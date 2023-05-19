@@ -1,0 +1,709 @@
+																																														/*
+													{WAHEGURU G DE CHARNA CH ARDAAS}																
+												{WAHEGURU G DA KHALSA WAHEGURU G DI FATEH}																	
+																																								
+o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
+													Raj Karega Khalsa Aaki Rahe Na Koi
+o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o													*/
+																																														/*																																									/*
+Purpose			: Sales Invoice Print
+
+Tally Release	: Tally Prime Release 1.0 & Up Versions
+Created On		: 30/04/2023
+Created By		: Harman Singh
+																																														*//*
+o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o													
+											Bin Bal Ko Koi Raj Na Le Hai Jo Le Hai Nij Bal Se Le Hai
+o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o													*/
+
+[#Menu	: Default]
+	Add	: Button	: RefreshTdlButton
+
+[#Form	: Default]
+	Add	: Button	: RefreshTdlButton
+
+	[Button	: RefreshTdlButton]
+		Title	: "Refresh"
+		Key		: CTRL + 8
+		Action	: Refresh TDL
+	
+;========		Sales Invoice Print		==========
+
+[#Form	: Comprehensive Invoice]
+	Add	: Option	: BhawaniInvForm	: @@IsSales
+	
+	[!Form	: BhawaniInvForm]
+		Delete	: Parts
+		Delete	: Bottom Parts
+		Delete	: Page Break
+		Add		: Top Parts		: BhawaniInvTopPart, BhawaniInvBodyPart
+		Add		: Bottom Part	: BhawaniInvBottomPart
+		Add		: Page Break	: BhawaniClPageBreak, BhawaniInvTopPart
+		Add		: Width  		: 100% Page;@@InvWidth Inch
+		Add		: Height 		: 100% Page;@@InvHeight Inch
+        Add		: Space Top		: @@InvSpace Inch
+        Add		: Space Right	: 0.5 Inch
+        Add		: Space Left	: @@InvSpaceLeft Inch
+        Add		: Space Bottom	: 0.25 Inch
+		Local	: Style	: Default	: Font	: "Calibri"
+								
+		[Part	: BhawaniInvTopPart]
+			Vertical: Yes
+			Parts	: BhawaniInvFullDet, Empty, BhawaniInvColTit
+			
+			[Part	: BhawaniInvFullDet]
+				Border		: Thin Box
+				Left Part	: BhawaniInvAllDet
+				Right Part	: BhawaniInvVanEway
+				
+				[Part	: BhawaniInvAllDet]
+					Width	: 85% Page
+					Vertical: Yes
+					Parts	: BhawaniInvCompDet, BhawaniInvBuyDet
+				
+					[Part	: BhawaniInvCompDet]
+						Border	: Thin Bottom
+						Vertical: Yes
+						Parts	: BhawaniInvPageTit, BhawaniInvCompOthDet
+						
+						[Part	: BhawaniInvPageTit]
+							Line	: BhawaniInvPageTit
+							
+							[Line	: BhawaniInvPageTit]
+								Fields	: BhawaniInvPageNo, BhawaniInvTitle, Simple Field
+								Local	: Field	: Simple Field	: Width	: 15% Page
+								
+								[Field	: BhawaniInvPageNo]
+									Use		: Name Field
+									Width	: 15% Page
+									Style	: Normal
+									Set as	: "Page " + $$PageNo + 1 + " of " + $$PageNo
+									
+								[Field	: BhawaniInvTitle]
+									Use		: Name Field
+									Width	: 55% Page
+									Align	: Center
+									Set as	: ##ReportTitle
+									
+						[Part	: BhawaniInvCompOthDet]
+							Parts	: BhawaniInvCompDet1, BhawaniInvCompDet2, BhawaniInvCompDet3
+							
+							[Part	: BhawaniInvCompDet1]
+								Width	: 35% Page
+								Lines	: BhawaniInvCompName, BhawaniInvCompAddr
+								Repeat	: BhawaniInvCompAddr	: BhawaniCompanyAddress
+								
+								[Collection	: BhawaniCompanyAddress]
+									Type        : Address   : Company
+									Child of    : ##SVCurrentCompany
+									Compute		: IsNumber	  	: No
+									Compute		: FixedDirection: No
+									Object  	: Company CINumber
+									Object      : Company Contacts
+									Object		: Company FaxNo
+									Object      : Company Email
+									Object		: Company Website
+									Filter      : IsNotBlankAddr
+									
+								[Line	: BhawaniInvCompName]
+									Field	: BhawaniInvCompName
+									
+									[Field	: BhawaniInvCompName]
+										Use		: Name Field
+										Width	: 35% Page
+										Set as	: @@CmpMailName
+										
+								[Line	: BhawaniInvCompAddr]
+									Indent	: 3% Page
+									Field	: BhawaniInvCompAddr
+									
+									[Field	: BhawaniInvCompAddr]
+										Use		: Name Field
+										Width	: 32% Page
+										Style	: Normal
+										Set as	: $Address
+								
+							[Part	: BhawaniInvCompDet2]
+								Space Top	: 1
+								Width		: 25% Page
+								Lines		: BhawaniInvComp20B, BhawaniInvComp21B, BhawaniInvCompState
+								
+								[Line	: BhawaniInvComp20B]
+									Fields	: Short Prompt, Name Field
+									Local	: Field	: Short Prompt	: Set as	: "20B DL"
+									Local	: Field	: Short Prompt	: Width		: 10% Page
+									Local	: Field	: Short Prompt	: Style		: Normal Bold
+									Local	: Field	: Name Field	: Set as	: ""
+									Local	: Field	: Name Field	: Width		: 15% Page
+									Local	: Field	: Name Field	: Style		: Normal
+									
+								[Line	: BhawaniInvComp21B]
+									Fields	: Short Prompt, Name Field
+									Local	: Field	: Short Prompt	: Set as	: "21B DL"
+									Local	: Field	: Short Prompt	: Width		: 10% Page
+									Local	: Field	: Short Prompt	: Style		: Normal Bold
+									Local	: Field	: Name Field	: Set as	: ""
+									Local	: Field	: Name Field	: Width		: 15% Page
+									Local	: Field	: Name Field	: Style		: Normal
+									
+								[Line	: BhawaniInvCompState]
+									Fields	: Short Prompt, Name Field
+									Local	: Field	: Short Prompt	: Set as	: "State"
+									Local	: Field	: Short Prompt	: Width		: 10% Page
+									Local	: Field	: Short Prompt	: Style		: Normal Bold
+									Local	: Field	: Name Field	: Set as	: $$GetGSTStateCode:@@CompanyStateName + "-" + @@CompanyStateName
+									Local	: Field	: Name Field	: Width		: 15% Page
+									Local	: Field	: Name Field	: Style		: Normal
+									
+							[Part	: BhawaniInvCompDet3]
+								Space Top	: 1
+								Width		: 25% Page
+								Lines		: BhawaniInvFSSAI, BhawaniInvCompPan, BhawaniInvCompGstin
+								
+								[Line	: BhawaniInvFSSAI]
+									Fields	: Short Prompt, Name Field
+									Local	: Field	: Short Prompt	: Set as	: "FSSAI No"
+									Local	: Field	: Short Prompt	: Width		: 10% Page
+									Local	: Field	: Short Prompt	: Style		: Normal Bold
+									Local	: Field	: Name Field	: Set as	: ""
+									Local	: Field	: Name Field	: Width		: 15% Page
+									Local	: Field	: Name Field	: Style		: Normal
+									
+								[Line	: BhawaniInvCompPan]
+									Fields	: Short Prompt, Name Field
+									Local	: Field	: Short Prompt	: Set as	: "PAN NO"
+									Local	: Field	: Short Prompt	: Width		: 10% Page
+									Local	: Field	: Short Prompt	: Style		: Normal Bold
+									Local	: Field	: Name Field	: Set as	: @@CmpPanDetails
+									Local	: Field	: Name Field	: Width		: 15% Page
+									Local	: Field	: Name Field	: Style		: Normal
+									
+								[Line	: BhawaniInvCompGstin]
+									Fields	: Short Prompt, Name Field
+									Local	: Field	: Short Prompt	: Set as	: "GSTIN NO"
+									Local	: Field	: Short Prompt	: Width		: 10% Page
+									Local	: Field	: Short Prompt	: Style		: Normal Bold
+									Local	: Field	: Name Field	: Set as	: @@VATCMPGSTNumber
+									Local	: Field	: Name Field	: Width		: 15% Page
+									Local	: Field	: Name Field	: Style		: Normal
+									
+					[Part	: BhawaniInvBuyDet]
+						Parts	: BhawaniInvBuyerDet, BhawaniInvBuyerOth, BhawaniInvDetails
+						
+						[Part	: BhawaniInvBuyerDet]
+							Width	: 25% Page
+							Lines	: BhawaniInvBuyerName, BhawaniInvBuyerAddr, BhawaniInvBuyerPh, BhawaniInvBuyerState
+							Repeat	: BhawaniInvBuyerAddr	: Address
+							
+							[Line	: BhawaniInvBuyerName]
+								Field	: BhawaniInvBuyerName
+								
+								[Field	: BhawaniInvBuyerName]
+									Use		: Name Field
+									Width	: 25% Page
+									Set as	: $PartyMailingName
+									
+							[Line	: BhawaniInvBuyerAddr]
+								Field	: BhawaniInvBuyerAddr
+								
+								[Field	: BhawaniInvBuyerAddr]
+									Use		: Name Field
+									Width	: 25% Page
+									Style	: Normal
+									Set as	: $Address
+							
+							[Line	: BhawaniInvBuyerPh]
+								Field	: BhawaniInvBuyerPh
+								
+								[Field	: BhawaniInvBuyerPh]
+									Use		: Name Field
+									Width	: 25% Page
+									Style	: Normal
+									Set as	: $LedgerPhone:Ledger:$PartyLedgerName
+								
+							[Line	: BhawaniInvBuyerState]
+								Field	: BhawaniInvBuyerState
+								
+								[Field	: BhawaniInvBuyerState]
+									Use		: Name Field
+									Width	: 25% Page
+									Style	: Normal
+									Set as	: $$GetGSTStateCode:$StateName + "-" + $StateName
+								
+						[Part	: BhawaniInvBuyerOth]
+							Space Top	: 1
+							Width		: 25% Page
+							Lines		: BhawaniInvBuyerPan, BhawaniInvBuyer20B, BhawaniInvBuyer21B, BhawaniInvBuyerGstin, BhawaniInvBuyerFssai, +
+										  BhawaniInvBuyerUshop, BhawaniInvBuyerPoint
+							
+							[Line	: BhawaniInvBuyerPan]
+								Fields	: Short Prompt, Name Field
+								Local	: Field	: Short Prompt	: Set as	: "PAN NO"
+								Local	: Field	: Short Prompt	: Width		: 10% Page
+								Local	: Field	: Short Prompt	: Style		: Normal Bold
+								Local	: Field	: Name Field	: Set as	: $IncomeTaxNumber:Ledger:$PartyLedgerName
+								Local	: Field	: Name Field	: Width		: 15% Page
+								Local	: Field	: Name Field	: Style		: Normal
+								
+							[Line	: BhawaniInvBuyer20B]
+								Fields	: Short Prompt, Name Field
+								Local	: Field	: Short Prompt	: Set as	: "20B DL"
+								Local	: Field	: Short Prompt	: Width		: 10% Page
+								Local	: Field	: Short Prompt	: Style		: Normal Bold
+								Local	: Field	: Name Field	: Set as	: ""
+								Local	: Field	: Name Field	: Width		: 15% Page
+								Local	: Field	: Name Field	: Style		: Normal
+								
+							[Line	: BhawaniInvBuyer21B]
+								Fields	: Short Prompt, Name Field
+								Local	: Field	: Short Prompt	: Set as	: "21B DL"
+								Local	: Field	: Short Prompt	: Width		: 10% Page
+								Local	: Field	: Short Prompt	: Style		: Normal Bold
+								Local	: Field	: Name Field	: Set as	: ""
+								Local	: Field	: Name Field	: Width		: 15% Page
+								Local	: Field	: Name Field	: Style		: Normal
+								
+							[Line	: BhawaniInvBuyerGstin]
+								Fields	: Short Prompt, Name Field
+								Local	: Field	: Short Prompt	: Set as	: "GSTIN NO"
+								Local	: Field	: Short Prompt	: Width		: 10% Page
+								Local	: Field	: Short Prompt	: Style		: Normal Bold
+								Local	: Field	: Name Field	: Set as	: $PartyGstin
+								Local	: Field	: Name Field	: Width		: 15% Page
+								Local	: Field	: Name Field	: Style		: Normal
+								
+							[Line	: BhawaniInvBuyerFssai]
+								Fields	: Short Prompt, Name Field
+								Local	: Field	: Short Prompt	: Set as	: "FSSAI NO"
+								Local	: Field	: Short Prompt	: Width		: 10% Page
+								Local	: Field	: Short Prompt	: Style		: Normal Bold
+								Local	: Field	: Name Field	: Set as	: ""
+								Local	: Field	: Name Field	: Width		: 15% Page
+								Local	: Field	: Name Field	: Style		: Normal
+								
+							[Line	: BhawaniInvBuyerUshop]
+								Fields	: Short Prompt, Name Field
+								Local	: Field	: Short Prompt	: Set as	: "UShop"
+								Local	: Field	: Short Prompt	: Width		: 10% Page
+								Local	: Field	: Short Prompt	: Style		: Normal Bold
+								Local	: Field	: Name Field	: Set as	: ""
+								Local	: Field	: Name Field	: Width		: 15% Page
+								Local	: Field	: Name Field	: Style		: Normal
+								
+							[Line	: BhawaniInvBuyerPoint]
+								Fields	: Short Prompt, Name Field
+								Local	: Field	: Short Prompt	: Set as	: "Point"
+								Local	: Field	: Short Prompt	: Width		: 10% Page
+								Local	: Field	: Short Prompt	: Style		: Normal Bold
+								Local	: Field	: Name Field	: Set as	: ""
+								Local	: Field	: Name Field	: Width		: 15% Page
+								Local	: Field	: Name Field	: Style		: Normal
+								
+						[Part	: BhawaniInvDetails]
+							Width	: 35% Page
+							Border	: Thin Left
+							Lines	: BhawaniInvNo, BhawaniInvDate, BhawaniInvSalesPer, BhawaniInvBeat, BhawaniInvHulCode, BhawaniInvShikarNo, +
+									  BhawaniInvPayMode
+				
+							[Line	: BhawaniInvNo]
+								Fields	: Short Prompt, BhawaniInvNo
+								Local	: Field	: Short Prompt	: Set as	: "Bill No."
+								Local	: Field	: Short Prompt	: Width		: 15% Page
+								Local	: Field	: Short Prompt	: Style		: Normal Bold
+								
+								[Field	: BhawaniInvNo]
+									Use		: Name Field
+									Width	: 20% Page
+									Set as	: $VoucherNumber
+									
+							[Line	: BhawaniInvDate]
+								Fields	: Short Prompt, BhawaniInvDate
+								Local	: Field	: Short Prompt	: Set as	: "Bill Date"
+								Local	: Field	: Short Prompt	: Width		: 15% Page
+								Local	: Field	: Short Prompt	: Style		: Normal Bold
+								
+								[Field	: BhawaniInvDate]
+									Use		: Uni Date Field
+									Width	: 20% Page
+									Style	: Normal
+									Align	: Left
+									Set as	: $Date
+									
+							[Line	: BhawaniInvSalesPer]
+								Fields	: Short Prompt, BhawaniInvSalesPer
+								Local	: Field	: Short Prompt	: Set as	: "Sales Person"
+								Local	: Field	: Short Prompt	: Width		: 15% Page
+								Local	: Field	: Short Prompt	: Style		: Normal Bold
+								
+								[Field	: BhawaniInvSalesPer]
+									Use		: Name Field
+									Width	: 20% Page
+									Style	: Normal
+									Set as	: ""
+								
+							[Line	: BhawaniInvBeat]
+								Fields	: Short Prompt, BhawaniInvBeat
+								Local	: Field	: Short Prompt	: Set as	: "Beat"
+								Local	: Field	: Short Prompt	: Width		: 15% Page
+								Local	: Field	: Short Prompt	: Style		: Normal Bold
+								
+								[Field	: BhawaniInvBeat]
+									Use		: Name Field
+									Width	: 20% Page
+									Style	: Normal
+									Set as	: ""
+								
+							[Line	: BhawaniInvHulCode]
+								Fields	: Short Prompt, BhawaniInvHulCode
+								Local	: Field	: Short Prompt	: Set as	: "HUL Code"
+								Local	: Field	: Short Prompt	: Width		: 15% Page
+								Local	: Field	: Short Prompt	: Style		: Normal Bold
+								
+								[Field	: BhawaniInvHulCode]
+									Use		: Name Field
+									Width	: 20% Page
+									Style	: Normal
+									Set as	: ""
+																
+							[Line	: BhawaniInvShikarNo]
+								Fields	: Short Prompt, BhawaniInvShikarNo
+								Local	: Field	: Short Prompt	: Set as	: "Shikar Order No."
+								Local	: Field	: Short Prompt	: Width		: 15% Page
+								Local	: Field	: Short Prompt	: Style		: Normal Bold
+								
+								[Field	: BhawaniInvShikarNo]
+									Use		: Name Field
+									Width	: 20% Page
+									Style	: Normal
+									Set as	: ""
+								
+							[Line	: BhawaniInvPayMode]
+								Fields	: Short Prompt, BhawaniInvPayMode
+								Local	: Field	: Short Prompt	: Set as	: "Payment Mode"
+								Local	: Field	: Short Prompt	: Width		: 15% Page
+								Local	: Field	: Short Prompt	: Style		: Normal Bold
+								
+								[Field	: BhawaniInvPayMode]
+									Use		: Name Field
+									Width	: 20% Page
+									Style	: Normal
+									Set as	: ""
+								
+				[Part	: BhawaniInvVanEway]
+					Width	: 15% Page
+					Border	: Thin Left
+					Lines	: BhawaniInvVanNo, BhawaniInvEwayNo
+				
+					[Line	: BhawaniInvVanNo]
+						Fields	: Short Prompt, BhawaniInvVanNo
+						Local	: Field	: Short Prompt	: Set as	: "Van"
+						Local	: Field	: Short Prompt	: Width		: 5% Page
+						
+						[Field	: BhawaniInvVanNo]
+							Use		: Name Field
+							Width	: 10% Page
+							Style	: Normal
+							Set as	: ""
+							
+					[Line	: BhawaniInvEwayNo]
+						Fields	: Short Prompt, BhawaniInvEwayNo
+						Local	: Field	: Short Prompt	: Set as	: "Eway No"
+						Local	: Field	: Short Prompt	: Width		: 5% Page
+						
+						[Field	: BhawaniInvEwayNo]
+							Use		: Name Field
+							Width	: 10% Page
+							Style	: Normal
+							Set as	: $GSTeWayBillNumber;$GSTeWayBillDate
+							
+			[Part	: BhawaniInvColTit]
+				Border	: Thin Box
+				Line	: BhawaniInvColTit
+				
+				[Line	: BhawaniInvColTit]
+					Use		: BhawaniInvStockDet
+					Local	: Field	: BhawaniInvSrNo	: Set as	: "Sl"
+					Local	: Field	: BhawaniInvHsn		: Set as	: "HSN NO"
+					Local	: Field	: BhawaniInvProd	: Set as	: "Product Name"
+					Local	: Field	: BhawaniInvMrp		: Set as	: "MRP"
+					Local	: Field	: BhawaniInvCs		: Set as	: "Cs"
+					Local	: Field	: BhawaniInvPcs		: Set as	: "Pcs"
+					Local	: Field	: BhawaniInvUpc		: Set as	: "UPC"
+					Local	: Field	: BhawaniInvRate	: Set as	: "Base Rate"
+					Local	: Field	: BhawaniInvSchDisc	: Set as	: "Sch Disc"
+					Local	: Field	: BhawaniInvRsDisc	: Set as	: "RS Disc"
+					Local	: Field	: BhawaniInvTaxable	: Set as	: "Taxable Amt"
+					Local	: Field	: BhawaniInvGst		: Set as	: "GST%"
+					Local	: Field	: BhawaniInvCgst	: Set as	: "CGST Amt"
+					Local	: Field	: BhawaniInvSgst	: Set as	: "SGST Amt"
+					Local	: Field	: BhawaniInvIgst	: Set as	: "IGST Amt"
+					Local	: Field	: BhawaniInvNetAmt	: Set as	: "Net Amt"
+					Local	: Field	: Default			: Type		: String
+					Local	: Field	: Default			: Align		: Center
+					Local	: Field	: Default			: Style		: Normal Bold
+					Local	: Field	: Default			: Lines		: 0
+					
+		[Part	: BhawaniInvBodyPart]
+			Border			: Thin Left Right
+			Line			: BhawaniInvStockDet
+			Repeat			: BhawaniInvStockDet	: InventoryEntries
+			Bottom Line		: BhawaniInvStockTot
+			Scroll			: Vertical
+			Float			: No
+			Common Borders	: Yes
+			Total			: BhawaniInvCs, BhawaniInvPcs, BhawaniInvSchDisc, BhawaniInvRsDisc, BhawaniInvTaxable, BhawaniInvCgst, BhawaniInvSgst, +
+							  BhawaniInvIgst, BhawaniInvNetAmt
+			
+			[Line	: BhawaniInvStockDet]
+				Left Fields	: BhawaniInvSrNo, BhawaniInvHsn, BhawaniInvProd
+				Right Fields: BhawaniInvMrp, BhawaniInvCs, BhawaniInvPcs, BhawaniInvUpc, BhawaniInvRate, BhawaniInvSchDisc, BhawaniInvRsDisc, +
+							  BhawaniInvTaxable, BhawaniInvGst, BhawaniInvCgst, BhawaniInvSgst, BhawaniInvIgst, BhawaniInvNetAmt
+				Local		: Field	: Default	: Style	: Normal
+									
+				[Field	: BhawaniInvSrNo]
+					Use		: Name Field
+					Width	: 5% Page
+					Set as	: $$Line
+					
+				[Field	: BhawaniInvHsn]
+					Use		: Name Field
+					Width	: 7% Page
+					Border	: Thin Left
+					Set as	: $GSTItemHSNCodeEx
+					
+				[Field	: BhawaniInvProd]
+					Align		: Left
+					Full Width	: Yes
+					Border		: Thin Left
+					Lines		: 0
+					Set as		: $StockItemName
+					
+				[Field	: BhawaniInvMrp]
+					Use		: Number Field
+					Width	: 6% Page
+					Align	: Right
+					Format	: "No Zero, Decimal:2"
+					Border	: Thin Left
+					Set as	: ""
+					
+				[Field	: BhawaniInvCs]
+					Use		: Number Field
+					Align	: Right
+					Width	: 5% Page
+					Border	: Thin Left
+					Set as	: ""
+					
+				[Field	: BhawaniInvPcs]
+					Use		: Number Field
+					Width	: 6% Page
+					Align	: Right
+					Border	: Thin Left
+					Set as	: $$Number:$BilledQty
+					
+				[Field	: BhawaniInvUpc]
+					Use		: Number Field
+					Align	: Right
+					Width	: 5% Page
+					Border	: Thin Left
+					Set as	: ""
+					
+				[Field	: BhawaniInvRate]
+					Use		: Rate Price Field
+					Width	: 7% Page
+					Border	: Thin Left
+					Set as	: $Rate
+					
+				[Field	: BhawaniInvSchDisc]
+					Use		: Number Field
+					Width	: 6% Page
+					Align	: Right
+					Border	: Thin Left
+					Format	: "No Zero, Decimal:2"
+					Set as	: $Discount
+					
+				[Field	: BhawaniInvRsDisc]
+					Use		: Number Field
+					Width	: 6% Page
+					Align	: Right
+					Border	: Thin Left
+					Format	: "No Zero, Decimal:2"
+					Set as	: $Discount
+					
+				[Field	: BhawaniInvTaxable]
+					Use		: Amount Field
+					Width	: 10% Page
+					Border	: Thin Left
+					Set as	: $Amount
+					
+				[Field	: BhawaniInvGst]
+					Use		: EXPINV GSTRateTemp
+					Width	: 7% Page
+					Border	: Thin Left
+					Set as	: If NOT $GSTIsTransLedEx Then "" Else  If $$IsEmpty:$GSTClsfnIGSTRateEx Then "0%" Else $$Sprintf:"%s%%":$GSTClsfnIGSTRateEx
+					IgstRate: $$ReportObject:$$CollectionFieldByKey:$GSTItemTaxSGSTRate:@@GSTTaxAnalysisItemLedKey:GSTTaxAnalysiAlongWithSummary
+    
+				[Field	: BhawaniInvCgst]
+					Use			: EXPINV CGSTAmt
+					Width		: 6% Page
+					Invisible	: ##GSTFirstTransNatureType != 1 OR  (NOT ##IsRevChargeAppl AND $$IsEmpty:##GSTActualCGSTAmount)
+				
+				[Field	: BhawaniInvSgst]
+					Use			: EXPINV SGSTAmt
+					Width		: 6% Page
+					Invisible	: ##GSTFirstTransNatureType != 1 OR  (NOT ##IsRevChargeAppl AND $$IsEmpty:##GSTActualSGSTAmount)
+										
+				[Field	: BhawaniInvIgst]
+					Use			: EXPINV IGSTAmt
+					Width		: 6% Page
+					Invisible	: ##GSTFirstTransNatureType NOT IN (2, 3) OR  (NOT ##IsRevChargeAppl AND $$IsEmpty:##GSTActualIGSTAmount)
+					
+				[Field	: BhawaniInvNetAmt]
+					Use					: EXPINV GSTAmtTemp
+					Width				: 10% Page
+					Border				: Thin Left
+					Set as	    		: If $$IsEmpty:@taxableamt Then $$InitValue:"Amount" Else (If ##GSTFirstTransNatureType NOT IN (2, 3) Then If ##vIsDebit Then $$AsDrAmt:@localtaxamount Else $$AsCrAmt:@localtaxamount +
+										  Else If ##vIsDebit Then $$AsDrAmt:@intstatetaxamount Else $$AsCrAmt:@intstatetaxamount)
+					intstatetaxamount	: $$NettAmount:@taxableamt:$$NettAmount:@igsttaxamt:$$NettAmount:@cessgsttaxamt
+					localtaxamount    	: $$NettAmount:@taxableamt:$$NettAmount:@cgsttaxamt:$$NettAmount:@sgsttaxamt:$$NettAmount:@cessgsttaxamt:@statecesstaxamt
+					taxableamt        	: $$ReportObject:$$CollectionFieldByKey:$GSTInvoice_GSTAssesableValue:@@GSTTaxAnalysisItemLedKey:GSTTaxAnalysiAlongWithSummary
+					cgsttaxamt        	: $$ReportObject:$$CollectionFieldByKey:$GSTItemTaxCGSTTaxAmt:@@GSTTaxAnalysisItemLedKey:GSTTaxAnalysiAlongWithSummary
+					sgsttaxamt        	: $$ReportObject:$$CollectionFieldByKey:$GSTItemTaxSGSTTaxAmt:@@GSTTaxAnalysisItemLedKey:GSTTaxAnalysiAlongWithSummary
+					igsttaxamt        	: $$ReportObject:$$CollectionFieldByKey:$GSTItemTaxIGSTTaxAmt:@@GSTTaxAnalysisItemLedKey:GSTTaxAnalysiAlongWithSummary
+					cessgsttaxamt     	: $$ReportObject:$$CollectionFieldByKey:$GSTItemTaxCessGSTTaxAmt:@@GSTTaxAnalysisItemLedKey:GSTTaxAnalysiAlongWithSummary
+					statecesstaxamt  	: $$ReportObject:$$CollectionFieldByKey:$GSTItemTaxStateCessAmt:@@GSTTaxAnalysisItemLedKey:GSTTaxAnalysiAlongWithSummary
+													
+			[Line	: BhawaniInvStockTot]
+				Border	: Totals
+				Use		: BhawaniInvStockDet
+				Local	: Field	: BhawaniInvSrNo	: Set as	: ""
+				Local	: Field	: BhawaniInvHsn		: Set as	: ""
+				Local	: Field	: BhawaniInvProd	: Set as	: ""
+				Local	: Field	: BhawaniInvMrp		: Set as	: ""
+				Local	: Field	: BhawaniInvCs		: Set as	: $$Total:BhawaniInvCs
+				Local	: Field	: BhawaniInvPcs		: Set as	: $$Total:BhawaniInvPcs
+				Local	: Field	: BhawaniInvUpc		: Set as	: ""
+				Local	: Field	: BhawaniInvRate	: Set as	: ""
+				Local	: Field	: BhawaniInvSchDisc	: Set as	: $$Total:BhawaniInvSchDisc
+				Local	: Field	: BhawaniInvRsDisc	: Set as	: $$Total:BhawaniInvRsDisc
+				Local	: Field	: BhawaniInvTaxable	: Set as	: $$Total:BhawaniInvTaxable
+				Local	: Field	: BhawaniInvGst		: Set as	: ""
+				Local	: Field	: BhawaniInvCgst	: Set as	: $$Total:BhawaniInvCgst
+				Local	: Field	: BhawaniInvSgst	: Set as	: $$Total:BhawaniInvSgst
+				Local	: Field	: BhawaniInvIgst	: Set as	: $$Total:BhawaniInvIgst
+				Local	: Field	: BhawaniInvNetAmt	: Set as	: $$Total:BhawaniInvNetAmt
+				Local	: Field	: Default			: Style		: Normal Bold
+					
+		[Part	: BhawaniInvBottomPart]
+			Vertical: Yes
+			Parts	: Empty, BhawaniInvTaxSumm, BhawaniInvDigSign, BhawaniInvTermsSign
+
+			[Part	: BhawaniInvTaxSumm]
+				Border			: Thin Box
+				Width			: 100% Page
+				Lines			: VCHGSTInvPrintTitle1, VCHGSTInvPrintTitle2, GST VCHGSTInvPrintBody, GST VCHGSTInvPrintTotal	
+				Repeat			: GST VCHGSTInvPrintBody	: GSTAnalysisPrintSummary
+				Horizontal Align: Right
+				Common Border   : Yes
+				Total			: VCHGSTInvPrint TaxValue, VCHGSTInvPrint IGSTAmt, VCHGSTInvPrint CGSTAmt,VCHGSTInvPrint SGSTAmt, +
+								  VCHGSTInvPrint CessAmt, VCHGSTInvPrint CessQtyAmt, VCHGSTInvPrint TotalTaxAmt
+				Invisible       : @@IsGSTInvoiceEmptyCollection OR NOT @@InvGSTAnalysis
+				Option          : VCH GST AnalysisDetailsSmallSizePart : NOT @@IsGSTTaxAnalysisWithItems
+		
+				[Part	: BhawaniInvAmtWords]
+					Border	: Thin Box
+					Line	: BhawaniInvAmtWords
+					
+					[Line	: BhawaniInvAmtWords]
+						Space Top	: 0.2
+						Space Bottom: 0.2
+						Fields	: Short Prompt, BhawaniInvAmtWords
+						Local	: Field	: Short Prompt	: Set as	: "Amount (in words)"
+						Local	: Field	: Short Prompt	: Width		: 20% Page
+						Local	: Field	: Short Prompt	: Style		: Normal Bold
+						
+						[Field	: BhawaniInvAmtWords]
+							Use		: Name Field
+							Width	: 80% Page
+							Lines	: 0
+							Style	: Normal
+							Set as	: $$InWords:$Amount + " Only"
+				
+			[Part	: BhawaniInvDigSign]
+				Border	: Thin Left Right
+				Line	: BhawaniInvDigSign
+				
+				[Line	: BhawaniInvDigSign]
+					Field	: Name Field
+					Local	: Field	: Name Field	: Set as	: "DIGITAL SIGNATURE"
+					Local	: Field	: Name Field	: Width		: 100% Page
+					Local	: Field	: Name Field	: Style		: Normal
+					Local	: Field	: Name Field	: Align		: Center
+				
+			[Part	: BhawaniInvTermsSign]
+				Border		: Thin Box
+				Left Part	: BhawaniInvTerms
+				Right Part	: BhawaniInvAuthSign
+			
+				[Part	: BhawaniInvTerms]
+					Width	: 80% Page
+					Lines	: BhawaniInvTermsTit, BhawaniInvTerms
+					
+					[Line	: BhawaniInvTermsTit]
+						Field	: BhawaniInvTermsTit
+						
+						[Field	: BhawaniInvTermsTit]
+							Use		: Name Field
+							Width	: 80% Page
+							Align	: Center
+							Border	: Thin Bottom
+							Set as	: "Terms & Conditions"
+							
+					[Line	: BhawaniInvTerms]
+						Field	: BhawaniInvTerms
+						
+						[Field	: BhawaniInvTerms]
+							Use		: Name Field
+							Width	: 80% Page
+							Style	: Small
+							Lines	: 0
+							Set as	: If $$IsEmpty:$VCHPrintDecl:VoucherType:##SVVoucherType Then If @@IsSales Then @@SimpleDesc Else "" Else $VCHPrintDecl:VoucherType:##SVVoucherType
+					
+				[Part	: BhawaniInvAuthSign]
+					Width		: 20% Page
+					Border		: Thin Left
+					Line		: BhawaniInvForComp
+					Bottom Line	: BhawaniInvAuthSign
+					
+					[Line	: BhawaniInvForComp]
+						Field	: BhawaniInvForComp
+						
+						[Field	: BhawaniInvForComp]
+							Use		: Name Field
+							Align	: Right
+							Width	: 20% Page
+							Set as	: "For " + @@CmpMailName
+							
+					[Line	: BhawaniInvAuthSign]
+						Field	: BhawaniInvAuthSign
+						
+						[Field	: BhawaniInvAuthSign]
+							Use		: Name Field
+							Style	: Small
+							Align	: Right
+							Width	: 20% Page
+							Set as	: "Auth. Signatory"
+							
+		[Part	: BhawaniClPageBreak]
+			Line	: BhawaniClPageBreak
+			
+			[Line	: BhawaniClPageBreak]
+				Right Field	: BhawaniClPageBreak
+				
+				[Field	: BhawaniClPageBreak]
+					Use		: Name Field
+					Align	: Right
+					Style	: Tiny Italic
+					Width	: 100% Page
+					Set as	: ".....Continue"
+				
+;=================================================					End Of File 				===================================================

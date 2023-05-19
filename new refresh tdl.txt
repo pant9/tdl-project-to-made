@@ -1,0 +1,10 @@
+[#Menu	: Default]
+	Add	: Button	: At Beginning	: RefreshTdlBttn
+	
+[#Form	: Default]
+	Add	: Button	: At Beginning	: RefreshTdlBttn
+	
+	[Button	: RefreshTdlBttn]
+		Title	: $$LocaleString:"Refresh"
+		Key		: Alt + 7
+		Action	: Refresh TDL

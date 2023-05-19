@@ -1,0 +1,74 @@
+[#Menu	: Default] 
+	Add	: Button	: RefreshTdlButton
+
+[#Form	: Default]
+	Add	: Button	: RefreshTdlButton
+
+	[Button	: RefreshTdlButton]
+		Title	: "Refresh"
+		Key		: CTRL + 8
+		Action	: Refresh TDL
+	
+;========		Sales Invoice Print		==========
+
+[#Form	: Comprehensive Invoice]
+	Add	: Option	: GujratfrieghtInvForm	: @@IsSales
+	
+
+[!Form	: GujratfrieghtInvForm]
+		Delete	: Parts
+		Delete	: Bottom Parts
+		Delete	: Page Break
+		Add		: Top Parts		: GujratfrieghtInvTopPart 
+		Add		: Page Break	: GujratfrieghtClPageBreak, GujratfrieghtInvTopPart
+		Add		: Width  		: 100% Page;@@InvWidth Inch
+		Add		: Height 		: 100% Page;@@InvHeight Inch
+        Add		: Space Top		: @@InvSpace Inch
+        Add		: Space Right	: 0.5 Inch
+        Add		: Space Left	: @@InvSpaceLeft Inch
+        Add		: Space Bottom	: 0.25 Inch
+		Local	: Style	: Default	: Font	: "Calibri"
+		
+Part	: GujratfrieghtInvTopPart
+			
+	Parts	: GujratfrieghtInvFullDet, GujratfrieghtInvColTit
+	
+[Part	: GujratfrieghtInvFullDet]
+	Vertical: Yes
+				Border		: Thin Box
+				Left Part	: GujratfrieghtInvAllDet
+				Right Part	: GujratfrieghtInvVanEway
+				
+[Part	: GujratfrieghtInvTopPart]
+	
+Line : GujratfrieghtInvcmpname,GujratfrieghtInvcmpaddress
+[Line: GujratfrieghtInvcmpname]
+	
+Field : GujratfrieghtInvcmpname
+	
+	
+[Field : GujratfrieghtInvcmpname]
+ width	:  45% page
+  style		: extra large bold
+	  Use   : namefield
+     Set as : @@CmpMailName
+	 
+
+
+[Line: GujratfrieghtInvcmpaddress]
+	Field : GujratfrieghtInvcmpaddress
+	
+	
+	 [Field : GujratfrieghtInvcmpaddress]
+    Width	:  45% page
+  style		: extra large 
+	  Use   : namefield
+     Set as : $Address
+	   
+	
+
+	
+					
+								
+   
+	
