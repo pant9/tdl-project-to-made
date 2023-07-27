@@ -1,0 +1,161 @@
+
+;............................................CONSUMER REPORT................................................
+
+[#Menu	: Display Menu]
+	Add	: Key Item	: After	: @@locStatementsofAccounts	: CONSUMPTION REPORT	: O : Display	: ConsumptionRep
+	
+[Report		: ConsumptionRep]
+		Use			: DSP Template
+		Family		: $$Translate:"Consumption Report"
+		Title		: $$LocaleString:"Consumption Report"
+		Variable	: ReportTitle, SVPrintOrientation
+		Variable	: DoSetAutoColumn, SVFromDate, SVToDate, SLedger, GodownNameVarDash
+		Print Set	: Report Title	: $$LocaleString:"Consumption Report"
+		Set			: Report Title	: $$LocaleString:"Consumption Report"
+		Set			: SVFromDate	: $$MonthStart:##SVCurrentDate
+		Set     	: SVTodate		: $$MonthEnd:##SVCurrentDate
+		Repeat		: GodownNameVarDash
+		Form		: ConsumDtlRep
+		Set         : DoSetAutoColumn   : Yes
+		Set         : DSPRepeatCollection: "GodownNameVarColl"
+;			
+		[Form		: ConsumDtlRep]
+			Use		: DSP Template
+			Height	: 100% screen
+			Width	: 100% screen;ConsumSubTitleRep
+			Parts	: DSP ReportTime, DSP CompanyName, DSP CompanyAddress, DSP ReportTitle, DSP PageNo
+			Parts	: ConsumDtlRepTOp, ConsumTitleRep, ConsumDtlRep
+			Option	: Small Size Form
+			Local	: Part	: DSP PageNo	: Space Bottom	: 0.25
+			Delete	: Page Break
+			Add		: Page Break		: DSP ClPageBreak, DB1Open
+			Option	: Set Auto VCH Option	: ##DoSetAutoColumn AND $$SetAutoColumns:GodownNameVarDash
+			
+	[!Form: Set Auto Vch Option]
+
+	[Collection	: GodownNameVarColl]
+		Type	: Godown
+		Compute	: GodownNameVarDash	: $Name
+		
+			[Part	:DB1Close]
+				Line	: DB1Close
+				[Line	: DB1Close]
+					Field	: Name Field
+					Local	: Field: Name field :Set as: "Continue"
+					Local	: Field: Name field :Align:Right
+					Local	: Field: Name field :Border: thin top
+					Local	: Field: Name field :Full Width:Yes
+					
+			[Part	:DB1Open]
+				Part	: ConsumDtlRepTOp
+				
+				[Part	: ConsumDtlRepTOp]
+				Space Top	: 1 Mms
+				Space Bottom: 1 Mms
+				Width		: 100% Page
+				Invisible	: ($$InPrintMode OR ($$InExportMode AND @@IsExcelFormat)) OR NOT $$IsCommon:SVCurrentCompany OR NOT ##PrintWithCompanyName
+				Line		: ConsumDtlRepTOp
+					
+				[Line	: ConsumDtlRepTOp]
+					Space Bottom: 0.5
+					Right Field	: DSP MainDateTitle
+					
+			[Part		: ConsumTitleRep]
+				Line		: ConsumDtlReptitle
+				[Line	: ConsumDtlReptitle]
+					Border	: thin box
+					Field	: ConsumDtlReptitle;, ConsumDtlReptitleDate
+					[Field	: ConsumDtlReptitle]
+						Set as	: "CONSUMPTION REPORT FOR THE MONTH OF" 
+						Style	: LARGE BOLD
+						Align	: Center
+						Full Width	: Yes
+						
+						
+			[Part		: ConsumSubTitleRep]
+				Common Border	: Yes
+				Lines	: ConsumDtlRepSubTitle
+			
+				[Line		: ConsumDtlRepSubTitle]
+					Border	: Column Titles
+					Fields	: RSDCGrp, RSDCGodownNew, RSDCTotsss
+					Repeat	: RSDCGodownNew
+					Local	: Field	: Default		: Type	: String
+					Local	: Field	: RSDCGrp		: Set as	: ""
+					Local	: Field	: Default		: Style		: Normal Bold
+					Local	: Field	: Default		: Align		: Center
+					
+					[Field	: RSDCGodownNew]
+						Use		: sHORT NAme Field
+						Align	: Center
+						Set as	: ##GodownNameVarDash
+						
+							[Field	: RSDCTotsss]
+								Use	: Name Field
+								Width	: 10% page
+								Set as	: "Total"
+							
+						[Variable	: GodownNameVarDash]
+							Type	: String
+							Repeat	: ##DSPRepeatCollection
+						
+			[Part: ConsumDtlRep]
+				Lines			: ConsumDtlRepSubTitle, ConsumDtlRepList
+				Repeat			: ConsumDtlRepList : RSConsumGroupList
+				Scroll			: Vertical	
+				Common Border	: Yes
+				Float			: No
+;				Totals			: RSDCGodown	
+					
+				[Line	: ConsumDtlRepList]
+					Fields	: RSDCGrp, RSDCGodown, RSDCTot
+					Repeat	: RSDCGodown
+					Local	: Field	: Default	: Style	: Normal
+					Total	: RSDCGodown
+					
+					[Field	: RSDCGrp]
+						Use		: NAME FIELD
+						Set as	: $StkGrpItemName
+						Width	: 10% PAGE
+						Border	: thin left 
+						
+					[Field	: RSDCGodown]
+						Use		: Number FIELD
+						Align	: Right
+						Width	: @@ShortNameWidth
+						Format	: "No Zero, Decimal:2"
+						Set as	: $$Number:@FieldVal
+						FieldVal: $$ReportObject:$$CollectionFieldByKey:$BilledQty:@SrchKey:RSDCGodownColl
+						Border	: thin left
+						SrchKey	: ##GodownNameVarDash + #RSDCGrp
+						
+						[Collection	: RSDCGodownColl]
+							Source Collection	: SRCConsumCollection
+							
+							Walk: InventoryEntriesOut
+							By	: StkGrpNameVal	: $Parent:StockItem:$StockItemName
+							
+							Compute	: RsdcGodownName	: $GodownName
+							
+							Aggr Compute: BilledQty	: Sum	: $BilledQty
+							Search Key	: $RsdcGodownName + $StkGrpNameVal
+
+					[Field	: RSDCTot]
+						Use		: Number FIELD
+						Align	: Right
+						Border	: Thin Left
+						Width	: 10% Page
+						Format	: "No Zero, Decimal:2"
+						Set as	: $$Total:RSDCGodown
+
+						
+[Collection: RSConsumGroupList]
+	Source Collection : SRCConsumCollection
+	Walk    : Inventory Entries Out
+	By		: StkGrpItemName 	: $parent:StockItem:$StockItemName
+
+[Collection: SRCConsumCollection]
+Type    : Vouchers : VoucherType
+Child of  : $$VchTypeStockJrnl
+Belongs To : Yes
+						

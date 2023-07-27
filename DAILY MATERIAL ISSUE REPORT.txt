@@ -1,0 +1,274 @@
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DAILY MATERIAL ISSUE REPORT;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+[#Menu	: Display Menu]
+	Add	: Key Item	: After	: @@locStatementsofAccounts	: DAILY MATERIAL ISSUE REPORT	: M : Display	: MaterialIssueRep
+	
+[Report		: MaterialIssueRep]
+		Use			: DSP Template
+		Family		: $$Translate:"Daily Material Issue Report"
+		Title		: $$LocaleString:"Daily Material Issue Report"
+		Variable	: ReportTitle, SVPrintOrientation
+		Variable	: SVFromDate, SVToDate, SLedger
+		Print Set	: Report Title	: $$LocaleString:"Daily Material Issue Report"
+		Set			: Report Title	: $$LocaleString:"Daily Material Issue Report"
+		Set			: SVFromDate	: $$MonthStart:##SVCurrentDate
+		Set     	: SVTodate		: $$MonthEnd:##SVCurrentDate
+		Form		: MatrIssueDtlRep
+		
+		[Form		: MatrIssueDtlRep]
+			Use		: DSP Template
+			Height	: 100% screen
+			Width	: 100% screen
+			Parts	: DSP ReportTime, DSP CompanyName, DSP CompanyAddress, DSP ReportTitle, DSP PageNo, +
+			MtrlIssueRepTOp, MtrlIssueTitleRep, MtrlIssueDtlRepList, MtrlIssueRepGTot
+			Option	: Small Size Form
+			Local	: Part	: DSP PageNo1	: Space Bottom	: 0.25
+			Delete	: Page Break
+			Add		: Page Break	: DSP ClPageBreak1, DB1Open1
+
+			
+			[Part	:DB1Close1]
+				Line	: DB1Close1
+				[Line	: DB1Close1]
+					Field	: Name Field
+					Local	: Field: Name field :Set as: "Continue"
+					Local	: Field: Name field :Align:Right
+					Local	: Field: Name field :Border: thin top
+					Local	: Field: Name field :Full Width:Yes
+					
+			[Part	:DB1Open1]
+				Part	: MtrlIssueRepTOp
+				
+				[Part	: MtrlIssueRepTOp]
+				Space Top	: 1 Mms
+				Space Bottom: 1 Mms
+				Width		: 100% Page
+				Invisible	: ($$InPrintMode OR ($$InExportMode AND @@IsExcelFormat)) OR NOT $$IsCommon:SVCurrentCompany OR NOT ##PrintWithCompanyName
+				Line		: MtrlIssueRepTOp
+					
+				[Line	: MtrlIssueRepTOp]
+					Space Bottom: 0.5
+					Right Field	: DSP MainDateTitle
+					
+			[Part		: MtrlIssueTitleRep]
+				Line		: MtrlIssueTitleRep
+				[Line	: MtrlIssueTitleRep]
+					Border	: thin box
+					Field	: MtrlIssueTitleRep
+;					Right Field	: NAME FIELD, MtrlIssueTitleDATE
+					Local	: Field	: NAME FIELD	: Set as	: "Date : " 
+					Local	: Field	: name field	: Align		: Right
+					Local	: Field	: name field	: Width		: 5% page
+					[Field	: MtrlIssueTitleRep]
+						Set as	: "DAILY MATERIAL ISSUE"
+						Style	: Large Bold
+						Align	: Center
+						Full Width	: Yes
+						
+					[Field	: MtrlIssueTitleDATE]
+						Use	: Uni Date Field 
+						Set as	: ##VARVchDate
+						Align	: Right
+						Width	: 5% page
+
+			[Part	: MtrlIssueDtlRepList]	
+				Line	: MtrlIssueDtlRepList
+				Repeat			: MtrlIssueDtlRepList: RSDCMtrlIssueList
+				Scroll			: Vertical	
+				Float			: No
+				Common Borders	: Yes		
+				
+				[Line	: MtrlIssueDtlRepList]
+					Explode	: MtrlIssueDtlRepExpl
+					Field	: RSDCgdwnGrpName, RSDCempTit
+					Right Fields	: RSDCqtyTit, RSDCrateTit, RSDCamtTit
+					Border	: thin top bottom
+					
+					[Field	: RSDCgdwnGrpName]
+						Use		: Short Name Field
+						Set as	: $GodownName
+						Width	: 20% page
+					
+					[Field	: RSDCempTit]
+						Use	: Name Field
+						Info	: ""
+						Full Width	: Yes
+						
+					[Field	: RSDCqtyTit]
+						Use	: Name Field
+						Info	: "Issue Qty"
+						Width	: 10% page
+						Align	: Center
+						Inactive	: $$Line > 1
+						
+					[Field	: RSDCrateTit]
+						Use	: Name Field
+						Info	: "Rate"
+						Width	: 10% page
+						Align	: Center
+						Inactive	: $$Line > 1
+						
+					[Field	: RSDCamtTit]
+						Use	: Name Field
+						Info	: "Amount"
+						Width	: 10% page
+						Align	: Center
+						Inactive	: $$Line > 1
+				
+
+					[Part	: MtrlIssueDtlRepExpl]
+						Line	: MtrlIssueDtlRepExpl, MtrlIssueDtlRepListTot
+						Repeat	: MtrlIssueDtlRepExpl	: RSDCMtrlIssueListExpl
+						Total	: RSDCamt
+						
+						[Line	: MtrlIssueDtlRepExpl]
+							Fields			: RSDCgdwn, RSDCemp
+							Right Fields	: RSDCqty, RSDCrate, RSDCamt
+							
+							[Field	: RSDCgdwn]
+								Use		: NAME FIELD
+								Set as	: ""
+								Width	: 20% PAGE
+								Border	: thin left 
+								
+							[Field	: RSDCemp]
+								Use	: NAME FIELD
+								Set as	: $StockItemNAme
+								Full Width	: Yes
+								Border	: thin left 
+								
+							[Field	: RSDCqty]
+								Use	: Number Field
+								Set as	: $$Number:$BilledQty
+								Width	: 10% PAGE
+								Border	: thin left 
+								Format	: "no zero, decimal:2"
+								
+							[Field	: RSDCrate]
+								Use	: Number Field
+								Set as	: $$Number:$Rate
+								Width	: 10% PAGE
+								Border	: thin left 
+								Format	: "no zero, decimal:2"
+								
+							[Field	: RSDCamt]
+								Use	: Amount FIELD
+								Set as	: $Amount
+								Width	: 10% PAGE
+								Border	: thin left right
+										
+	
+								
+						[Line	: MtrlIssueDtlRepListTot]
+;							Border	: Totals
+							Fields			: RSDCgdwnTot, RSDCempTot
+							Right Fields	: RSDCqtyTot, RSDCrateTot, RSDCamtTot
+							Total	: RSDCamtTot
+							Border	: thin top
+							[Field	: RSDCgdwnTot]
+								Use		: NAME FIELD
+								Set as	: ""
+								Width	: 20% PAGE
+								Border	: thin left 
+								
+							[Field	: RSDCempTot]
+								Use	: NAME FIELD
+								Set as	:""
+								Full Width	: Yes
+								Border	: thin left 
+								
+							[Field	: RSDCqtyTot]
+								Use	: name Field
+								Set as	: ""
+								Width	: 10% PAGE
+								Border	: thin left 
+								
+								
+							[Field	: RSDCrateTot]
+								Use	: name Field
+								Set as	: "TOTAL"
+								Width	: 10% PAGE
+								Border	: thin left 
+								
+							[Field	: RSDCamtTot]
+								Use	: Amount FIELD
+								Set as	: $$Total:RSDCamt
+								Width	: 10% PAGE
+								Border	: thin left right
+
+					[Part	: MtrlIssueRepGTot]
+						Line	: MtrlIssueRepGTot
+						Border	: Totals
+						
+						[Line	: MtrlIssueRepGTot]
+							Fields			: RSDCgdwnGTot, RSDCempGTot
+							Right Fields	: RSDCqtyGTot, RSDCrateGTot, RSDCamtGTot
+							[Field	: RSDCgdwnGTot]
+								Use		: NAME FIELD
+								Set as	: ""
+								Width	: 20% PAGE
+								Border	: thin left 
+								
+							[Field	: RSDCempGTot]
+								Use	: NAME FIELD
+								Set as	:""
+								Full Width	: Yes
+								Border	: thin left 
+								
+							[Field	: RSDCqtyGTot]
+								Use	: name Field
+								Set as	: ""
+								Width	: 10% PAGE
+								Border	: thin left 
+								
+								
+							[Field	: RSDCrateGTot]
+								Use	: name Field
+								Set as	: "G.TOTAL"
+								Width	: 10% PAGE
+								Border	: thin left 
+								
+							[Field	: RSDCamtGTot]
+								Use	: Amount FIELD
+								Set as	: $$CollAmtTotal:RSDCMtrlIssueListExplNew:$Amount
+								Width	: 10% PAGE
+								Border	: thin left right
+																
+								[Collection	: RSDCMtrlIssueListExplNew]
+									Source Collection : SRCMtrlIssueCollection
+									Walk	: Inventory Entries Out
+								;	Compute	: StkGrpItemName 	: $parent:StockItem:$StockItemName
+								;	Compute	: VoucherNumber		: $VoucherNumber
+									Compute : StockItemNAme		: $StockItemNAme
+									Compute	: RSGodownName		: $GodownName
+									Compute : BilledQty			: $BilledQty
+									Compute : Rate				: $Rate
+									Compute : Amount			: $Amount
+							
+[Collection	: RSDCMtrlIssueList]
+	Source Collection : SRCMtrlIssueCollection
+	Walk	: Inventory Entries Out
+	By		: GodownName 	: $GodownName
+
+	Aggr Compute : Amount	: Sum : $Amount
+
+[Collection	: RSDCMtrlIssueListExpl]
+	Source Collection : SRCMtrlIssueCollection
+	Walk	: Inventory Entries Out
+;	Compute	: StkGrpItemName 	: $parent:StockItem:$StockItemName
+;	Compute	: VoucherNumber		: $VoucherNumber
+	Compute : StockItemNAme		: $StockItemNAme
+	Compute	: RSGodownName		: $GodownName
+	Compute : BilledQty			: $BilledQty
+	Compute : Rate				: $Rate
+	Compute : Amount			: $Amount
+	Filter	: OnlyReltData
+
+	
+[Collection	: SRCMtrlIssueCollection]
+	Type	: Vouchers	: Voucher Type
+	Child Of	: $$VchTypeStockJrnl
+	Belongs To	: Yes
+				
+[System	: Formula]
+	OnlyReltData	: $$Owner:#RSDCgdwnGrpName = $RSGodownName

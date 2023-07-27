@@ -1,0 +1,197 @@
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DAILY MATERIAL ISSUE REPORT;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+[#Menu	: Display Menu]
+	Add	: Key Item	: After	: @@locStatementsofAccounts	: SAMPLE REPORT	: L : Display	: SampleReport
+	
+[Report		: SampleReport]
+		Use			: DSP Template
+		Family		: $$Translate:"Sample Report"
+		Title		: $$LocaleString:"Sample Report"
+		Variable	: ReportTitle, SVPrintOrientation
+		Variable	: SVFromDate, SVToDate, SLedger
+		Print Set	: Report Title	: $$LocaleString:"Sample Report"
+		Set			: Report Title	: $$LocaleString:"Sample Report"
+		Set			: SVFromDate	: $$MonthStart:##SVCurrentDate
+		Set     	: SVTodate		: $$MonthEnd:##SVCurrentDate
+		Form		: SampleDtlRep
+		
+		[Form		: SampleDtlRep]
+			Use		: DSP Template
+			Height	: 100% screen
+			Width	: 100% screen
+			Parts	: DSP ReportTime, DSP CompanyName, DSP CompanyAddress, DSP ReportTitle, DSP PageNo, +
+			SampleRepTOp, SampleTitleRep, SampleDtlRepList
+			Option	: Small Size Form
+			Local	: Part	: DSP PageNo2	: Space Bottom	: 0.25
+			Delete	: Page Break
+			Add		: Page Break	: DSP ClPageBreak2, DB1Open2
+
+			
+			[Part	:DB1Close2]
+				Line	: DB1Close2
+				[Line	: DB1Close2]
+					Field	: Name Field
+					Local	: Field: Name field :Set as: "Continue"
+					Local	: Field: Name field :Align:Right
+					Local	: Field: Name field :Border: thin top
+					Local	: Field: Name field :Full Width:Yes
+					
+			[Part	:DB1Open2]
+				Part	: SampleRepTOp
+				
+				[Part	: SampleRepTOp]
+				Space Top	: 1 Mms
+				Space Bottom: 1 Mms
+				Width		: 100% Page
+				Invisible	: ($$InPrintMode OR ($$InExportMode AND @@IsExcelFormat)) OR NOT $$IsCommon:SVCurrentCompany OR NOT ##PrintWithCompanyName
+				Line		: SampleRepTOp
+					
+				[Line	: SampleRepTOp]
+					Space Bottom: 0.5
+					Right Field	: DSP MainDateTitle
+					
+			[Part		: SampleTitleRep]
+				Line		: SampleTitleRep
+				[Line	: SampleTitleRep]
+					Border	: COLUMN TITLES
+					Field	: RSDCempTitl, RSDCItemNAmeTitl
+					Right Fields	: RSDCUnitTitl, RSDCqtyTitl, RSDCamtTitl, RSDCBalanceTitl
+;					
+					[Field	: RSDCempTitl]
+						Use		: NAME FIELD
+						Set as	: ""
+						Align	: Center
+						Width	: 15% page
+						Border	: thin LEFT 
+						
+					[Field	: RSDCItemNAmeTitl]
+						Use		: NAME FIELD
+						Set as	: "ITEM NAME"
+						Align	: Center
+						Full Width	: Yes
+						Border	: thin LEFT
+						
+					[Field	: RSDCUnitTitl]
+						Use		: NAME FIELD
+						Set as	: "UNIT"
+						Align	: Center
+						Width	: 7% page
+						Border	: thin LEFT
+						
+					[Field	: RSDCqtyTitl]
+						Use		: NAME FIELD
+						Set as	: "ISSUE QTY"
+						Align	: Center
+						Width	: 10% page
+						Border	: thin LEFT
+						
+					[Field	: RSDCamtTitl]
+						Use		: NAME FIELD
+						Set as	: "AMOUNT"
+						Align	: Center
+						Width	: 10% page
+						Border	: thin LEFT
+						
+					[Field	: RSDCBalanceTitl]
+						Use		: NAME FIELD
+						Set as	: "BALANCE"
+						Align	: Center
+						Width	: 10% page
+						Border	: thin LEFT RIGHT
+
+			[Part	: SampleDtlRepList]	
+				Line	: SampleDtlRepList
+				Repeat			: SampleDtlRepList: RSDCsampleRepList
+				Scroll			: Vertical	
+				Float			: No
+				Common Borders	: Yes
+				
+				[Line	: SampleDtlRepList]
+					Explode	: SampleDtlRepListExpl
+					Field	: RSDCStockGrpName
+					
+					[Field	: RSDCStockGrpName]
+						Use		: Short Name Field
+						Set as	: $StkGrpItemName
+						Full Width	: Yes
+					
+					[Part	: SampleDtlRepListExpl]
+						Line	: SampleDtlRepListExpl
+						Repeat	: SampleDtlRepListExpl	: RSDCSampleListExpl
+					
+						[Line	: SampleDtlRepListExpl]
+							Field	: RSDCempty, RSDCItemNAme
+							Right Fields	: RSDCUnit, RSDCqnty, RSDCamnt, RSDCBalance
+							Local	: Field	: default	: Align	: Left
+							
+							[Field	: RSDCempty]
+								Use		: NAME FIELD
+								Set as	: ""
+;								Align	: Center
+								Width	: 15% page
+								Border	: Thin LEFT 
+								
+							[Field	: RSDCItemNAme]
+								Use		: Name Field
+								Set as	: $StockItemName
+;								Align	: Center
+								Full Width	: Yes
+								Border	: Thin LEFT
+								
+							[Field	: RSDCUnit]
+								Use		: Rate Units FIELD
+								Set as	: $Rate
+;								Align	: Center
+								Width	: 7% page
+								Border	: Thin LEFT
+								
+							[Field	: RSDCqnty]
+								Use		: Number FIELD
+								Set as	: $$Number:$BilledQty
+;								Align	: Center
+								Width	: 10% page
+								Border	: Thin LEFT
+								Format	: "no zero, decimal:2"
+								
+							[Field	: RSDCamnt]
+								Use		: Amount FIELD
+								Set as	: $Amount
+;								Align	: Center
+								Width	: 10% page
+								Border	: Thin LEFT
+								
+							[Field	: RSDCBalance]
+								Use		: Amount FIELD
+								Set as	: $ClosingBalance
+;								Align	: Center
+								Width	: 10% page
+								Border	: Thin LEFT RIGHT
+;						
+
+[Collection	: RSDCsampleRepList]
+	Source Collection : SRCSampleRepCollection
+	Walk	: Inventory Entries out
+	By		: StkGrpItemName 	: $parent:StockItem:$StockItemName
+
+	Aggr Compute : Amount			: Sum : $Amount
+	Aggr Compute : ClosingBalance	: Sum : $ClosingBalance
+  
+[Collection	: RSDCSampleListExpl]
+	Source Collection : SRCSampleRepCollection
+	Walk	: Inventory Entries out
+	Compute	: StkGrpItemName 	: $parent:StockItem:$StockItemName
+	Compute : StockItemNAme		: $StockItemNAme
+	Compute	: Rate				: $Rate
+	Compute : BilledQty			: $BilledQty
+	Compute : Amount			: $Amount
+	Compute : ClosingBalance	: $ClosingBalance
+	Filter	: OnlyRelData
+
+	
+[Collection	: SRCSampleRepCollection]
+	Type	: Vouchers	: Voucher Type
+	Child Of	: $$VchTypeStockJrnl
+	Belongs To	: Yes
+				
+[System	: Formula]
+	OnlyRelData	: $$Owner:#RSDCStockGrpName = $StkGrpItemName
