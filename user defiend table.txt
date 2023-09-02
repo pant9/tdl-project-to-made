@@ -1,0 +1,102 @@
+[#Part: STKI Units]
+	Add	: Line	: At End	: STKIBaseSize
+	[Line	: STKIBaseSize]
+		Fields      : Short Prompt, STKIBaseSize
+		Space Top	: 0.5
+        Local       : Field : Short Prompt : Info : $$LocaleString:"Size:"
+		
+		[Field		: STKIBaseSize]
+			Use			: name field
+			Width		: 5% page
+			Style		: Normal
+			Storage     : STKIbaseSize
+			Show Table	: On Empty
+			Table		: None, STKIBaseSizeTable
+			
+[Collection		: STKIBaseSizeTable]
+	Title		: $$LocaleString:"List of Size"
+	List Name	: $$LocaleString:"S", $$LocaleString:"M", $$LocaleString:"L", $$LocaleString:"XL", $$LocaleString:"XXL"
+	list name	: $$LocaleString:"XXXL"
+	
+
+[System	: UDF]
+	STKIbaseSize	: String	: 5001
+
+	
+
+[#Line	: EI ColumnOne]
+	Add		: Option	: EI ColumnOneOption	: @@IsSales
+	[!Line	: EI ColumnOneOption]
+		
+	Add	: Right Field	: At Beginning	: VCHListOfMobTit
+	
+	[Field	: VCHListOfMobTit]
+		Use		: name field
+		Align	: Center
+		Style	: Small Bold
+		Info	: "List of"
+		Width	: 7% page
+;		Invisible	: NOT @@IsSales
+		
+[#Line	: EI ColumnOneRate]
+	Add		: Option	: EI ColumnOneRateOption	: @@IsSales
+	[!Line	: EI ColumnOneRateOption]
+		
+	Add		: Right Field	: At Beginning	: VCHListOfMobTit
+	Local	: Field	: VCHListOfMobTit	: Info	: "Mobile"
+	
+[#Line	: EI ColumnTwo]
+	Add		: Option	: EI ColumnTwoOption	: @@IsSales
+	[!Line	: EI ColumnTwoOption]
+		
+	Add		: Right Field	: At Beginning	: VCHListOfMobTit
+	Local	: Field	: VCHListOfMobTit	: Info	: ""
+
+[#Line	: EI InvInfo]
+	Add		: Option	: EI InvInfoOption	: @@IsSales
+	[!Line	: EI InvInfoOption]
+		
+	Add	: Right Field	: At Beginning	: VCHListOfMob
+	
+	[Field	: VCHListOfMob]
+		Use		: name field
+		Width	: 7% page
+		Style	: Small
+		Storage	: $VCHListOfMobile
+		Show Table	: Always
+		Table		: ListOfSizeTable
+
+[System	: UDF]
+	VCHListOfMobile	: String	: 1101
+		
+[Collection	: ListOfSizeTable]
+	Title	: $$LocaleString:"List Of SIze"
+	Sub Title: $$LocaleString:"Stock Item", $$LocaleString:"Size"
+	Type	: StockItem
+	Fetch	: Name, STKIbaseSize
+	Format	: $NAme,25
+	Format	: $STKIbaseSize,15
+	
+[#Line	: EIAccInfo]
+	Add		: Option	: EIAccInfoOption	: @@IsSales
+	[!Line	: EIAccInfoOption]
+		
+	Add		: Right Field	: At Beginning	: VCHListOfMobTit
+	Local	: Field	: VCHListOfMobTit	: Info	: ""
+
+
+[#Line	: CIAccInfo]
+	Add		: Option	: CIAccInfoOption	: @@IsSales
+	[!Line	: CIAccInfoOption]
+		
+	Add		: Right Field	: At Beginning	: VCHListOfMobTit
+	Local	: Field	: VCHListOfMobTit	: Info	: ""	
+
+
+	
+[#Line: CI InvInfo]
+	Add		: Option	: CI InvInfoOption	: @@IsSales
+	[!Line	: CI InvInfoOption]
+		
+	Add	: Right Field	: At Beginning	: VCHListOfMob
+	

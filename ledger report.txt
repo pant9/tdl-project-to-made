@@ -1,0 +1,44 @@
+[#Menu	: Gateway of Tally]
+	Add	: Item: At End: ledger report : Alter: RSTLedgerReport
+	
+[Report		: RSTLedgerReport]
+	Form	: RSTLedgerList
+	
+[Form		: RSTLedgerReport]
+	Height	: 70% screen
+	Width	: 70% screen
+	Part	: RSTLedgerReport
+	
+[Part		: RSTLedgerReport]
+	Line	: RSTLEDTitle, RSTLedgerReport
+	Repeat	: RSTLedgerReport, HELLOOOOO
+	
+[Line	: RSTLEDTitle]
+	Field: RSTitleled, RSTitlegrp
+;	Local: Field: RSTitleled: Set as: "Ledger Name"
+;	Local: Field: RSTitlegrp: Set as: "Group Name"
+[Field: RSTitleled]	
+	Use: name filed
+	Set as: "Ledger Name"
+[Field: RSTitlegrp]	
+	Use: name filed
+	Set as: "Group Name"	
+
+[Line		: RSTLedgerReport]
+	Field	: ledgrname, ledgrparent
+;	Local	: Field	: longprompt	: Set as: "Ledger Details"
+	
+[Field: ledgrname]
+	Use: name field
+	Set as: $name
+	
+[Field: ledgrparent]
+	Use: Name field
+	Set as: $parent
+	
+
+[Collection	: HELLOOOOO]
+	Title	: "List of ledgers"
+	Type	: ledger
+	Child Of: "sundry creditors"
+

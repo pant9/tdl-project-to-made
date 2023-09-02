@@ -1,0 +1,199 @@
+[#Form: NormalJRPrint]
+	Add       		: Option     : RSVCH Invoice	: NOT ##SVExport AND NOT ##IsBankPymtAdvicePrint
+	[!Form			: RSVCH Invoice]
+		Delete		: Part
+		Delete		: Bottom Part
+		
+		Add			: Part			: RSVCH ADD PART, RSVCH TITLE PART, RSVCH DETAIL PART
+		Add			: Bottom Part	: RSVCH TOTAL PART, RSVCH SIGN PART
+[Part				: RSVCH ADD PART]
+	Border			: thin bottom
+	Line			: RSVCH CmpN, RSVCH ADD, RSVCH REP TITLE
+	[Line			: RSVCH CmpN]
+		Field		: RSVCH CmpN
+		[Field		: RSVCH CmpN]
+			Use		: NAME FIELD
+			Set as	: @@CmpMailName
+			Style       	: Normal Bold
+			Full Width  	: Yes
+			Align       	: Centre
+			
+	[Line			: RSVCH ADD]
+		Field		: RSVCH ADD
+		[Field		: RSVCH ADD]
+			Use		: NAME FIELD
+			Set as	: $$FullList:CompanyAddress:$address
+			Style       	: Normal 
+			Full Width  	: Yes
+			Align       	: Centre
+			
+	[Line			: RSVCH REP TITLE]
+		SpaceTop    : If $$InPixelMode then 1 Else 0.5
+        SpaceBottom : If $$InPixelMode then 0.5 Else 0
+		Field		: RSVCH BL, RSVCH REP TITLE
+		Right Field : RSVCH REP DATE, RSVCH REP DATE1
+		
+		[Field		: RSVCH BL]
+			Use     : NAME FIELD
+            Set as  : ""
+            Style	: normal bold
+			Width	: 15
+		
+		[Field		: RSVCH REP TITLE]
+			Use		: NAME FIELD
+			Set as	: ##ReportTitle
+			Style       	: Normal Bold
+			Full Width  	: Yes
+			Align			: Center
+			
+		[Field		: RSVCH REP DATE]
+			Use     : NAME FIELD
+            Set as  : "Date :"
+            Style	: normal bold
+			Width	: 10
+		
+		[Field		: RSVCH REP DATE1]
+			Use     : Uni Date Field
+            Set as  : $Date
+            
+			
+[Part				: RSVCH TITLE PART]
+	Border			: thick bottom 
+	Line			: RSVCH DETAIL
+	[Line			: RSVCH DETAIL]
+		Border		: THICK LEFT RIGHT 
+		Field		: RSVCH Party
+		Right Field	: RSVCH DR,RSVCH CR
+			
+		[Field		: RSVCH Party]
+			Use		: name field
+			Set as	: "Particulars"
+			Style	: normal bold
+			Full Width	: Yes
+	
+		[Field		: RSVCH DR]
+			Use		: name field
+			Set as	: "Debit"
+			Style	: normal bold
+			Align	: Right
+			Width	: 12.2
+			Border	: THIN LEFT RIGHT
+	
+		[Field		: RSVCH CR]
+			Use		: name field
+			Set as	: "Credit"
+			Style	: normal bold
+			Align	: Right
+			Width	: 12
+	
+[Part				: RSVCH DETAIL PART]
+	Border			: thick LEFT RIGHT 
+	Line			: RSVCH PARTY DETAIL
+	Repeat			: RSVCH PARTY DETAIL : All Ledger Entries
+	Scroll			: Vertical
+	Common Border	: Yes
+	
+
+	[Line			: RSVCH PARTY DETAIL]
+		
+		Field		: RSVCH PARTY L
+		Right Field	: RSVCH DRAMT,RSVCH CRAMT
+		
+		Explode		: RSVCH LEDGER NARRATION
+
+
+		[Field		: RSVCH PARTY L]
+			Use		: name field
+			Set as	: $LedgerName
+			Full Width	: Yes
+			
+
+		[Field		: RSVCH DRAMT]
+			Border	: THIN LEFT RIGHT
+			Use		: AMOUNT field
+			Set as	: if $$IsDr:$Amount then $$AsPositive:$Amount else $$AsAmount:0
+			Style	: normal 
+			Align	: Right
+	
+		[Field		: RSVCH CRAMT]
+			Use		: AMOUNT field
+			Set as	: if $$IsDr:$Amount then $$AsAmount:0 else $$AsPositive:$Amount
+			Style	: normal 
+			Align	: Right
+			
+[Part				: RSVCH LEDGER NARRATION]
+	Line			: RSVCH LEDGER NARRATION
+	[Line			: RSVCH LEDGER NARRATION]
+		Field		: RSVCH LEDGER NARRATION
+		[Field		: RSVCH LEDGER NARRATION]
+			Use		: name field
+			Set as	: $NARRATION
+			Width	: 45
+			Line		: 0
+			Style		: SMALL
+			
+		
+[Part				: RSVCH TOTAL PART]
+	Border			: thick TOP 
+	Line			: RSVCH TOTAL 
+	
+	[Line			: RSVCH TOTAL ]
+		Border		: thick LEFT RIGHT
+		Field		: RSVCH TOTAL
+		Right Field	: RSVCH TOTALDr, RSVCH TOTALCr
+		
+		[Field		: RSVCH TOTAL]
+			Use		: NAME field
+			Set as	: "TOTAL : "
+			Style	: normal bold
+			Align	: Right
+			Full Width: Yes
+	
+		[Field		: RSVCH TOTALDr]
+			Use		: AMOUNT field
+			Set as	: $$Total:RSVCHDRAMT
+			Style	: normal bold
+			Align	: Right
+			Width	: 12.2
+			Border	: THIN LEFT RIGHT
+			
+		[Field		: RSVCH TOTALCr]
+			Use		: AMOUNT field
+			Set as	: $$Total:RSVCHCRAMT
+			Style	: normal bold
+			Align	: Right
+			Width	: 12
+			
+		
+[Part				: RSVCH SIGN PART]
+	SpaceTop   		: If $$InPixelMode then 2 Else 0.5
+    SpaceBottom 	: If $$InPixelMode then 3 Else 0
+	Border			: thick TOP 
+	Line			: RSVCH REC
+	[Line			: RSVCH REC]
+		Field		: RSVCH REC, RSVCH ACC
+		Right Field	: RSVCH SIGN
+		[Field		: RSVCH REC]
+			Use		: name field
+			Set as	: "Received by"
+			Style	: normal italic
+			Width	: 15
+			Align	: Left
+			
+		[Field		: RSVCH ACC]
+			Use		: name field
+			Set as	: "Accountant"
+			Style	: normal bold
+			Full Width	: Yes
+			Align		: Center
+			
+		[Field		: RSVCH SIGN]
+			Use		: name field
+			Set as	: "Authorised Signatory"
+			Style	: normal bold
+			Full Width	: Yes
+			Align		: Right
+			
+
+			
+			

@@ -1,0 +1,29 @@
+[#Menu	: Default]
+	Add	: Button	: RefreshTdlButton
+
+[#Form	: Default]
+	Add	: Button	: RefreshTdlButton
+
+	[Button	: RefreshTdlButton]
+		Title	: "Refresh"
+		Key		: CTRL + 8
+		Action	: Refresh TDL
+		
+
+[#Part: DYBKCFG Regular]
+	Add	: Option	: DSPExplodeCmpOPTN	: ##IsDayBookRpt
+	[!Part	: DSPExplodeCmpOPTN]
+	Add	: Line	: After	: DSPExplodeBankAll	: DSPExplodeCmp
+	[Line	: DSPExplodeCmp]
+		Field	: Medium Prompt, DSPExplodeCmp
+		local	: Field	: Medium Prompt	: Set as	: "Show Ledgers Name"
+		local	: Field	: Medium Prompt	: Indent	: 2
+		Local	: Field	: Default		: Color		: Deep Grey
+		[Field	: DSPExplodeCmp]
+			Use	: logical Field
+			Set as	: No
+			
+			
+			
+			
+			

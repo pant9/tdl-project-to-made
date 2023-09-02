@@ -1,0 +1,801 @@
+[#Menu	: Default]
+	Add	: Button	: RefreshTdlButton
+
+[#Form	: Default]
+	Add	: Button	: RefreshTdlButton
+
+	[Button	: RefreshTdlButton]
+		Title	: "Refresh"
+		Key		: CTRL + 8
+		Action	: Refresh TDL
+
+;--------------------------------------KBL TEXTILE---------------------------------------
+	
+[#Form	: Comprehensive Invoice]
+	Add	: Option	: RSKBLInvForm	: @@IsSales ;and @@RsDSPCmpNameYesNo
+	
+	[!Form	: RSKBLInvForm]
+		Delete	: Parts
+		Delete	: Bottom Parts
+		Delete	: Page Break
+		Add		: Top Parts		: RSKBLInvTopPart, RSKBLInvBodyPart
+		Add		: Bottom Part	: RSKBLInvBottomPart
+		Add		: Page Break	: RSKBLClPageBreak, RSKBLInvTopPart
+		Add		: Width  		: 100% Page;@@InvWidth Inch
+		Add		: Height 		: 100% Page;@@InvHeight Inch
+        Add		: Space Top		: @@InvSpace Inch
+        Add		: Space Right	: 0.5 Inch
+        Add		: Space Left	: @@InvSpaceLeft Inch
+        Add		: Space Bottom	: 0.25 Inch
+		Local	: Style	: Default	: Font	: "Tahoma"
+								
+		[Part	: RSKBLInvTopPart]
+			Border	: thin box
+			Vertical: Yes
+			Parts	:  RSKBLInvCompDet, RSKBLInvCompCopy, RSKBLInvDispDtl, RSKBLInvPartyDtl, RSKBLInvColTit
+				
+			[Part	: RSKBLInvCompDet]
+				
+				Parts	: RSKBLInvCompLogo1, RSKBLInvCompDtl;, RSKBLInvCompLogo2
+				Right Part	: RSKBLInvCompLogo2
+				
+				[Part	: RSKBLInvCompLogo1]
+					Line	: Empty
+					Graph Type	: $LogoPath:Company:##SvCurrentCompany
+					Width		: 20% Page
+					Height		: 10% Page
+					
+				
+				[Part	: RSKBLInvCompDtl]
+					Width	: 60% page
+					Line	: RSKBLInvCompIcon, RSKBLInvCompDet, RSKBLInvCompName, RSKBLInvCompAdd, RSKBLInvCompGSTIN;, RSKBLInvCompCopy
+					Repeat	: RSKBLInvCompAdd	: RSKBLCompanyAddress
+					
+					[Collection	: RSKBLCompanyAddress]
+						Type        : Address   : Company
+						Child of    : ##SVCurrentCompany
+						Compute		: IsNumber	  	: No
+						Compute		: FixedDirection: No
+						Object      : Company Contacts
+;						Object      : Company Email
+					
+					[Line	: RSKBLInvCompIcon]
+						Field	: RSKBLInvCompIcon
+						[Field	: RSKBLInvCompIcon]
+							Use	: Name Field
+							Set as	: $RSFontStyle:Vouchertype:##SVVoucherType
+							Full Width	: Yes
+							Align	: Center
+							Style	: large bold
+							
+					[Line	: RSKBLInvCompDet]
+						Field	: RSKBLInvCompDet
+						[Field	: RSKBLInvCompDet]
+							Use	: Name Field
+							Set as	: ##ReportTitle
+							Full Width	: Yes
+							Align	: Center
+							Style	: large bold
+							
+					[Line	: RSKBLInvCompName]
+						Field	: RSKBLInvCompName
+						[Field	: RSKBLInvCompName]
+							Use	: Name Field
+							Set as	: @@CmpMailName
+							Full Width	: Yes
+							Align	: Center
+							Style	: Extra large Bold
+						
+					[Line	: RSKBLInvCompAdd]
+						Field	: RSKBLInvCompAdd
+						[Field	: RSKBLInvCompAdd]
+							Use	: Name Field
+							Set as	: $Address
+							Full Width	: Yes
+							Align	: Center
+							Style	: Normal
+						
+					[Line	: RSKBLInvCompGSTIN]
+						Field	: RSKBLInvCompGSTIN
+						[Field	: RSKBLInvCompGSTIN]
+							Use	: Name Field
+							Set as	: "GSTIN : " +@@VATCMPGSTNumber
+							Full Width	: Yes
+							Align	: Center
+							Style	: large bold
+								
+							
+				[Part	: RSKBLInvCompLogo2]
+					Line	: Empty
+					Graph Type	: $RSSALogoPathAno;:Company:##SvCurrentCompany
+					Width		: 20% Page
+					Height		: 10% Page
+;					Line		: RSKBLInvCompLogo2
+;					[Line		: RSKBLInvCompLogo2]
+;						Field	: RSKBLInvCompLogo2
+;						[Field		: RSKBLInvCompLogo2]
+;							Use		: Name Field
+;							Set as	: $RSSALogoPathAno
+;				
+			[Part	: RSKBLInvCompCopy]
+				Border	: thin bottom
+				Line	: RSKBLInvCompCopy
+				[Line	: RSKBLInvCompCopy]
+					Field		: RSempty
+					Right Field	: RSKBLInvCompCopy
+					[Field	: RSempty]
+						Use	: Name Field
+						Width	: 80% page
+						Set as	: ""
+						
+					[Field	: RSKBLInvCompCopy]
+						Use	: Name Field
+						Set as	: ##SVPrintCopy
+						Style	: Normal  Italic
+						Align	: Right
+						Width	: 20% page
+	
+			[Part	: RSKBLInvDispDtl]
+				Parts	: RSKBLInvDispDtlLeft
+				Right Part	: RSKBLQRCodeInfo
+				[Part	: RSKBLInvDispDtlLeft]
+					Border	: Thin Right
+					Width	: 50% Page
+					Line	: RSKBLInvDispInvNo, RSKBLInvDispDate, RSKBLInvDispPOS, RSKBLInvDispRC, RSKBLInvDispTrans, RSKBLInvDispVehicle
+					[Line	: RSKBLInvDispInvNo]
+						Fields	: Medium Prompt, Name Field
+						Local	: Field	: Medium Prompt	: Set as	: "Invoice No. "
+						Local	: Field	: Medium Prompt	: Width		: 20% Page
+						Local	: Field	: Medium Prompt	: Style		: Normal 
+						Local	: Field	: Name Field	: Set as	: $VoucherNumber
+						Local	: Field	: Name Field	: Width		: 30% Page
+						Local	: Field	: Name Field	: Style		: Normal
+					
+					[Line	: RSKBLInvDispDate]
+						Fields	: Medium Prompt, Name Field
+						Local	: Field	: Medium Prompt	: Set as	: "Date "
+						Local	: Field	: Medium Prompt	: Width		: 20% Page
+						Local	: Field	: Medium Prompt	: Style		: Normal 
+						Local	: Field	: Name Field	: Use		: Uni Date Field
+						Local	: Field	: Name Field	: Set as	: $Date
+						Local	: Field	: Name Field	: Width		: 30% Page
+						Local	: Field	: Name Field	: Style		: Normal
+					
+					[Line	: RSKBLInvDispPOS]
+						Fields	: Medium Prompt, Name Field
+						Local	: Field	: Medium Prompt	: Set as	: "Place Of Supply "
+						Local	: Field	: Medium Prompt	: Width		: 20% Page
+						Local	: Field	: Medium Prompt	: Style		: Normal 
+						Local	: Field	: Name Field	: Set as	: $PlaceOfSupply
+						Local	: Field	: Name Field	: Width		: 30% Page
+						Local	: Field	: Name Field	: Style		: Normal
+						
+					[Line	: RSKBLInvDispRC]
+						Fields	: Medium Prompt, Name Field
+						Local	: Field	: Medium Prompt	: Set as	: "Reverse Charges "
+						Local	: Field	: Medium Prompt	: Width		: 20% Page
+						Local	: Field	: Medium Prompt	: Style		: Normal 
+						Local	: Field	: Name Field	: Set as	: $RSsaleRCM
+						Local	: Field	: Name Field	: Width		: 30% Page
+						Local	: Field	: Name Field	: Style		: Normal
+						
+					[Line	: RSKBLInvDispTrans]
+						Fields	: Medium Prompt, Name Field, Short Prompt, RSKBLInvDispTrans
+						Local	: Field	: Medium Prompt		: Set as	: "GR/RR NO. "
+						Local	: Field	: Medium Prompt		: Width		: 10% Page
+						Local	: Field	: Medium Prompt		: Style		: Normal 
+						Local	: Field	: Name Field		: Set as	: $BillofLadingNo
+						Local	: Field	: Name Field		: Width		: 15% Page
+						Local	: Field	: Name Field		: Style		: Normal
+						Local	: Field	: Short Prompt		: Set as	: "Transport "
+						Local	: Field	: Short Prompt		: Width		: 10% Page
+						Local	: Field	: Short Prompt		: Style		: Normal 
+					
+						[Field	: RSKBLInvDispTrans]
+							Use	: Name Field
+							Set as	: $BasicShippedBy
+							Width	: 15% Page
+							Style	: Normal
+							
+
+					[Line	: RSKBLInvDispVehicle]
+						Fields	: Medium Prompt, Name Field, Short Prompt, RSKBLInvDispVehicle
+						Local	: Field	: Medium Prompt			: Set as	: "Vehicle No. "
+						Local	: Field	: Medium Prompt			: Width		: 10% Page
+						Local	: Field	: Medium Prompt			: Style		: Normal 
+						Local	: Field	: Name Field			: Set as	: $BasicShipVesselNo
+						Local	: Field	: Name Field			: Width		: 15% Page
+						Local	: Field	: Name Field			: Style		: Normal
+						Local	: Field	: Short Prompt			: Set as	: "Station"
+						Local	: Field	: Short Prompt			: Width		: 10% Page
+						Local	: Field	: Short Prompt			: Style		: Normal 
+
+						[Field	: RSKBLInvDispVehicle]
+							Use	: Name Field
+							Set as	: $BasicFinalDestination
+							Width	: 15% Page
+							Style	: Normal
+						
+				[Part	: RSKBLQRCodeInfo]
+					Width	: 50% Page
+					Part	: RSKBLQRCodeInfoRight,RSKBLQRCodeInfoLeft
+					Border	: thin top
+					[Part: RSKBLQRCodeInfoLeft]	
+						Use	: eInvoice QRC Details
+						Width	: 20% page
+						Border	: Thin Left
+					[#Part: eInvoice QRC Details]
+						Width		: 1.25 Inch
+						Height		: 1.25 Inch
+					[Part	: 	RSKBLQRCodeInfoRight]
+						Width	: 30% page
+						Border	: Thin Left
+						
+						Line		: RSExpinv IRN1,RSExpinv IRN2,RSExpinv AckNo1, RSExpinv AckDate1
+						Local		: Line		: RSExpinv AckNo1		: Space top		: 0.10
+						Local		: Line		: RSExpinv AckDate1	: Space top		: 0.10
+						Invisible	: NOT ##SAGSTWithQRInfo OR NOT @@IsVchGSTeInvAppl
+
+						[Line: RSExpinv IRN1]
+							
+							Field	: Medium Prompt
+							Local		: Field		: Medium Prompt	: Set as	: $$LocaleString:"IRN Number :"
+							Local		: Field		: Medium Prompt	: Width	: 30
+
+						[Line: RSExpinv IRN2]
+							
+							Field	: Name Field
+							Local		: Field		: Name Field	: Set as	: @@GSTeInvIRN
+							Local		: Field		: Name Field	: FullWidth		: Yes
+							Local		: Field		: Name Field	: Line		: 3
+						[Line: RSExpinv AckNo1]
+							
+							Use			: eInv IRN Details Template
+							Local		: Field		: Medium Prompt	: Set as	: $$LocaleString:"Ack No."
+							Local		: Field		: Medium Prompt	: Width		: 10 % page
+							Local		: Field		: Name Field	: Set as	: If ##IseInvPSPrintAfterSave Then ##eInvPSAckNo Else $IRNAckNo
+							Local		: Field		: Name Field	: Width		: 20 % Page
+						
+							Border	: Thin Top
+						[Line: RSExpinv AckDate1]
+							
+							Use			: eInv IRN Details Template
+							Space Bottom: 0.25
+							Local		: Field		: Medium Prompt	: Set as	: $$LocaleString:"Ack Date"
+							Local		: Field		: Medium Prompt	: Width		: 10 % page
+							Local		: Field		: Name Field	: Set as	: If ##IseInvPSPrintAfterSave Then $$String:##eInvPSAckDate Else $$String:$IRNAckDate
+							Local		: Field		: Name Field	: Width		: 20% page 
+
+							
+				[Part	: RSKBLInvPartyDtl]
+					Border	: Thin Top
+					Parts	: RSKBLInvPartyDtlLeft
+					Right Part	: RSKBLInvPartyDtlRight
+					[Part	: RSKBLInvPartyDtlLeft]
+						Border	: Thin Right
+						Width	: 50% page
+						Line	: RSKBLInvPartyDtlLeft, RSKBLInvPartyName, RSKBLInvPartyAdd, RSKBLInvPartyAdd1
+						Bottom Line	: RSKBLInvPartyGSTIN
+						Repeat	: RSKBLInvPartyAdd	: RSPartyAddress
+						
+						[Collection: RSPartyAddress]
+							Type        : Address   : Ledger
+							Child of    : ##PartyLedgerName  
+							
+						[Line	: RSKBLInvPartyDtlLeft]
+							Field	: RSKBLInvPartyDtlLeft
+							[Field	: RSKBLInvPartyDtlLeft]
+								Use	: Name Field
+								Set as	: "Billed To"
+								Align	: Center
+								Style	: Normal Bold Italic
+								Full Width	: Yes
+								
+						[Line	: RSKBLInvPartyName]
+							Field	: RSKBLInvPartyName
+							[Field	: RSKBLInvPartyName]
+								Use	: Name Field
+								Set as	: $PartyMailingName
+								Align	: Left
+								Style	: Normal
+								Full Width	: Yes
+;								Width	: 50% page	
+						
+						[Line	: RSKBLInvPartyAdd]
+							Field	: RSKBLInvPartyAdd
+							[Field	: RSKBLInvPartyAdd]
+								Use	: Name Field
+								Set as	: $Address
+								Align	: Left
+								Style	: Normal
+								Full Width	: Yes
+;								Line	: 0
+;								Width	: 50% page
+
+						[Line	: RSKBLInvPartyAdd1]
+							Space Bottom	: 1
+							Border	: Thin bottom
+							Field	: RSKBLInvPartyAdd1
+							[Field	: RSKBLInvPartyAdd1]
+								Use	: Name Field
+								Set as	: $StateName + "-" + $Pincode:Ledger:$PartyLedgerName + "-" + $CountryName:Ledger:$PartyLedgerName
+								Align	: Left
+								Style	: Normal
+								Line	: 0
+								Full Width	: Yes
+								
+						[Line	: RSKBLInvPartyGSTIN]
+							Space Top	: 0.3
+							Space Bottom	: 0.3
+							Field	: Short Prompt, Name Field
+							Local	: Field	: Short Prompt	: Set as	: "GSTIN : " 
+							Local	: Field	: Short Prompt	: Width		: 15% page
+							Local	: Field	: Short Prompt	: Style		: Normal Bold
+							Local	: Field	: Name Field	: Set as	: $PartyGSTIN
+							Local	: Field	: Name Field	: Width		: 35% page
+							Local	: Field	: Name Field	: Style		: Normal
+								
+					[Part	: RSKBLInvPartyDtlRight]
+						Width	: 50% page
+						Line	: RSKBLInvPartyDtlRight, RSKBLInvBuyerName, RSKBLInvBuyerAdd, RSKBLInvBuyerAdd1
+						Bottom Line	: RSKBLInvBuyerGSTIN
+						Repeat	: RSKBLInvBuyerAdd	: RSBuyerAddress
+						
+						[Collection: RSBuyerAddress]
+							Type        : BasicBuyerAddress   : Ledger
+;							Child of	: ##LedgerName
+
+						[Line	: RSKBLInvPartyDtlRight]
+							Field	: RSKBLInvPartyDtlRight
+							[Field	: RSKBLInvPartyDtlRight]
+								Use	: Name Field
+								Set as	: "Shipped To"
+								Align	: Center
+								Style	: Normal Bold Italic
+								Full Width	: Yes
+								
+						[Line	: RSKBLInvBuyerName]
+							Field	: RSKBLInvBuyerName
+							[Field	: RSKBLInvBuyerName]
+								Use	: Name Field
+								Set as	: $BasicBuyerName
+								Align	: Left
+								Style	: Normal
+								Full Width	: Yes
+;								Width	: 50% page	
+						
+						[Line	: RSKBLInvBuyerAdd]
+							Field	: RSKBLInvBuyerAdd
+							[Field	: RSKBLInvBuyerAdd]
+								Use	: Name Field
+								Set as	: $BasicBuyerAddress
+								Align	: Left
+								Style	: Normal
+								Full Width	: Yes
+;								Line	: 0
+;								Width	: 50% page
+
+						[Line	: RSKBLInvBuyerAdd1]
+							Space Bottom	: 1
+							Border	: Thin bottom
+							Field	: RSKBLInvBuyerAdd1
+							[Field	: RSKBLInvBuyerAdd1]
+								Use	: Name Field
+								Set as	: $ConsigneeStateName + "-" + $Consigneepincode + "-" + $ConsigneeCountryName
+								Align	: Left
+								Style	: Normal
+								Line	: 0
+								Full Width	: Yes
+								
+						[Line	: RSKBLInvBuyerGSTIN]
+							Space Top	: 0.3
+							Space Bottom	: 0.3
+							Field	: Short Prompt, Name Field
+							Local	: Field	: Short Prompt	: Set as	: "GSTIN : " 
+							Local	: Field	: Short Prompt	: Width		: 15% page
+							Local	: Field	: Short Prompt	: Style		: Normal Bold
+							Local	: Field	: Name Field	: Set as	: $ConsigneeGSTIN
+							Local	: Field	: Name Field	: Width		: 35% page
+							Local	: Field	: Name Field	: Style		: Normal	
+							
+					[Part	: RSKBLInvColTit]
+						Border	: Thin top
+						Line	: RSKBLInvColTit
+						[Line	: RSKBLInvColTit]
+							Use	: RSKBLInvBodyPart
+							Local	: Field	: RSKBLInvColTitSNo		: Set as	: "S.No. "
+							Local	: Field	: RSKBLInvColTitDes		: Set as	: "Description "
+							Local	: Field	: RSKBLInvColTitHSN		: Set as	: "HSN/SAC Code"
+							Local	: Field	: RSKBLInvColTitSize	: Set as	: "Size"
+							Local	: Field	: RSKBLInvColTitQty		: Set as	: "Qty."
+							Local	: Field	: RSKBLInvColTitUnit	: Set as	: "Unit"
+							Local	: Field	: RSKBLInvColTitPrc		: Set as	: "Price"
+							Local	: Field	: RSKBLInvColTitAmt		: Set as	: "Amount"
+							Local	: Field	: Default				: Type		: String
+							Local	: Field	: Default				: Style		: Normal Bold
+							Local	: Field	: Default				: Line		: 0
+				
+				[Part	: RSKBLInvBodyPart]
+					Border			: Thin Box
+					Line			: RSKBLInvBodyPart
+					Repeat			: RSKBLInvBodyPart	: InventoryEntries
+					Bottom Line		: RSKBLInvBodyPartTot
+					Scroll			: Vertical
+					Float			: No
+					Common Borders	: Yes
+					Total			: RSKBLInvColTitQty, RSKBLInvColTitUnit, RSKBLInvColTitAmt
+
+					[Line	: RSKBLInvBodyPart]
+						Fields	: RSKBLInvColTitSNo, RSKBLInvColTitDes
+						Right Field	: RSKBLInvColTitHSN, RSKBLInvColTitSize, RSKBLInvColTitQty, RSKBLInvColTitUnit
+						Right Field	: RSKBLInvColTitPrc, RSKBLInvColTitAmt
+						Local		: Field	: Default	: Style	: Normal
+						Explode		: RSKBLInvBodyPartDetExpl	: NOT @@IsSysNameStkItem AND ##PRNWithItemDesc AND NOT $$IsEmpty:$BasicUserDescription
+								
+						[Part	: RSKBLInvBodyPartDetExpl]
+							Line	: RSKBLInvBodyPartDetExpl
+							Repeat	: RSKBLInvBodyPartDetExpl	: BasicUserDescription
+							Break On: $$IsEmpty:$BasicUserDescription
+							Scroll  : Vertical
+							
+							[Line	: RSKBLInvBodyPartDetExpl]
+								Fields	: RSKBLInvColTitSNo, RSKBLInvColTitDes
+								Right Field	: RSKBLInvColTitHSN, RSKBLInvColTitSize, RSKBLInvColTitQty, RSKBLInvColTitUnit
+								Right Field	: RSKBLInvColTitPrc, RSKBLInvColTitAmt
+								Local	: Field	: RSKBLInvColTitSNo		: Set as	: ""
+								Local	: Field	: RSKBLInvColTitDes		: Set as	: $BasicUserDescription
+								Local	: Field	: RSKBLInvColTitHSN		: Set as	: ""
+								Local	: Field	: RSKBLInvColTitSize	: Set as	: ""
+								Local	: Field	: RSKBLInvColTitQty		: Set as	: ""
+								Local	: Field	: RSKBLInvColTitUnit	: Set as	: ""
+								Local	: Field	: RSKBLInvColTitPrc		: Set as	: ""
+								Local	: Field	: RSKBLInvColTitAmt		: Set as	: ""
+								Local	: Field	: Default				: Style		: Small Italic
+								Local	: Field	: Default				: Lines		: 0
+								
+
+						[Field	: RSKBLInvColTitSNo]
+							Use	: Name field
+							Set as	: $$Line
+							Width	: 5% page
+							Border	: Thin Right
+							
+						[Field	: RSKBLInvColTitDes]
+							Use	: Name Field
+							Set as	: $StockItemName
+							Full Width	: Yes
+							Border	: Thin Right
+							
+						[Field	: RSKBLInvColTitHSN]
+							Use		: Name Field
+							Width	: 10% Page
+							Border	: Thin right
+							Set as	: $HSNCode
+							Align	: Center
+							
+						[Field	: RSKBLInvColTitSize]
+							Use		: Name Field
+							Width	: 10% Page
+							Border	: Thin right
+							Set as	: $RSVCHItemSize
+							Align	: Center
+							
+						[Field	: RSKBLInvColTitQty]
+							Use	    : Number Field
+							Width   : 10% Page
+							Format	: "No Zero, Decimal:2"
+							Border  : Thin Right
+							Set as  : $$Number:$BilledQty
+							Align	: Center
+							
+						[Field	: RSKBLInvColTitUnit]
+							Use	    : Rate Units Field
+							Width   : 10% Page
+							Border  : Thin Right
+							Set as  : $Rate
+							Align	: Center
+						
+						[Field	: RSKBLInvColTitPrc]
+							Use		: Rate Price Field
+							Width	: 10% Page
+							Border	: Thin Right
+							Set as	: $Rate
+							Align	: Center
+							
+						[Field	: RSKBLInvColTitAmt]
+							Use		: Amount Field
+							Width	: 10% Page
+							Set as	: $Amount
+							Align	: Center
+					
+					[Line	: RSKBLInvBodyPartTot]
+						Border	: Thin Top
+						Use	: RSKBLInvBodyPart
+						Local	: Field	: RSKBLInvColTitSNo		: Set as	: ""
+						Local	: Field	: RSKBLInvColTitDes		: Set as	: ""
+						Local	: Field	: RSKBLInvColTitHSN		: Set as	: ""
+						Local	: Field	: RSKBLInvColTitSize	: Set as	: ""
+						Local	: Field	: RSKBLInvColTitQty		: Set as	: $$Total:RSKBLInvColTitQty
+						Local	: Field	: RSKBLInvColTitUnit	: Set as	: $$Total:RSKBLInvColTitUnit
+						Local	: Field	: RSKBLInvColTitPrc		: Set as	: ""
+						Local	: Field	: RSKBLInvColTitAmt		: Set as	: $$Total:RSKBLInvColTitAmt
+						Local	: Field	: Default				: Style		: Normal Bold
+						
+		[Part	: RSKBLInvBottomPart]
+			Border	: Thin Box
+			Vertical: Yes
+			Parts		: RSKBLInvGrandTotal, RSKBLInvAmtTotal, RSKBLInvTerms
+			
+			[Part	: RSKBLInvGrandTotal]
+				Parts	: RSKBLInvGrandTotalLeft, RSKBLInvGrandTotalRyt
+				
+				[Part	: RSKBLInvGrandTotalLeft]
+					Width	: 60% page
+					Border	: Thin right
+					Line	: RSKBLInvGrandTotalLeft
+					[Line	: RSKBLInvGrandTotalLeft]
+						Field	: RSKBLInvGrandTotalLeft
+						[Field	: RSKBLInvGrandTotalLeft]
+							Use	: Name Field
+							Set as	:""
+							
+				[Part	: RSKBLInvGrandTotalRyt]
+					Width	: 40% page
+					Lines	: RSKBLInvGST, RSKBLInvGrandTot
+					Repeat	: RSKBLInvGST : Ledger Entries
+							
+					[Line	: RSKBLInvGST]
+						Empty	: $ledgerName = $PartyledgerName
+						Right Field	: Medium Prompt, RSKBLInvGST
+						Local		: Field	: Medium Prompt	: Set as	: $LedgerNAme
+						Local		: Field	: Medium Prompt	: Width	    : 25% page
+						Local		: Field	: Medium Prompt	: Style		: Normal Bold Italic
+						
+						[Field	: RSKBLInvGST]
+							Use	: Name Field
+							Set as	: $Amount
+							Width	: 15% page	
+							Style	: Normal
+							Align	: Right
+							
+					
+					[Line	: RSKBLInvGrandTot]
+						Border		: Thin top
+						Space Bottom: 0.2
+						Space Top	: 0.2
+						Right Field	: Medium Prompt, RSKBLInvGrandTot
+						Local		: Field	: Medium Prompt	: Set as	: "Grand Total"
+						Local		: Field	: Medium Prompt	: Width	    : 20% page
+						Local		: Field	: Medium Prompt	: Style		: Normal Bold Italic
+							
+						[Field	: RSKBLInvGrandTot]
+							Use	: Amount Field
+							Set as	: $Amount
+							Width	: 15% page
+							Style	: Normal
+							Align	: Right
+							
+			[Part	: RSKBLInvAmtTotal]
+				Vertical	: Yes
+				Parts	: RSKBLInvTaxSumm, RSKBLInvAmtWords
+				
+				[Part	: RSKBLInvTaxSumm]
+					Border			: Thin top bottom
+					Width			: 100% Page
+					Lines			: VCHGSTInvPrintTitle1, VCHGSTInvPrintTitle2, GST VCHGSTInvPrintBody, GST VCHGSTInvPrintTotal	
+					Repeat			: GST VCHGSTInvPrintBody	: GSTAnalysisPrintSummary
+					Horizontal Align: Right
+					Common Border   : Yes
+					Total			: VCHGSTInvPrint TaxValue, VCHGSTInvPrint IGSTAmt, VCHGSTInvPrint CGSTAmt,VCHGSTInvPrint SGSTAmt, +
+									  VCHGSTInvPrint CessAmt, VCHGSTInvPrint CessQtyAmt, VCHGSTInvPrint TotalTaxAmt
+					Invisible       : @@IsGSTInvoiceEmptyCollection OR NOT @@InvGSTAnalysis
+					Option          : VCH GST AnalysisDetailsSmallSizePart : NOT @@IsGSTTaxAnalysisWithItems
+				
+				[Part	: RSKBLInvAmtWords]
+					Line	: RSKBLInvAmtWords
+					[Line	: RSKBLInvAmtWords]
+						Space Top	: 0.2
+						Space Bottom: 0.2
+						Fields	: Short Prompt, RSKBLInvAmtWords
+						Local	: Field	: Short Prompt	: Set as	: "Amount (in words)"
+						Local	: Field	: Short Prompt	: Width		: 20% Page
+						Local	: Field	: Short Prompt	: Style		: Normal Bold
+						
+						[Field	: RSKBLInvAmtWords]
+							Use		: Name Field
+							Width	: 80% Page
+							Lines	: 0
+							Style	: Normal
+							Set as	: $$InWords:$Amount + " Only"
+							
+			[Part: RSKBLInvTerms]
+				border 	: Thin Top
+				Parts	: RSKBLInvTermsLeft, RSKBLInvAuthSign
+				[Part	: RSKBLInvTermsLeft]
+					Border	: thin Right
+					Line	: RSKBLInvTermsLeft, RSKBLInvTermsDtl
+					[Line	: RSKBLInvTermsLeft]
+						Field	: RSKBLInvTermsLeft
+						[Field	: RSKBLInvTermsLeft]
+							Use	: Name Field
+							Set as	: "Terms & Conditions"
+							Style	: Large Bold
+							Width	: 40% page
+							
+					[Line	: RSKBLInvTermsDtl]
+						Field	: RSKBLInvTermsDtl
+						[Field	: RSKBLInvTermsDtl]
+							Use	: Name Field
+							Set as	: $VCHPrintDecl:VoucherType:##SVVoucherType
+							Style	: Normal
+							Width	: 40% page	
+							Line	: 0
+						
+				[Part: RSKBLInvAuthSign]
+					Line	: RSKBLInvRecSign, RSKBLInvForCmp, RSKBLInvAuthSign 
+					[Line	: RSKBLInvRecSign]
+						Space Bottom	: 1.5
+						Border	: Thin Bottom
+						Field	: RSKBLInvRecSign
+						[Field	: RSKBLInvRecSign]
+							Use	: Name Field
+							Set as	: "Receiver's Signature"
+							Width	: 60% Page
+					
+					[Line	: RSKBLInvForCmp]
+						Field	: RSKBLInvForCmp
+						[Field	: RSKBLInvForCmp]
+							Use	: Name Field
+							Set as	: "For  " + @@CmpMailName
+							Width	: 60% Page
+							Align	: Center
+					
+					[Line	: RSKBLInvAuthSign]
+						Field	: RSKBLInvAuthSign
+						[Field	: RSKBLInvAuthSign]
+							Use	: Name Field
+							Set as	: "Authorised Signature"
+							Width	: 60% Page
+							Align	: Center
+					
+[Part	: RSKBLClPageBreak]
+	Line	: RSKBLClPageBreak
+
+	[Line	: RSKBLClPageBreak]
+		Right Field	: RSKBLClPageBreak
+		
+		[Field	: RSKBLClPageBreak]
+			Use		: Name Field
+			Align	: Right
+			Style	: Tiny Italic
+			Width	: 100% Page
+			Set as	: ".....Continue"
+			
+
+
+[#Part: DSP Cfg CompanyDtls]
+;	Add	: Option	: RSDSPCfgCompanyDtls	: $$IsSales
+;	
+;	[!Part	: RSDSPCfgCompanyDtls]
+		Add	: Line	: At Beginning	: DSPOnlyCmpName
+		[Line	: DSPOnlyCmpName]
+			Field	: Medium Prompt, DSPOnlyCmpName
+			Local	: Field	: Medium Prompt	: Set as	: "Hide Only Company Name"
+			[Field	: DSPOnlyCmpName]
+				Use	: Logical Field
+				Storage	: RsDSPCmpName
+				
+[System	: UDF]
+	RsDSPCmpName	: Logical	: 4200
+	
+;[System	: Formula]
+;	RsDSPCmpNameYesNo	: $RsDSPCmpName:CompanyMailingName:##SVCurrentCompany
+
+[#Part: Cfg ShowCompanyLogo]	
+
+	Add	: Line	: After	: Cfg LogoFileName	: RSSALogoPath
+	[Line	: RSSALogoPath]
+		Field	: Medium Prompt, RSSALogoPath
+		Local	: Field	: Medium Prompt	: Set as	: "Another Image File Name "
+		[Field	: RSSALogoPath]
+			Use	: Name Field
+			Storage	: RSSALogoPathAno
+			Set Always	: Yes
+			
+[System	: UDF]
+	RSSALogoPathAno	: String	: 2013
+
+;-------------------------------Size column in sale voucher----------------------------
+[#Line	: EI ColumnOne]
+	Add		: Option	: EI ColumnOneOption	: @@IsSales
+	[!Line	: EI ColumnOneOption]
+		
+	Add	: Right Field	: Before	: VCH QtyTitle	: VCHItemSizeTit
+	
+	[Field	: VCHItemSizeTit]
+		Use		: name field
+		Align	: Center
+		Style	: Small Bold
+		Info	: "Size"
+		Width	: 7% page
+		Invisible	: NOT @@IsSales
+		
+[#Line	: EI ColumnOneRate]
+	Add		: Option	: EI ColumnOneRateOption	: @@IsSales
+	[!Line	: EI ColumnOneRateOption]
+		
+	Add		: Right Field	: Before	: VCH QtyTitle	: VCHItemSizeTit
+	Local	: Field	: VCHItemSizeTit	: Info	: ""
+	
+[#Line	: EI ColumnTwo]
+	Add		: Option	: EI ColumnTwoOption	: @@IsSales
+	[!Line	: EI ColumnTwoOption]
+		
+	Add		: Right Field	: Before	: VCH QtyTitle	: VCHItemSizeTit
+	Local	: Field	: VCHItemSizeTit	: Info	: ""
+
+[#Line	: EI InvInfo]
+	Add		: Option	: EI InvInfoOption	: @@IsSales
+	[!Line	: EI InvInfoOption]
+		
+	Add	: Right Field	: Before	: VCH BilledQty	: VCHItemSize
+	
+	[Field	: VCHItemSize]
+		Use		: name field
+		Width	: 7% page
+		Align	: Center
+		Style	: Small bold
+		Storage	: RSVCHItemSize
+		Set Always	: Yes
+		Invisible	: NOT @@IsSales
+
+[#Line	: EIAccInfo]
+	Add		: Option	: EIAccInfoOption	: @@IsSales
+	[!Line	: EIAccInfoOption]
+		
+	Add		: Right Field	: Before	:  EI AccQty	: VCHItemSizeTit
+	Local	: Field	: VCHItemSizeTit	: Info	: ""
+
+
+[#Line	: CIAccInfo]
+	Add		: Option	: CIAccInfoOption	: @@IsSales
+	[!Line	: CIAccInfoOption]
+		
+	Add		: Right Field	: Before	: EI AccQty	: VCHItemSizeTit
+	Local	: Field	: VCHItemSizeTit	: Info	: ""	
+
+
+	
+[#Line: CI InvInfo]
+	Add		: Option	: CI InvInfoOption	: @@IsSales
+	[!Line	: CI InvInfoOption]
+		
+	Add	: Right Field	: Before	: VCHBilledQty	: VCHItemSize
+	
+[System	: UDF]
+	RSVCHItemSize	: String	: 1101
+	
+[#Part: EI DelNoteInfo]
+	Add	: Line	:	At End	: RCMline
+	[Line	: RCMline]
+		Field	: Medium Prompt ,RCMline
+		Local	: Field	: Medium Prompt : Set as: "Reverse Charges "
+		[Field	: RCMline]
+			Use		: Name Field
+			Set as	: IF $$IsEmpty:$$VALUE then "No" else $$Value
+			Storage	: RSsaleRCM
+	
+[System	: UDF]
+	RSsaleRCM	: String	: 2001
+	
+[#Part: VTYP BehaviourMain]
+	Add	: Line	: At End	: RSFontHindi
+	[Line	: RSFontHindi]
+		Field	: Long Prompt, RSFontHindi
+		Local	: Field	: Long Prompt	: Set as	: "Hindi Font"
+		[Field	: RSFontHindi]
+			Use	: Name Field
+			Storage	: RSFontStyle
+			
+[System	: UDF]
+	RSFontStyle	: String	: 2012

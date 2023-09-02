@@ -1,0 +1,59 @@
+[#Part: VTYP BasicDetails]
+
+	Add	: Line	: At End	: ChgVchCmpName, ChgVchRemark1, ChgVchRemark2
+	[Line	: ChgVchCmpName]
+		Fields	: long Prompt, ChgVchCmpName
+		Local   : Field : long Prompt 	: Set as 	: "Company Name"
+		[Field	: ChgVchCmpName]
+			Use	: Name field
+			Storage		: RSChgCmpName
+			Width		: 25% page
+					
+	[Line	: ChgVchRemark1]
+		Fields	: long Prompt, ChgVchRemark1
+		Local   : Field : long Prompt : Set as : "Remarks 1"
+		[Field	: ChgVchRemark1]
+			Use		: Name field
+			Storage	: RSChgVchRem1
+			Width	: 25% page
+			
+	[Line	: ChgVchRemark2]
+		Fields	: long Prompt, ChgVchRemark2
+		Local   : Field : long Prompt : Set as : "Remarks 2"
+		[Field	: ChgVchRemark2]
+			Use		: Name field
+			Storage	: RSChgVchRem2
+			Width	: 25% page
+			
+[System	: UDF]
+	RSChgCmpName	: String	: 1810
+	RSChgVchRem1	: String	: 1811
+	RSChgVchRem2	: String	: 1812
+	
+
+	
+[#Part: EXPINV GSTExportTitle]
+   
+        Add : Line    : After	: GSTExportInvoiceTitle	: GSTExportInvoiceCMP, GSTExportInvoiceNote, GSTExportInvoiceRem
+		[Line	: GSTExportInvoiceCMP]
+			Field	: GSTExportInvoiceCMP
+			[Field	: GSTExportInvoiceCMP]
+				Use	: name field
+				Set as	: $RSChgCmpName:VOUCHERTYPE:$VOUCHERTYPENAME
+				Align	: Left
+;				Style	: Normal Bold
+
+		[Line	: GSTExportInvoiceNote]
+			Field	: GSTExportInvoiceNote
+			[Field	: GSTExportInvoiceNote]
+				Use	: name field
+				Set as	: $RSChgVchRem1:VOUCHERTYPE:$VOUCHERTYPENAME
+				Align	: Left
+				
+		[Line	: GSTExportInvoiceRem]
+			Field	: GSTExportInvoiceRem
+			[Field	: GSTExportInvoiceRem]
+				Use	: name field
+				Set as	: $RSChgVchRem2:VOUCHERTYPE:$VOUCHERTYPENAME
+				Align	: Left
+				

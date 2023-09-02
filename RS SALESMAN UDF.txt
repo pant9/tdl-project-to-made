@@ -1,0 +1,77 @@
+[Include: SALESMAN DETAIL REPORT.txt]
+
+
+[#Part: LED Credit Sundry]
+	Add	: Line	: After	: LED CreditVchEntry	: LEDCreditSalesman
+	[Line	: LEDCreditSalesman]
+		Fields	: long prompt, LEDCreditSalesman, CreditSalesmanEntry
+		Local   	: Field : Long Prompt	: Set as   	: $$LocaleString:"Use as Salesman :"
+		
+		[Field		: LEDCreditSalesman]
+			Use		: Logical Field
+			Set as	: If $$IsEmpty:$IsSalesmanLED Then NO Else $IsSalesmanLED
+			Width	: 6
+			
+		[Field		: CreditSalesmanEntry]
+
+			Use			: Logical Field
+			Storage		: IsSalesmanLED
+			Set as		: #LEDCreditSalesman
+			Set Always	: Yes
+			Invisible	: Yes   
+			
+
+
+	
+[#Part: EI Consignee]
+	Add	: Line	: At End	: EISalesman
+	[Line	: EISalesman]
+		Field	: Simple Prompt, EISalesman
+		Local   : Field : Simple Prompt: Info       : $$LocaleString:"Salesman Name :"
+		Local 	: Field : Simple Prompt: Width		: @@VchLeftPromptWidth % Page
+		[Field	: EISalesman]
+			Use	: Ledger Name Field
+			Storage	: EISalesmanLED
+			Show Table	: Always
+			Table		: ListOfSalesman
+
+
+[Collection	: ListOfSalesman]
+	Title		: $$LocaleString:"List Of Salesman"
+	Type		: ledger
+	Child Of	: $$GroupSundryCreditors
+	Belongs To	: Yes
+	Format		: $NAME,40
+	Filter		: IsOnlySalesmanLED
+;	Fetch	: IsSalesmanLED, parent
+;	Format	: $IsSalesmanLED,25
+;	Format	: $parent,20
+			
+[System	: Formula]
+	IsOnlySalesmanLED	: $IsSalesmanLED
+	
+			
+[System	: UDF]
+	IsSalesmanLED	: Logical	: 6100
+	EISalesmanLED	: String	: 6101
+;	EISalesmanLEDRS	: String	: 6102
+	
+ [#Part: EXPINV Consignee]
+	Add	: Line	: At End	: GlobalSalesman
+	[Line	: GlobalSalesman]
+		Field	: medium Prompt, GlobalSalesman
+		Local	: Field	: medium Prompt	: Set as	: "Salesman Name : "
+		[Field	: GlobalSalesman]
+			Use	: NAme field
+			Set as	: $EISalesmanLED
+			Style	: normal
+			
+ [#Part: EXPINV Buyer]	
+	Add	: Line	: At End	: RSGlobalSalesman
+	[Line	: RSGlobalSalesman]
+		Field	: medium Prompt, RSGlobalSalesman
+		Local	: Field	: medium Prompt	: Set as	: "Salesman Name : "
+		[Field	: RSGlobalSalesman]
+			Use	: Name field
+			Set as	: $EISalesmanLED
+			Style	: normal			

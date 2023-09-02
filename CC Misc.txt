@@ -1,0 +1,501 @@
+; NO ADDITION OF NEW BATCH IN SALE BILL OK
+; AUTOMATIC SELECT THE BATCH ACCORDING TO EXIPRY DATE OK
+; Price list lock OK
+; Stop billing on Credit days  OK
+;Serial No. : 795705480
+
+;[#Field: Ei Consignee]
+;
+;;	Delete : Notify  	: PartyCreditDateLimit    : ($$IsSysName:##NotifyPartyName OR (##NotifyPartyName!=$$Value)) AND $$SetNotifyParty AND (($IsCreditDaysChkOn:Ledger:$$Value AND $IsBillwiseOn:Company:##SVCurrentCompany AND (If $$IsEqual:($Parent:Ledger:$$Value):$$GroupBranches + 
+	;										Then $$IsAllBillWiseOn Else Yes) AND (@@IsSales OR @@IsDelNote OR @@IsSalesOrder) + 
+	;;										AND ((NOT $IsOptional) AND @@DueBillsOfParty > 0))) 
+;	Add : Control  	: PartyCreditDateLimit    : @@DueBillsOfParty > 0 ;;($$IsSysName:##NotifyPartyName OR (##NotifyPartyName!=$$Value)) AND $$SetNotifyParty AND (($IsCreditDaysChkOn:Ledger:$$Value AND $IsBillwiseOn:Company:##SVCurrentCompany AND (If $$IsEqual:($Parent:Ledger:$$Value):$$GroupBranches + 
+;											Then $$IsAllBillWiseOn Else Yes) AND (@@IsSales OR @@IsDelNote OR @@IsSalesOrder) + 
+;											AND ((NOT $IsOptional) AND @@DueBillsOfParty > 0))) 
+
+[#Part: CMP TallyShopFeatures Left]	
+	Add : Line : CMPStopBatchs,CMPAllowdISCOUNT
+[Line : CMPStopBatchs]
+        Fields      : Long Prompt, CMPStopBatchs
+        Local       : Field : Long Prompt : Set as    : $$LocaleString:"Stop Mannual Batch Entry In Invoice ?"
+        Space Top   : 0.4
+		Invisible   : Not $$IsCMpOwner
+
+[Field: CMPStopBatchs]
+    Use         : Logical Field
+    Storage     : IsCMPStopBatch
+ 	Set Always	: Yes
+	Invisible   : Not $$IsCMpOwner
+[Line	: CMPAllowdISCOUNT]
+        Fields      : Long Prompt, CMPAllowdISCOUNT
+        Local       : Field : Long Prompt : Set as    : $$LocaleString:"Allow Mannual Discount In Invoice ?"
+        Space Top   : 0.4
+		Invisible   : Not $$IsCMpOwner
+
+[Field: CMPAllowdISCOUNT]
+    Use         : Logical Field
+    Storage     : IsCMPAllowDisc
+ 	Set Always	: Yes
+	Invisible   : Not $$IsCMpOwner
+	
+[System : Formula]
+	IsCMPStopBatchON : $IsCMPStopBatch:Company:##SvCurrentCompany
+	IsCMPAllowDiscOn : $IsCMPAllowDisc:Company:##SvCurrentCompany
+	
+[System : UDF]
+	IsCMPStopBatch 	: Logical : 213
+	IsCMPAllowDisc	: Logical : 214
+	
+
+
+[#Field: VchBatchName]
+[#Field: VCHBATCH NrmlName]
+	Add	: Option	: VchBatchNameStop : @@IsCMPStopBatchON
+[!Field	: VchBatchNameStop]
+	Delete	: Table
+	Add		: Table        : Active Batches VchExtract               : @@HasBatchWise
+	Delete	: Trigger
+	Set as	: $$CollectionField:$Name:$$LINE:ActiveBatchesVchExtract
+	Set Always: Yes
+	Unique	 : Yes
+	Validate : $$VALUE = $$CollectionField:$Name:$$LINE:ActiveBatchesVchExtract
+	
+;	Read Only	: Yes
+[#Field: VCHBATCH Rate]
+	Add	: Option: VCHBATCH RateSale : @@ISSales
+[#Field: VCHBATCH RateUnits]
+	Add	: Option: VCHBATCH RateSale : @@ISSales
+[#Field: VCHBATCH Discount]
+	Add	: Option: VCHBATCH DiscSale : @@ISSales and not @@IsCMPAllowDiscOn
+	Delete	: Skip on
+
+[!Field:VCHBATCH RateSale]
+	Skip On     : $$IsValidPriceLevel:$PriceLevel
+[!Field	: VCHBATCH DiscSale]
+	Delete	: Skip on
+	add : Skip on : Yes
+[#Collection: Active Batches VchExtract]
+	Sort : @@Default : $ExpiryPeriod
+
+
+
+[#Field: VCH NrmlBilledQty]
+	Add : Option : VCH NrmlBilledQtySO :  (@@IsSales or @@IsDelNote or @@IsDebitNote or @@IsRejectionoutRS)
+[!Field : VCH NrmlBilledQtySO]	
+;	Add : Control    : NegativeStock	: @@IsOutwardType AND $$InCreateMode AND $$IsNegative:@@FinalStockTotal
+	Add : Control    : NegativeStock	: @@IsOutwardType AND $$IsNegative:@@FinalStockTotal
+[#Field: VCHBATCH NrmlBQty]
+	Add : Option : VCHBATCH NrmlBQtySO :  (@@IsSales or @@IsDelNote or @@IsDebitNote or @@IsRejectionoutRS)
+[!Field : VCHBATCH NrmlBQtySO]	
+;    Add : CONTROL      : NegativeStock : @@InvoiceInCreate AND +
+ ;                                     $$IsNegative:@@FinalStockTotal
+ Add : CONTROL      : NegativeStock : $$IsNegative:@@FinalStockTotal									  
+[#Field: VCHBATCH JrnlBQty]
+	Add : CONTROL      : NegativeStock : $$IsNegative:@@FinalStockTotal
+[#Field: VCH JrnlBilledQty]
+	Add : CONTROL      : NegativeStock : @@IsOutwardType AND $$IsNegative:@@FinalStockTotal
+	
+[#Field: VCHSTKJrnl BilledQty]
+	Delete : Control
+	Delete : Notify
+	Add : Control      : NegativeStock1 : (@@InCrtMode AND $$Value > $$Number:@@MyGDQty2) ;; or (not ($$Value = @MyBOMQTY or $$IsEmpty:$$Value)) ;; or Not($$IsEmpty:$$Value)((@@FinalStockTotal - $$Value) <=0)
+	MyBOMQTY : ((@CollVal * #MVCHBilledQty)/@BaseQty)
+	Delete :Option 
+	
+
+[System : Formula]
+	NegativeStock1 : "Negative Stock"
+	IsRejectionoutRS : $$IsRejout:##SVVoucherType or $$IsJobMaterialIssue:##SvVoucherType
+	MyGDQty : $$Table:VCHGodown:$GodownItemClBal
+	MyGDQty2 : $GodownItemClBal:Godown:#VCHGodown
+	GDCurrQty : $BilledQty ;;#VCHSTKJrnlBilledQty ;;$BilledQty ;;$$FilterQtyTotal:InventoryEntriesOut:FltrGodownName1:$BilledQty
+	FinalStockTotal1	 : $$AsInQty:$$NettQty:@@GDCurrQty:@@MyGDQty2
+	InCrtMode	: $AsMfgJrnl:VoucherType:$VoucherTypeName
+	FltrGodownName1		: $StockItemName = #VCHStockItem ;;$GodownName = #VCHGodown AND $StockItemName = #VCHStockItem
+						 ;; else $GodownName = #VCHBATCHGodown
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+[#Menu: gatewayofTally]
+	Add : Key Item : After : @@locLedgers : District Master : D : Alter : RSDistrictMasterRPT
+
+[Report : RSDistrictMasterRPT]
+	Form : RSDistrictMasterRPT
+	Title	: $$LocaleString:"District Master"
+	Object : Company
+[Form : RSDistrictMasterRPT]
+	Part : RSDistrictMasterRPT
+[Part : RSDistrictMasterRPT]
+	Line :  RSDistrictMasterRPTTitle, RSDistrictMasterRPTEntry
+	Repeat : RSDistrictMasterRPTEntry : RSDistrictMaster
+	Breakon : $$IsEmpty:$RSDistrictName
+	Scroll : Vertical
+[Line : RSDistrictMasterRPTTitle]
+	Field : RSDistrictMasterFld
+	Local : Field : Default : Type	: String
+	Local : Field : Default : Delete : Storage
+	Local : Field : Default : Delete : Inactive
+	Local : Field : Default : Align  : Center
+	Local : Field : Default : Skip : Yes
+	Local : Field : RSDistrictMasterFld	: Set as : "District Name"
+	Border	: Thin Top Bottom
+[Line : RSDistrictMasterRPTEntry]
+	Field : RSDistrictMasterFld
+[Field : RSDistrictMasterFld]
+	Use		: Name Field
+	Storage	: RSDistrictName
+	width	: 30
+	Style	: Small
+	
+	
+[System : UDF]
+	RSDistrictMaster 	: Aggregate : 461
+	RsDistrictName	: String	: 462
+
+[Collection:CmpDistrictList]
+	Title	: $$LocaleString:"District Master"
+	Type:  RSDistrictMaster : Company
+	Child Of:##SvCurrentCompany
+	Fetch	: RsDistrictName
+	Format:$RsDistrictName,20
+
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;Trial Balance Credit Limit Display & Configuration Change
+[Variable	: rsShowCreditLimit]
+	Type	: Logical	
+[Variable	: rsShowParent]
+	Type	: Logical
+
+[#Form: NRM GrpSummary]
+	Add	: Button	: DispCreditLimit,DISPLedParent
+[Button	: DispCreditLimit]
+	Key         : Alt + L
+    Action      : Set : rsShowCreditLimit : NOT ##rsShowCreditLimit
+    Title       : if ##rsShowCreditLimit then $$LocaleString:"Hide Credit Limit" else $$LocaleString:"Show Credit Limit"
+    
+[Button	: DISPLedParent]
+	Key         : Alt + B
+    Action      : Set : rsShowParent : NOT ##rsShowParent
+    Title       : if ##rsShowParent then $$LocaleString:"Hide Group" else $$LocaleString:"Show Group"
+
+	
+	
+
+[#Report: Group Summary]
+	Set         : DSPShowOpening    : Yes
+    Set         : DSPShowTrans      : Yes
+    Set         : DSPShowClosing    : Yes
+	Variable	: rsShowCreditLimit
+	Set	: rsShowCreditLimit : No
+	Variable	: rsShowParent
+	Set	: rsShowParent : No
+	
+[#Report: Trial Balance]
+	Variable	: rsShowCreditLimit
+	Set	: rsShowCreditLimit : No
+	Variable	: rsShowParent
+	Set	: rsShowParent : No
+	
+[#Line: DSP AmtOneTitle]
+	Add	: Field	: After: DSP NameTitle: DSPLedCreditLimitTitle,DSPLedParentTitle
+	Local	: Field	: DSPLedCreditLimitTitle : Set as	: ""
+	Local	: Field	: DSPLedParentTitle		 : Set as	: ""
+[#Line: DSP AmtTwoTitle]	
+	Add	: Field	: After: DSP NameTitle: DSPLedCreditLimitTitle,DSPLedParentTitle
+	Local	: Field	: DSPLedCreditLimitTitle : Set as	: ""
+	Local	: Field	: DSPLedParentTitle		 : Set as	: ""
+	
+[#Line: DSP Totals]
+	Add	: Field	: After: DSP NameTitle: DSPLedCreditLimitTitle,DSPLedParentTitle
+	Local	: Field	: DSPLedCreditLimitTitle : Set as	: ""
+	Local	: Field	: DSPLedParentTitle		 : Set as	: ""
+
+[#Line: DSP DateTitle]
+	Add	: Field	: After: DSP NameTitle: DSPLedCreditLimitTitle,DSPLedParentTitle
+[Field	: DSPLedCreditLimitTitle]
+	Use		: Name Field
+	Set as	: "Credit limit"
+	Style	: Small Bold
+	Width	: 15
+	Align	: Right
+	Style	: Small
+	Invisible	: Not (##rsShowCreditLimit)
+[Field	: DSPLedParentTitle]
+	Use		: Name Field
+	Set as	: "Parent"
+	Width	: 20
+	Style	: Small
+	Invisible	: Not ##rsShowParent
+	
+[#Line: DSP AccLine]
+	Add	: Field	:  DSPLedCreditLimit,DSPLedParentA
+    Fields      : DSP AccName
+[#Field: DSP DispName]
+	Width	: 40
+
+[Field	: DSPLedCreditLimit]
+	Use		: Amount Field
+	Set as	: $CreditLimit:Ledger:$Name
+	Width	: 15
+	Align	: Right
+	Format	: "DRCR"
+	Style	: Small
+	Invisible	: Not ##rsShowCreditLimit
+[Field	: DSPLedParentA]
+	Use		: Name Field
+	Set as	: $Parent:Ledger:$Name
+	Width	: 20
+	Style	: Small
+	Invisible	: Not ##rsShowParent
+	
+;;;;;Ledger Display Rate display after discount
+	
+[#Part: DayBookVCHINVAlloc Explosion]
+	Local		: Line	: DSP InvAllocDetails	: Local: Field: DSP VchRate : Set as: $Amount/$BilledQty 
+	
+;;;;;;;;;;;;;;;;;;;;;
+
+[#Part: EI OrderInfo]
+	Add	: Line: At End	: EIPORemarks
+	Height	: 6
+[Line	: EIPORemarks]
+	Invisible	: Not @@IsPurcOrder
+	Fields      : Medium Prompt, EIPORemarks
+    Local       : Field : Medium Prompt : Set as : $$LocaleString:"Remarks : "
+[Field	: EIPORemarks]    
+	Use	: Name Field
+	Storage	: vchPOremarks
+	Style	: Small Bold
+
+[System	: UDF]
+	vchPOremarks : String	: 1985
+	
+[#Form	: Comprehensive Invoice]
+	
+[#Part: EXPINV TopRight]
+	Add	: Part: After: EXPINV BasicInfo : EIPORemarks
+[Part	: EIPORemarks]
+	Line	: EIPORemarks
+    Invisible	: Not @@IsPurcOrder
+	Border	: Thin Bottom
+	Local : Line	: EIPORemarks : Local	: Field: Medium Prompt: Width	: 10
+	
+
+;;;;;;;;;;;;;;;
+[#Line: EI InvDetails]
+	Delete	: Option
+	
+	ADD : Option      : EI AddMarks   : $$EIAddMarksOption	
+	Add : Option      : EI AddPackages: ##ICFGNumPackages ;NOT @@IsPOSInvoice AND ##ICFGNumPackages AND NOT @@IsDebitNote
+[#Line: CI InvInfo]
+	Delete	: Explode:  CI AddMarks
+	Add 	: Explode : CI AddMarks    			:  NOT @@IsPOSInvoice  AND ( NOT @@IsDebitNote) AND (##ICFGMarks OR ##ICFGNumPackages) AND NOT $$IsEmpty:$StockItemName
+				
+[#Field: EI NumPackages]
+	Invisible   : NOT ##ICFGNumPackages ;;OR @@IsDebitNote
+
+;;;;;;;;;;;;;;;;;;
+[#Menu	: Display Menu]
+	Add	: Key Item	: Ledger Payment Performance Report : P:Display Collection : PartySaleReportColl
+		
+[Collection: PartySaleReportColl]
+;	Use         : Alias Collection
+    Trigger		: PartySaleReportTrigger
+	Variable	: LedgerName
+	Report		: PartySaleReport
+    Format     	: $Name, 35
+    Type       	: Ledger
+    Title      	: $$LocaleString:"List of Ledger"
+    ;Align      	: Right
+    Full Height	: Yes
+    Fetch	    : Name
+
+[Report: PartySaleReportTrigger]      ;;Auto Report
+    Auto    : Yes
+    Title	: $$LocaleString:"Godown Selection"
+	Form	: PartySaleReportTrigger
+	Local   : Collection: Default 	: Align : Right
+	Variable: SVCurrentCompany
+
+[Form: PartySaleReportTrigger]
+    No Confirm      : Yes
+    Space Top       : 0.5
+    Space Left      : 1
+    Space Right     : 1
+    Full Width      : No
+    Full Height     : No
+    Vertical Align  : Top
+	Part			: PartySaleReportTriggerPart
+
+[Part : PartySaleReportTriggerPart]
+	Line	: PartySaleReportITemList
+    Local   : Field : Medium Prompt : Width : 25
+
+	[Line: PartySaleReportITemList]
+
+		Fields      : Medium Prompt, PartySaleReportITemList
+		Local       : Field : Medium Prompt : Info : $$LocaleString:"Name of Ledger"                                      
+		Space Bottom: 0.5
+
+		[Field: PartySaleReportITemList]
+
+			Use         : Name Field
+			Table       : PartySaleReportColl
+			Show Table  : Always
+			CommonTable : No
+			Variable    : LedgerName 
+			Modifies    : LedgerName:Yes 
+[Report:PartySaleReport]
+	Use		: DSP Template
+	Form	: PartySaleReport
+	Variable: LedgerName
+[Form	: PartySaleReport]
+	Use	: DSP TEMPLATE
+	Part : DSP CompanyName, DSP CompanyAddress, DSP ReportTitle
+	Part	: PWSTitle,PWSDetails
+	;;Bottom Part: GodownStockReportBottom
+	Delete : Page Break
+	Button : PrintButton
+	Local : Part : DSP ReportTitle : Local : Line  : DSP ReportName : Local : Field   : DSP ReportName : Set as : "Item Wise Sale For " + ##LedgerName
+	Add : Page Break : RSGRCL1,PWSReportOP
+
+[Part: RSGRCL1]
+	Line: RSGRCL1
+[Line: RSGRCL1]
+	Field: Name Field
+	Local:Field: Name Field : Set as: "...Continued"
+	Local:Field: Name Field : Full Width: Yes
+	Local:Field: Name Field : Border: Thin Top
+[Part	: PWSReportOP]
+	Part	: DSP CompanyName, DSP CompanyAddress, DSP ReportTitle,PWSTitle
+	Vertical	: Yes
+[Part	: PWSTitle]
+	Line	: PWSTitle1,PWSTitle
+[Line	: PWSTitle1]
+	Field	: Short Prompt,PWSItemName
+	Local	: Field	: Short Prompt : Set as	:"Ledger Name :"
+[Field	: PWSItemName]
+	Use	: Name Field
+	Set as	: ##LedgerName
+	Full Width	: Yes
+
+[Line	: PWSTitle]
+	Use		: PWSDetails
+	Local	: Field	: Default	: Type	: String
+	Local	: Field	: Default	: Style	: Small Bold
+	Local	: Field	: PWSSno	: Set as	: "S No."
+	Local	: Field	: PWSDate	: Set as	: "Date"
+	Local	: Field	: PWSInvoice: Set as	: "Invoice No."
+	Local	: Field	: PWSArtNO	: Set as	: "Art No"
+	Local	: Field	: PWSitemDesc: Set as	: "Description"
+	Local	: Field	: PWSQty	: Set as	: "Qty"
+	Local	: Field	: PWSPacking: Set as	: "Packing"
+	Local	: Field	: PWSCartoon: Set as	: "No. of Cartoon"
+	Local	: Field	: PWSValue	: Set as	: "Value in Euro"
+	Local	: Field : PWSNoofBills : Set as : "No Of Bills"
+	Border	: Column Titles
+[Part	: PWSDetails]
+	Line	: PWSDetails
+	Repeat	: PWSDetails : PWSSALESVouchersSumm
+	Bottom Line	: PWSTotal
+	Scroll	: Vertical
+	Total	: PWSQty,PWSCartoon,PWSValue
+[Line	: PWSDetails]
+	Field	: PWSSno,PWSDate,PWSInvoice,PWSArtNO,PWSitemDesc
+	Right Field	: PWSQty,PWSPacking,PWSCartoon,PWSValue,PWSNoofBills
+	
+[Field	: PWSSno]
+	Use	: Name Field
+	Set as	: $$Line
+	Width	: 6
+	Style	: Small
+	
+[Field	: PWSDate]
+	Use	: Uni date Field
+	Set as	: $Date
+	Width	: 10
+	Style	: Small
+	Align	: Center
+[Field	: PWSInvoice]
+	Use	: Name Field
+	Set as	: $VoucherNumber
+	Width	: 10
+	Style	: Small
+	
+[Field	: PWSArtNO]
+	Use	: Name Field
+	Set as	: $PartNo:Stockitem:$StockITemName
+	Width	: 9
+	Style	: Small
+	
+[Field	: PWSitemDesc]
+	Use	: Name Field
+	Set as	: $StockitemName
+	Full Width	: Yes
+	Style	: Small
+	
+[Field	: PWSQty]
+	Use	: Qty Primary Field
+	Set as	: $BilledQty
+	Width	: 10
+	Style	: Small
+	
+[Field	: PWSPacking]
+	Use	: Qty Primary Field
+	Set as	: $StkPackDesc:StockItem:$Stockitemname
+	Width	: 8
+	Style	: Small
+	Align	: Right
+	
+[Field	: PWSCartoon]
+	Use	: Number Field
+	Set as	: #PWSQty / #PWSPacking
+	Width	: 8
+	Style	: Small
+	Align	: Right
+	Format	: "NoZero"
+[Field	: PWSValue]
+	Use	: Amount Forex Field
+	Set as	: $Amount
+	Width	: 11
+	Style	: Small
+	Format	: "NoSymbol"
+[Field	: PWSNoofBills]
+	Use	: Number Field
+	Set as	: $$NumItems:PWSITEMBILLS
+	Width	: 8
+	Style	: Small
+	Align	: Right
+	Format	: "NoZero"
+	
+[Line	: PWSTotal]
+	Use		: PWSDetails
+	Local	: Field	: Default	: Style	: Small Bold
+	Local	: Field	: PWSSno	: Set as	: ""
+	Local	: Field	: PWSDate	: Set as	: ""
+	Local	: Field	: PWSInvoice: Set as	: ""
+	Local	: Field	: PWSArtNO	: Set as	: ""
+	Local	: Field	: PWSitemDesc: Set as	: "Total"
+	Local	: Field	: PWSQty	: Set as	: $$Total:PWSQty
+	Local	: Field	: PWSPacking: Set as	: ""
+	Local	: Field	: PWSCartoon: Set as	: $$Total:PWSCartoon
+	Local	: Field	: PWSValue	: Set as	: $$Total:PWSValue
+	Local	: Field : PWSNoofBills : Set as : ""
+	Border	: Totals
+[Collection	: PWSSALESVouchers]
+	Type	: Vouchers : Ledger
+	Child Of	: ##LedgerName
+	Fetch	: *.*,InventoryEntries.*
+	Filter	: PWSSalesOnly
+[Collection	: PWSSALESVouchersSumm]
+	Source Collection	: PWSSALESVouchers
+	Walk	: Inventory Entries
+	Compute	: Date		: $..Date
+	Compute	: VoucherNumber: $..VoucherNumber
+	Compute	: StockITemName : $StockitemName
+	Compute	: BilledQty	: $BilledQty
+	Compute	: Amount	: $Amount
+[System	: Formula]
+	PWSSalesOnly	: $$IsSales:$VoucherTypeName

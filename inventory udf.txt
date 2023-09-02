@@ -1,0 +1,78 @@
+
+[#Line	: EI ColumnOne]
+	Add		: Option	: EI ColumnOneOption	: @@IsSales
+	[!Line	: EI ColumnOneOption]
+		
+	Add	: Right Field	: After	: VCH RateUnitsTitle	: VCHListOfMobTit
+	
+	[Field	: VCHListOfMobTit]
+		Use		: name field
+		Align	: Center
+		Style	: Small Bold
+		Info	: "List of"
+		Width	: 7% page
+;		Invisible	: NOT @@IsSales
+		
+[#Line	: EI ColumnOneRate]
+	Add		: Option	: EI ColumnOneRateOption	: @@IsSales
+	[!Line	: EI ColumnOneRateOption]
+		
+	Add		: Right Field	: After	: VCH RateUnitsTitle	: VCHListOfMobTit
+	Local	: Field	: VCHListOfMobTit	: Info	: "Mobile"
+	
+[#Line	: EI ColumnTwo]
+	Add		: Option	: EI ColumnTwoOption	: @@IsSales
+	[!Line	: EI ColumnTwoOption]
+		
+	Add		: Right Field	: After	: VCH RateUnitsTitle	: VCHListOfMobTit
+	Local	: Field	: VCHListOfMobTit	: Info	: ""
+
+[#Line	: EI InvInfo]
+	Add		: Option	: EI InvInfoOption	: @@IsSales
+	[!Line	: EI InvInfoOption]
+		
+	Add	: Right Field	: After	: VCH RateUnit	: VCHListOfMob
+	
+	[Field	: VCHListOfMob]
+		Use		: name field
+		Width	: 7% page
+		Align	: Center
+		Style	: Small bold
+		Storage	: VCHListOfMobile
+		Set Always	: Yes
+		Set By Condition	: $stockItemNAme = "FUNGICIDES"		: "waterballs"
+		Set By Condition	: $stockItemNAme = "HERBICIDES"		: "Spring Roll"
+		Set By Condition	: $stockItemNAme = "INSECTICIDES"	: "Burger"
+;		Invisible	: NOT @@IsSales
+
+[#Line	: EIAccInfo]
+	Add		: Option	: EIAccInfoOption	: @@IsSales
+	[!Line	: EIAccInfoOption]
+		
+	Add		: Right Field	: After	: EI AccRatePer	: VCHListOfMobTit
+	Local	: Field	: VCHListOfMobTit	: Info	: ""
+
+
+[#Line	: CIAccInfo]
+	Add		: Option	: CIAccInfoOption	: @@IsSales
+	[!Line	: CIAccInfoOption]
+		
+	Add		: Right Field	: After	: EI AccRatePer	: VCHListOfMobTit
+	Local	: Field	: VCHListOfMobTit	: Info	: ""	
+
+
+	
+[#Line: CI InvInfo]
+	Add		: Option	: CI InvInfoOption	: @@IsSales
+	[!Line	: CI InvInfoOption]
+		
+	Add	: Right Field	: After	: VCHRateUnit	: VCHListOfMob
+	
+[System	: UDF]
+	VCHListOfMobile	: String	: 1101
+	
+;[#Field	: VCH StockItem]
+;	On	: Accept	: Yes	: Call	: SetStockItemFunc
+;	[Function	: SetStockItemFunc]
+;		001	: Set Value	: VCHListOfMobile	: $$Number:$BilledQty+$$Number:$Rate;10 
+		

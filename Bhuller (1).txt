@@ -1,0 +1,1112 @@
+;;793155978
+[#Form:Comp	rehensive Invoice]
+	Add: Option:RsInvCom: @@IsSales
+[!Form:RsInvCom]
+	Delete	:Parts
+	Delete	:Bottom Part
+	Delete	:Page Break
+	Width  	: 100% PAGE 
+	Height 	: 100% Page
+	
+	Add:Part		:RsTaxTitle,RSCmpNamePart,RsComTitle,RsComGodown ,RsComInv,RsComBuyers,RsComNote,RsComInventoryTitle,RsComInventory
+	Add:Bottom Part	:InvTotalQty ,RsComInvDetail,RsComTotalValueWord,RsComTerms
+	Add: Page Break: BHClosing,BhOpening  
+
+[Part: BHClosing]
+	Line	: BHClosing
+[Line: BhClosing]
+	Field: Name Field
+	Local: Field: Name Field : Set as: "....Continued"   
+	Local: Field: Name Field : Border	: Thin Top
+	Local: Field: Name Field : Full Width: Yes
+	Local: Field: Name Field : Align	: Right	
+[Part : BhOpening]
+	Part:  RsTaxTitle,RSCmpNamePart,RsComTitle,RsComGodown,RsComInv,RsComBuyers,RsComNote,RsComInventoryTitle ;,RsComInventory
+	Vertical: Yes
+	
+
+[Part:RsTaxTitle]
+	Line	:RsTaxTitle,RsLdh
+	;Border	:Thin Bottom
+	
+[Line:RsTaxTitle]
+	Field		:RsTaxOffice1,RsTaxTitle
+	Field	:RsTaxOffice
+[Field:RsTaxTitle]
+	Set as		:$VCHPrintTitle:Vouchertype:##SVVoucherType
+	Full Width	:Yes
+	Align		:Center
+	Style		:TimesNewRoman
+	;Border		:Thin Bottom
+[Field:RsTaxOffice1]
+	Use	:Name Field
+	Width		:12
+	Set as	: ""
+	Style		:MyStyle
+[Field:RsTaxOffice]
+	Use	:Copy Field
+	Full Width	: No
+	Width		:12
+	Align		:Right
+	Style		:MyStyle
+	
+[Line:RsLdh]
+	Field		:RsLdh
+	Space Top	:.1
+	;Invisible: Yes  
+[Field:RsLdh]
+	Set as		:"" ;"Subject to LUDHIANA Jurisdiction"
+	Full Width	:Yes
+	Align		:Center
+	Style		:MyStyle
+	;Space Left	:20
+	
+[Part : RSCmpNamePart]
+	Line	:RsComName,RsComPartyName,RssComAdd
+;	Repeat	:RssComAdd:CompanyAddress
+	Border	:Thin Bottom
+[Line:RsComName]
+	Field		:RsComName
+[Field:RsComName]
+	Set as		:@@CmpMailName
+	;Width		:175
+	Full Width	: Yes
+	Align		:Left
+	Align: Center 
+	Style		:TimesNewRoman16
+[Line:RssComAdd]
+	Field		:RssComAdd
+	Space Top: .2 
+[Field:RssComAdd]
+	Set as		:$$FullList:CompanyAddress:$Address
+	Full Width	:Yes
+	Align		:Center
+	Style		:MyStyle
+	Lines		: 2
+[Part:RsComTitle]
+	Part:RsComDetail,RsComDetailed
+	 
+[Part:RsComDetail]
+	Line	:RsComPartyName ;,RssComAdd
+;	Repeat	:RssComAdd:CompanyAddress
+;	Border:thin Top Bottom
+	
+	
+[Line:RsComPartyName]
+	Field		:RsComPartyName
+[Field:RsComPartyName]
+	Set as		:$PartyName
+	Width		:30
+	Align		:Left
+	Style		:MyStyle
+	Invisible: Yes 
+
+[Part:RsComDetailed]
+	Line		:RsComDL,RsComDL1
+[Line:RsComVat]
+	Right Field	:Short Prompt,RsComVats
+	Local	: Field: Short PRompt :  Set as		:"GST NO.:"
+[Field:RsComVat]
+	Set as		:"GST NO.:"
+	Width		:20
+	Align		:Left
+	Style		:MyStyle
+	;Space Right	:50
+	
+[Field:RsComVats]
+	Set as		:$GSTRegNumber:TaxUnit:@@CMPExcisePrimaryGodown ;$VATTINNumber:Company:##SVCurrentCompany
+	width		:25
+	Align		:Left
+	Style		:MyStyle
+	
+	
+[Line:RsComDL]
+	Field	:Medium Prompt,RsComVats
+	Local	: Field: Medium PRompt :  Set as		:"GST NO.:"
+	Local	: Field: Medium PRompt :  Width	: 10
+
+	Right Field	:Short PRompt,RsComDLs
+	Local	: Field: Short PRompt :  Set as		:"DL. NO:"
+
+[Field:RsComDL]
+	Set as		:"DL. NO:"
+	Width		:20
+	Align		:Right
+	Style		:MyStyle
+	;Space Right	:65
+	
+[Field:RsComDLs]
+	Set as		:$ComMailDL:Company:##SvCurrentCompany
+	Width		:25
+	Align		:Left
+	Style		:MyStyle
+	
+[Line:RsComDL1]
+	Right Field	:Short PRompt,RsComDL2
+	Local	: Field: Short PRompt :  Set as		:"DL. NO:"
+[Field:RsComDL1]
+	Set as		:"DL. NO:"
+	Width		:20
+	Align		:Right
+	Style		:MyStyle
+	;;Space Right	:65
+	
+[Field:RsComDL2]
+	Set as		:$ComMailDL1:Company:##SvCurrentCompany
+	Width		:25
+	Align		:Left
+	Style		:MyStyle
+
+[Part:RsComGodown]
+	Line:RsComGodown,RSCommGD1,RsComDis
+	;Repeat:RsComGodown:GodownAddress
+	Invisible: Yes 
+[Line:RsComGodown]
+	Field		:RsComGodown,RsComGodowns
+	
+[Field:RsComGodown]
+	Set as	:"Godown Address :"
+	Width	:20
+	Align	:Left
+	Style	:MyStyle
+	Border	:thin bottom
+	
+[Field:RsComGodowns]
+	Set as		:$GodownAddress:Company:##SvCurrentCompany
+	Full Width	:Yes
+	Align		:Left
+	Style		:MyStyle
+
+[Line:RsCommGD1]
+	Field		:RsComGodown,RsComGodowns
+	Local : Field	:RsComGodown : Set as: "" 
+	Local : Field	:RsComGodowns:Set as		:$GodownAddress1:Company:##SvCurrentCompany
+
+[Line:RsComDis]
+	Field:RsComDis
+[Field:RsComDis]
+	Set as		:"" ;;"Distributor For Punjab  :- Abbott Healthcare Pvt.Ltd"
+	Full Width	:Yes
+	Align		:Left
+	Style		:MyStyle
+
+[Part:RsComInv]
+	Line	:RsComInv
+	Border	:Thin Top Bottom
+	
+[Line:RsComInv]
+	Field		:RsComInvs,RsComInv
+	Right Field	:RsComInvDate,RsComInvDates
+	
+[Field:RsComInvs]
+	Set as	:"I n v o i c e  No. :- "
+	Width	:50
+	Align	:Right
+	Style	:TimesNewRoman
+	
+[Field:RsComInv]
+	Set as	:$VoucherNumber
+	Width	:20
+	Align	:Left
+	Style	:TimesNewRoman
+	
+[Field:RsComInvDate]
+	Set as		:"D a t e :-"
+	Width		:10
+	Align		:Right
+	Style		:TimesNewRoman
+	;Space Right	:45
+	
+[Field:RsComInvDates]
+	Set as	:$Date
+	Width	:16
+	Align	:Left
+	Style	:TimesNewRoman
+	
+[Part:RsComBuyers]
+	Part:RsComBuyer,RsComBuyerDetail
+[Part:RsComBuyer]
+	Line	:RsComBuyersName,RsComBuyersAdd
+	Repeat	:RsComBuyersAdd:PartyAddress ;BasicBuyerAddress
+	
+[Line:RsComBuyersName]
+	Field:Short Prompt ,RsComBuyersName
+	Local: Field: Short Prompt : Set as: "Party Name : "   
+	Local: Field: Short Prompt : Width	: 12
+[Field:RsComBuyersName]
+	Set as		:$MailingName:Ledger:$PartyLEdgerName ;$BasicBuyerName
+	Full Width	:Yes
+	Align		:Left
+	Style		:TimesNewRoman
+	
+[Line:RsComBuyersAdd]
+	Field:Short Prompt,RsComBuyersAdd
+	Local: Field: Short Prompt : Set as: "Address : "   
+	Local: Field: Short Prompt : Inactive: $$Line > 1  
+	Local: Field: Short Prompt : Width	: 12
+[Field:RsComBuyersAdd]
+	Set as		:$Address
+	Full Width	:Yes
+	Align		:Left
+	Style		:MyStyle
+	
+[Part:RsComBuyerDetail]
+	Line:RsComBuyerVatTinNo,RSCSTNO,RsComBuyerDL,RsComBuyerDL1,RSDOCDL,RsComBuyerTerm,RSPArtyPAN
+[Line:RsComBuyerVatTinNo]
+	Right Field	:Short PRompt,RsComBuyerVatTinNos
+	Local	: Field: Short PRompt :  Set as		:"GST NO.:"
+[Field:RsComBuyerVatTinNo]
+	Set as		:"GST NO:"
+	Width		:15
+	Align		:Left
+	Style		:MyStyle
+	;Space Right	:50
+	     
+[Field:RsComBuyerVatTinNos]
+	Set as		:$PArtyGSTIN:Ledger:$PartyLedgerName
+	Width		:25
+	Align		:Left
+	Style		:MyStyle
+	
+[Line : RSCSTNO]
+	Right Field	:Short PRompt,RSCSTNO
+	Local	: Field: Short PRompt :  Set as		:"CST NO.:"
+	Invisible:$$IsEmpty:$InterStateSTNumber:Ledger:$PartyLedgerName
+[Field:RSCSTNO]
+	Set as		:$InterStateSTNumber:Ledger:$PartyLedgerName ;$VATTINNUMBER:Ledger:$PartyLedgerName
+	Width		:25
+	Align		:Left
+	Style		:MyStyle
+	
+
+[Line:RsComBuyerDL]
+	Right Field:Short Prompt,RsComBuyerDL1
+	Local	: Field: Short PRompt :  Set as		:"DL NO. :"
+
+[Field:RsComBuyerDL]
+	Set as		:"DL NO.			:"
+	Width		:40
+	Align		:Right
+	Style		:MyStyle
+	;Space Right	:42
+	
+[Field:RsComBuyerDL1]
+	Set as		:$ComDL:Ledger:$PArtyLedgerName
+	Width		:25
+	Align		:Left
+	Style		:MyStyle
+	;Space Left	:15
+	
+[Line:RsComBuyerDL1]
+	Right Field	:Short PRompt,RsComBuyerDL3
+	Local	: Field: Short PRompt :  Set as		:"DL NO. :"
+	
+[Field:RsComBuyerDL2]
+	Set as		:"DL NO.			:"
+	Width		:20
+	Align		:Left
+	Style  		:MyStyle
+	;pace Right	:42
+	
+[Field:RsComBuyerDL3]
+	Set as		:$ComDL1:Ledger:$PArtyLedgerName
+	Width		:25
+	Align		:Left
+	Style		:MyStyle
+	;Space Left	:15
+[Line: RSDOCDL]
+	Right Field	:Short Prompt,RSDOCDL
+	Local	: Field: Short PRompt :  Set as		:"Doc. Regn No. :"
+	;Local	: Field: Short PRompt :Width: 15 
+	
+[Field:RSDOCDL]
+	Set as		:$ComDRNO:Ledger:$PartyLedgerName
+	Width		:25
+	Align		:Left
+	Style		:MyStyle
+	;Space Left	:15
+ 
+ 
+[Line:RsComBuyerTerm]
+	Right Field	:Short Prompt,RsComBuyerTerms
+	Local	: Field: Short PRompt :  Set as		:"Terms. :"
+	
+[Field:RsComBuyerTerm]
+	Set as		:"Terms.    :"
+	Width		:20
+	Align		:Left
+	Style		:MyStyle
+	Space Right	:42
+	
+
+[Field:RsComBuyerTerms]
+	Set as		:$BASICDUEDATEOFPYMT
+	Width		:25
+	Align		:Left
+	Style		:MyStyle
+	;Space Left	:15
+
+[Line	: RSPArtyPAN]
+	Right Field	:Short Prompt,RSPArtyPAN
+	Local	: Field: Short PRompt :  Set as		:"PAN No. :"
+	
+[Field:RSPArtyPAN]
+	Set as		:$IncomeTaxNumber:Ledger:$PartyLedgerName
+	Width		:25
+	Align		:Left
+	Style		:MyStyle
+	
+
+[Part:RsComNote]
+	Line:RsComNote
+	
+[Line:RsComNote]
+	Field	:RsComNote,RsComNotes
+	Invisible:Yes
+[Field:RsComNote]
+	Set as	:"Note:"
+	Width	:10
+	Align	:Left
+	Style	:MyStyle
+	Border	:Thin Bottom
+	
+[Field:RsComNotes]
+	Set as		:"No Goods Will Be taken Back In Any Condition if Any Compalint Regarding Goods Contact At Office No.'s With In 48 Hours From The Date of Receipt"
+	Full Width	:Yes
+	Align		:Left
+	Style		:MyStyle
+[Part: RsComInventoryTitle]
+	Line: RsComInventory 
+	Common Border: Yes 
+[Part:RsComInventory]
+	Line	:RsComInventorys
+	Repeat	:RsComInventorys:InvoiceLedger
+	Scroll	:Vertical
+	Space Top:.1
+	Vertical	: Yes
+	Common Border: Yes
+	Total	: RSComDisAmt
+[Line:RsComInventory]
+	Use:RsComInventorys
+	Local:Field:	Default 		:Type	: String
+	Local:Field:	Default 		:Style	:MyStyle
+	Local:Field:	RsComSno		:Set as	:"SNO."
+	Local:Field:	RsComItemName	:Set as	:"Product Name"
+	Local	: Field: RSHSNC			: Set as: "HSN"
+	Local	: Field	: RsComMFGName	: Set as: "Mfg. By"
+	Local:Field:	RsComPack		:Set as	:"Pack"
+	Local:Field:	RsComBatch		:Set as	:"Batch"
+	Local:Field:	RsComExpiry		:Set as	:"Expiry"
+	Local:Field:	RsComMFG		:Set as	:"GST %"
+	Local:Field:	RsComQty		:Set as	:"QTY"
+	Local:Field:	RsComFree		:Set as	:"Free"
+	Local:Field:	RsComCD			:Set as	:"MRP"
+	Local:Field:	RsComRate		:Set as	:"Rate"
+	Local:Field:	RSComDis1		: Set as: "Disc. %"
+	Local:Field:	RSComDisAmt		: Set as: "Disc Amt"
+	Local:Field:	RsComAmount		:Set as	:"Amount"
+	Border:Thick Top bottom
+	
+[Line:RsComInventorys]
+	Field		:RsComSno,RsComItemName
+	Right Field	:RsComMFGName,RSHSNC,RsComPack,RsComMFG,RsComBatch,RsComExpiry,RsComQty,RsComFree,RsComCD,RsComRate,RSComDis1,RSComDisAmt,RsComAmount
+	;Border		:thin bottom
+	Space Top: .3 
+[Field:RsComSno]
+	Set as		:$$Line
+	Width		:3
+	Align		:Left
+	Style		:Verdana
+	Border		:Thick Left 
+	Space Left	:1
+	
+[Field:RsComItemName]
+	Set as		:$StockItemname1
+	Full Width	: Yes
+	Align		:Left
+	Style		:Verdana
+	Border		:Thick Left Right
+	Space Left	:1
+	Lines		: 0
+[Field:RsComMFGName]
+	Set as		:$STKMFG:StockItem:$StockItemName1
+	Width		:10
+	Align		:Left
+	Style		:Verdana
+	Border		:Thick Left 
+	Space Left	:1
+
+[Field	: RSHSNC]
+	Set as		:$MyHSNCode:StockItem:$StockITemName1
+	Width		:4
+	Align		:Left
+	Style		:Verdana
+	Border		:Thick Left
+	Space Left	:1
+	
+[Field:RsComPack]
+	Set as		:$BasicNumpackages1
+	Width		:4
+	Align		:Left
+	Style		:Verdana
+	Border		:Thick Left
+	Space Left	:1
+	
+[Field:RsComBatch]
+	Set as		:$BatchName ;$$CollectionField:$BatchName:1:BatchAllocations
+	Width		:7
+	Align		:Left
+	Style		:Verdana
+	Border		:Thick Left
+	Space Left	:1
+	
+[Field:RsComExpiry]
+	Use			: Short Date Field
+	Set as		:$EXPIRYPERIOD ;If $$IsEmpty:@LastItem Then @@BooksYear Else @LastItem
+	Width		:7
+	Align		:Left
+	Style		:Verdana
+	Border		:Thick Left 
+	Space Left	:1
+	
+[Field:RsComMFG]
+	Set as		:$MyItemRate:Stockitem:$StockItemName1 ;$STKMFG:StockItem:$StockItemName1
+	Width		:3
+	Align		:Left
+	Style		:Verdana
+	Border		:Thick Left 
+	Space Left	:1
+	Format		: "Percentage"
+[Field:RsComQty]
+	Use			: Number Field
+	Set as		:$billedQTy
+	Width		:6
+	Style		:Verdana
+	Align		:Right
+	Border		:Thick Left 
+	;Space Left	:1
+	Format		: "Nosymbol"
+	
+[Field:RsComFree]
+	Use			: Qty PRimary Field
+	Set As		: $Actualqty - $BilledQty
+	ItemValue	: if (@@NoBaseUnits OR $$IsEmpty:$BilledQty) then $$Value else ($Rate * $BilledQty)
+	Width		:6
+	Align		:Right
+	Style		:Verdana
+	Border		:Thick Left
+	;Space Left	:2.5
+	Format		: "Nosymbol"
+	
+[Field:RsComCD]
+	Use			: Number Field
+	Set as		:$STKRSMRP:StockItem:$StockItemName1
+	Width		:6
+	Align		:Right
+	Style		:Verdana
+	Border		:Thick Left 
+	Format		: "Decimal:2,Nozero"
+		
+	;Space Left	:2.5
+	
+[Field:RsComRate]
+	Set as		:$Rate1
+	Width		:6
+	Style		:Verdana
+	Align		:Left
+	Border		:Thick Left 
+	;Space Left	:2.5
+[Field	: RSComDis1]
+	Use		: Number Field
+	Set as	: $Discount
+	Width	: 6
+	Format	: "Percentage,NoZero"
+	Border		:Thick Left 
+	Style		:Verdana
+	Align	: Right
+[Field	: RSComDisAmt]
+	Use		: Number Field
+	Set as	: (($$Number:$Billedqty * $$Number:$Rate1) * $$Number:$Discount)/100
+	Width	: 8
+	Format	: "Nozero,Decimal:2"
+	Border		:Thick Left 
+	Style		:Verdana
+	Align	: Right
+[Field:RsComAmount]
+	Set as		:$AMount
+	Width		:10
+	Style		:Verdana
+	Align		:Right
+	Border		:Thick Left Right
+	;Space Right	:2.5
+[Part: InvTotalQty]
+	Line: InvTotalQty
+	Common Border: Yes 
+[Line: InvTotalQty] 
+	Use:RsComInventorys
+;;	Local:Field:	Default 		:Type	: String
+	Local:Field:	Default 		:Style	:MyStyle
+	Local:Field:	RsComSno		:Set as	:""
+	Local:Field:	RsComItemName	:Set as	:"TOTAL QTY. :" + $$String:@@MyQtyVal ;($$CollNumTotal:inventoryentries:($$Number:$billedQTy))
+	;Local:Field:	RsComItemName	:Border: Thin Bottom 
+	Local	: Field: RSHSNC			: Set as	: "" 
+	Local:Field:	RsComPack		:Set as	:" "
+	Local:Field:	RsComBatch		:Set as	:" "
+	Local:Field:	RsComExpiry		:Set as	:" "
+	Local:Field:	RsComMFG		:Set as	:" "
+	Local:Field:	RsComQty		:Set as	:$$CollNumTotal:inventoryentries:($$Number:$billedQTy)
+	Local:Field:	RsComFree		:Set as	:" "
+	Local:Field:	RsComCD			:Set as	:" "
+	Local:Field:	RsComRate		:Set as	:" "
+	Local:Field:	RSComDisAmt		: Set as	: "" ;;$$Total:RSComDisAmt
+	Local:Field:	RsComAmount		:Set as	:"" ;$$CollAmtTotal:InventoryEntries:$AMount
+	Border:Thick Top 
+		
+[Part:RsComInvDetail]
+	Part:VCH GST Analysis,RsComInvDetailTotal
+	Local: Part	: VCH GST Analysis : Width	: 65% Page
+	;Local: Part	: VCH GST Analysis :Local : Part:  VCH GST AnalysisAmtDetails : Local: Line	: EXPINV WordTitle: Delete: Right Field
+	Local: Part	: VCH GST Analysis :Local : Part:  VCH GST AnalysisAmtDetails : Delete	: Lines
+	Local: Part	: VCH GST Analysis :Local : Part:  VCH GST AnalysisAmtDetails : Add : Line: RsComTotalValueWord
+	Local: Line	: EXPINV WordTitle: Delete: Right Field
+	;RsComInvDetailS,RsComInvDetailTotal
+	Border:thin Top bottom Right
+
+;RsComTotalValueWord	
+	
+[Part:RsComInvDetailS]
+	Line:RsComInvAbove,RsComInvUnder,RsComInvAgainst,RsComInvDelivery
+;	Border:thin Top
+	
+[Line:RsComInvQty]
+	;Border	:thin bottom
+	Field:RsComInvQty,RsComInvQtys
+	
+[Field:RsComInvQty]
+	Set as	:"Total Qty:"
+	Width	:10
+	Align	:Left
+	Style	:Verdana
+	
+[Field:RsComInvQtys]
+	Set as	:$$CollNumTotal:inventoryentries:($$Number:$billedQTy)
+	Width	:10
+	Align	:Left
+	Style	:Verdana
+		
+[Line:RsComInvAbove]
+	Field:RsComInvAbove
+[Field:RsComInvAbove]
+	Set as		:"" ;"THE ABOVE COMMODITIES ARE TAXED AT 15.95%+10% & 6.25%+10% SURCHARGE THEREON)"
+	Full Width	:Yes
+	Align		:Left
+	Style		:Verdana
+	;Border		:Thin bottom
+
+	
+[Line:RsComInvUnder]
+	Space Top	:.1
+	Field:RsComInvUnder
+	
+[Field:RsComInvUnder]
+	Set as		:"" ;"UNDER SINGLE STAGE TAXATION REGIME. NO ITC AVAILABLE AGAINST THIS INVOICE"
+	Full Width	:Yes
+	Align		:Left
+	Style		:Verdana
+	;Border		:Thin bottom
+	
+[Line:RsComInvAgainst]
+	Space Top:.1
+;	Field:RsComInvAgainst,RsComInvAgainsts
+	Right Field:RsComInvPvt,RsComInvPvts,RsComInvVhicle,RsComInvVhicles
+	
+[Field:RsComInvAgainst]
+	Set as	:"AGAINST FORM :"
+	Width	:12
+	Align	:Left
+	Style	:Verdana
+	
+[Field:RsComInvAgainsts]
+	Set as	:If ##CSTFormReceivable Then $CSTFormRecvType Else $CSTFormIssueType;$$SysName:CForm;$$StringWord:1:$$LocaleString:"Form Type"
+	Width	:10
+	Align	:Left
+	Style	:Verdana
+	Border	:Thin bottom
+	
+[Field:RsComInvPvt]
+	Set as	:"" ;"PVT MARK:"
+	Width	:8
+	Align	:Right
+	Style	:Verdana
+	
+[Field:RsComInvPvts]
+	Set as	:"" ;$PvtMark
+	Width	:8
+	Align	:Left
+	Style	:Verdana
+	;Border	:Thin bottom
+	
+[Field:RsComInvVhicle]
+	Set as		:"" ;"VEHICLE NO."
+	Width		:10
+	Align		:Right
+	Style		:Verdana
+	Space Left	:1.1
+	;Border	:Thin bottom
+		
+[Field:RsComInvVhicles]
+	Set as	:"" ;$EiVehicle
+	Width	:15
+	Align	:Left
+	Style	:Verdana
+	;Border	:Thin bottom
+		
+[Line:RsComInvDelivery]
+	Field:RsComInvDelivery,RsComInvDeliverys
+	;Border:thinbottom
+	
+[Field:RsComInvDelivery]
+	Set as	:"" ;"DELIVERY AT:"
+	Width	:12
+	Align	:Left
+	Style	:Verdana
+	
+[Field:RsComInvDeliverys]
+	Set as		:"" ;$BASICORDERTERMS
+	Width		:20
+	Align		:Left
+	Style		:Verdana
+;	Border	:Thin bottom
+		
+[Part:RsComInvDetailTotal]
+	Line		:FortSubtotal,FortOutput,FortTotalValue
+	Repeat		:FortOutput:LedgerEntries
+	Border		:thin top ;left
+	Width		: 35% page
+	
+[Line:FortSubtotal]
+	Right Field:FortSubtotal,FortSubtotals
+[Field:FortSubtotal]
+	Set as		:"SUB TOTAL :"
+	Width		:12
+	Align		:Right
+	Style		:Verdana
+	;Space Left	:180
+	
+[Field:FortSubtotals]
+	Set as		:$$CollAmtTotal:inventoryentries:$AMOUNT
+	Width		: 20
+	Align		:Right
+	Style		:Verdana
+	;Space Left	:40
+	
+	
+[Line:FortOutput]
+    Right Field:FortOutput,FortOutputTotal
+    ;Local: Field: Name Field		: Space Left	: 180
+	Local: Field: Name Field 		: Set as		: $LedgerName
+	Local: Field: Name Field		: Width			: 20
+	Local: Field: Name Field 		: Style			: Verdana
+	Local: Field: FortOutputTotal 	: Set as		: $Amount
+    Empty:$LedgerName = $PartyLedgerName
+
+[Field:FortOutput]
+	Set as		:$LedgerName
+	Width		:20
+	Align		:Right
+	Style		:Verdana
+	;Space Left	:180
+	;Border		:Thin Left Right
+	
+[Field:FortOutputTotal]
+	Set as		:$Amount
+	Width		:20
+	Align		:Right
+	Style		:Verdana
+	;pace Left	:70
+;	Border		:Thin right
+	
+[Line:FortTotalValue]
+	Right Field	:FortTotalValue,FortTotalValues
+	Border		:thin Top 
+[Field:FortTotalValue]
+	Set as		:"BILL AMOUNT :"
+	Width		:20
+	Align		:Left
+	Style		:Verdana
+	;Space Right	:35
+	
+[Field:FortTotalValues]
+	Set as		:$TotalAmount
+	Width		:20
+	Align		:Right
+	Style		:Verdana bold
+	;Space Left	:15
+	
+[Part:RsComTotalValueWord]
+;	Line	:RsComTotalValueWord,RsComBank,RsComPlease
+	;Border	:ThinBottom
+	Line	:RSVATLine1 ;,VATLine2,VATLine3,VATLine4,RsComTotalValueWord,RsComBank,RsComPlease
+	;Border	:ThinBottom
+[Line	:RSVATLine1]
+	Field: TempFld1 ;,TempFld2,TempFld3
+	Space Bottom: .3 
+[Field: TempFld1]
+	Use		: Name Field
+	Set as	:"" ;"VAT SALE 6.25% :"
+	Width	: 20
+	Align	:Left
+	Style	:Verdana
+	
+[Field: TempFld2]
+	Use		: Name Field
+	Set as	:"VAT TAX 6.25% :"
+	Width	: 20
+	Align	:Left
+	Style	:Verdana
+[Field: TempFld3]
+	Use		: Name Field
+	Set as	:"SUR ON 6.25% :"
+	Width	: 20
+	Align	:Left
+	Style	:Verdana
+	
+	
+[Line	:VATLine2]
+	Field: TempFld1,TempFld2,TempFld3
+	Local: Field:  TempFld1 :  Set as	:"VAT SALE 13% :"
+	Local: Field:  TempFld2 :  Set as	:"VAT TAX 13% :"
+	Local: Field:  TempFld3 :  Set as	:"SUR ON 13% :"
+	Space Bottom: .3
+[Line	:VATLine3]
+	Field: TempFld1,TempFld2,TempFld3
+	Local: Field:  TempFld1 :  Set as	:"CST SALE 2% :"
+	Local: Field:  TempFld2 :  Set as	:"CST TAX 2% :"
+	Local: Field:  TempFld3 :  Set as	:""
+	Space Bottom: .3
+[Line	:VATLine4]
+	Field: TempFld1,TempFld2,TempFld3
+	Field: TempFld1,TempFld2,TempFld3
+	Local: Field:  TempFld1 :  Set as	:"VAT SALE TAXFREE :"
+	Local: Field:  TempFld2 :  Set as	:" "
+	Local: Field:  TempFld3 :  Set as	:""
+	Space Bottom: .3
+[Line:RsComTotalValueWord]
+	Field:RsComTotalValueWord,RsComTotalValueWords
+	Border: THIN TOP
+	
+[Field:RsComTotalValueWord]
+	Set as	:"Rs.(In Words)  :"
+	Width	: 18
+	Align	:Left
+	Style	:Verdana
+	
+[Field:RsComTotalValueWords]
+	Set as		:$$InWords:$AMount + " Only."
+	Full Width	:Yes
+	Align		:Left
+	Style		:Verdana
+	
+[Line:RsComBank]
+	Field:RsComBankName ;, RsComBankNO
+	Border:thin Top Bottom
+	
+[Field:RsComBankName]
+	Set as	:"" ; "Our Bank Name is " + $Name:Ledger:##SABankName ;;+ " " + $BankDetails:Ledger:##SABankName ;$bankBranchname:ledger:##sabankname
+	Full Width	: Yes
+	Align	:Left
+	Style	:Verdana
+	
+[Field:RsComBankNO]
+	Set as		:"" ;$BankDetails:Ledger:##SaBankName
+	Width		:40
+	Align		:Left
+	Style		:Verdana
+	
+[Line:RsComPlease]
+	Field		:RsComPlease,RsComPleases
+	Right Field	:RsComFor
+	Space Top:.5
+	
+[Field:RsComPlease]
+	Set as	:"Please Note:"
+	Width	:20
+	Align	:Left
+	Style	:Verdana
+	Border	:thin Bottom
+
+[Field:RsComPleases]
+	Set as	:""
+	Width	:20
+	Align	:Left
+	Style	:Verdana
+
+[Field:RsComFor]
+	Set as	:"FOR " + @@Cmpmailname ; BHULLAR DISTRIBUTORS"
+	Width	:30
+	Align	: Right
+	Style	:Verdanabold
+	
+	
+[Part:RsComTerms]
+	Parts	: RsCompTerms, RsCompBank
+	Right Part	: RsCompSign
+	[Part	: RsCompTerms]
+		Width	: 50% page
+	Line:RsComTermCond,RsComTerms,RsComTerms1,RsComTerms2,RsComTerms3
+[Line:RsComTermCond]
+	Field:RsComTermCond
+[Field:RsComTermCond]
+	Set as	:"Terms  &  Conditiona"
+	Width	:30
+	Align	:Left
+	Style	:Verdanabold
+	Border	:thin Bottom
+	
+[Line:RsComTerms]
+	Field:RsComTerms
+[Field:RsComTerms]
+	Set as		:"1.Discrepancy if Any Subject to Correction 2. Goods once Sold Will not Returnable"
+	Full Width	:Yes
+	Align		:Left
+	Style		:Verdana
+	
+[Line:RsComTerms1]
+	Field:RsComTerms1
+[Field:RsComTerms1]
+	Set as		:"3.All payments made by Draft/Cheque in favour of Edge Pharma payable at Ludhiana. "
+	Full Width	:Yes
+	Align		:Left
+	Style		:Verdana
+	
+[Line:RsComTerms2]
+	Field:RsComTerms2
+[Field:RsComTerms2]
+	Set as		:"4. Subject to Ludhiana Jurisdiction. 5. Dishonoring of cheque Rs. 200/- Dr. to your account."
+	Full Width	:Yes
+	Align		:Left
+	Style		:Verdana
+	
+[Line:RsComTerms3]
+	Field:RsComTerms3
+	
+[Field:RsComTerms3]
+	Set as		:"6.Interest Will be Charged @24% p.a. if is not Paid Within 15 Days"
+	Align		:Left
+	Style		:Verdana
+	Full Width	:Yes
+	
+[Part	: RsCompBank]
+	Width	: 35% page
+	 Lines	: EXPINV BankTitle, EXPINV AcHolder, EXPINV BankName, EXPINV BankAccNo, EXPINV BankBranchInfo
+	 
+[Part	: RsCompSign]
+	Width	: 15% page
+	Bottom Line	: RsCompSign
+	[Line	: RsCompSign]
+		Right Field	:RsComAuth
+[Field:RsComAuth]
+	Set as		:"AUTHORISED SIGNATURE"
+;	Width		:15% page
+	Align		:Right
+	Style		:Verdana
+	
+
+
+	
+;;[#Part: Company MailingDetails]
+[#Part: Company MailingDtlsContact]
+	
+	Line:RssComGodown,RssComGodown1,RsComMailDL,RsComMailDL1
+;	Height		: 18
+	Scroll	: Vertical
+	
+[Line:RssComGodown]
+	Field		:Medium Prompt,RssComGodown
+	Local		:Field	:Medium Prompt	:Info		:$$LocaleString:"Godown Address"
+[Field:RssComGodown]
+	Use			:Name Field
+	Storage		:GodownAddress
+	Full Width	:Yes
+	Align		:Left
+	Style		:Normal
+[Line:RssComGodown1]
+	Field		:Medium Prompt,RssComGodown1
+	Local		:Field	:Medium Prompt	:Info		:$$LocaleString:"Godown DL No. :"
+[Field:RssComGodown1]
+	Use			:Name Field
+	Storage		:GodownAddress1
+	Full Width	:Yes
+	Align		:Left
+	Style		:Normal
+	
+[Line:RsComMailDL]
+	Field 		: Medium Prompt, RsComMailDL
+    Local       : Field : Medium Prompt : Info       : $$LocaleString:"DL. NO:"
+[Field:RsComMailDL]
+	Use			:Name Field
+	Storage		:ComMailDL
+	Width		:20
+	Align		:Left
+	Style		:Normal
+	
+[Line:RsComMailDL1]
+	Field		:Medium Prompt,RsComMailDL1
+	Local		:Field:Medium Prompt	: Info			: $$LocaleString:"DL. NO:"
+[Field:RsComMailDL1]
+	Use			:Name Field
+	Storage		:ComMailDL1
+	Width		:20
+	Align		:Left
+	Style		:Normal
+	
+	
+[#Form: Ledger]
+
+[#Part: LED Mailing Details]
+	Add:Part:ConDetail
+[Part:ConDetail]
+	Line:ConDL,ConDL1,CONDRNO
+[Line:ConDL]
+	Field 		: Medium Prompt, ConDL
+    Local       : Field : Medium Prompt : Info       : $$LocaleString:"DL. NO:"
+
+[Field:ConDL]
+	Use		:Name Field
+	Storage	:ComDL
+	Width	:25
+	Align	:Left
+	Style	:Normal
+
+[Line:ConDL1]
+	Field 		: Medium Prompt, ConDL1
+    Local       : Field : Medium Prompt : Info       : $$LocaleString:"DL. NO:"
+  
+[Field:ConDL1]
+	Use			:Name Field
+	Storage		:ComDL1
+	Width		:20
+	Align		:Left
+	Style		:Normal
+	
+[Field:ConDll]
+	Use			:Name Field
+	Storage		:ComDL1
+	Width		:20
+	Style		:Normal    
+[Line: CONDRNO]
+	Field 		: Medium Prompt, CONDRNO
+    Local       : Field : Medium Prompt : Info       : $$LocaleString:"Doc Regn. No.:"
+  
+[Field:CONDRNO]
+	Use			:Name Field
+	Storage		:ComDRNO
+	Width		:20
+	Align		:Left
+	Style		:Normal
+ 	
+
+[#Form:EI Supplementary]
+   [#Part: EI DelNoteInfo]
+	   Line:EiVehicle,EiPVT
+[Line:EiVehicle]
+	Field:Medium Prompt,EiVehicle
+	Local:Field:Medium Prompt:Set as:"Vehicle NO."
+[Field:EiVehicle]
+	Use		:Name Field
+	Storage	:EiVehicle
+	Width	:20
+	Align	:Left
+	Style	:Normal
+[Line:EiPVT]
+	Field:Medium Prompt,EiPVT
+	Local:Field:Medium Prompt:Set as:"PVT MARK"
+[Field:EiPVT]
+	Use		:Name Field
+	Storage	:PvtMark
+	Width	:20
+	Align	:Left
+	Style	:Normal
+	
+[#Part: STKI Units]	
+	Line:MFG,MRPLINE
+[Line:MFG]
+	Field	:Medium Prompt,MFG
+	Local	:Field:Medium Prompt	:Set as	:"MFG. NAME"
+[Field:MFG]
+	Use		:Name Field
+	Storage	:STKMFG
+	Width	:25
+	Align	:Left
+	Style	:Normal
+
+[Line:MRPLine]
+	Field	:Medium Prompt,MRPLine
+	Local	:Field:Medium Prompt	:Set as	:"MRP : "
+[Field:MRPLine]
+	Use		:Number Field
+	Storage	:STKRSMRP
+	Width	:10
+	Align	:Left
+	Style	:Normal
+	Format	: "Nozero,Decimal:2"
+
+[System	:UDF]
+	GodownAddress	:		String		:2001
+	GodownAddress1	:		String		:20011
+	ComMailDL		:		String		:2002
+	ComMailDL1		:		String		:2003
+	ComDL			:		String		:2004
+	ComDL1			:		String		:2005
+	EiVehicle		:		String		:2006
+	PvtMark			:		String		:2007
+	STKMFG			:		String		:2008
+	BankName		:		String		:2009
+	AccountNumber			:		String		:2010
+	STKRSMRP		: Number	: 2011
+	ComDRNO			: String: 2012
+[Collection:InvoiceLedger]
+	Source Collection	:..
+	Walk				:	Inventoryentries,batchAllocations
+	Fetch				:	*.*
+	Compute				: 	Stockitemname1 		: $..StockItemName
+	Compute				: 	Rate1				: $..Rate	
+	Compute				: 	STKMFG1				: $STKMFG:StockItem:$StockItemName
+	Compute				:	BasicNumpackages1	: $..BasicNumpackages
+	Compute				:	Discount		: $Discount
+	Sort				: 	@@Default			: $Stockitemname1 ;;$STKMFG1
+;	Compute				:	billedQTy1			: $..billedQTy
+;	Fetch				: 	STKMFG.*
+
+
+
+
+
+[Style		:MyStyle]
+	Font	:Arial
+	Height	:10
+	;Bold	:Yes
+	;Italic	:Yes
+	
+[Style:TimesNewRoman]
+	Font	:TimesNewRoman
+	Height	:13
+	Bold	:Yes
+
+[Style:TimesNewRoman16]
+	Font	:TimesNewRoman
+	Height	:16
+	Bold	:Yes
+	
+[Style:Verdana]
+	Font	:Verdana
+	Height	:8
+	
+[Style:bold]
+	Bold	:Yes
+[#Object: StockITem]
+	MyHSNCode : $$CollectionField:$HSNCODE:1:GSTDETAILS
+	MyItemRate: $GSTDETAILS[1].STATEWISEDETAILS[1].RATEDETAILS[3].GSTRate ;;TRATE $CollectionField:$HSNCODE:1:GSTDETAILS
+
+[System	: Formulae]
+	MyQtyVal : ($$CollNumTotal:inventoryentries:($$Number:$billedQTy))

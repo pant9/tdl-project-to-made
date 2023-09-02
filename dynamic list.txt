@@ -1,0 +1,52 @@
+[#Menu: Gateway of Tally]
+	Add: Item: At Beginning: Month year list: Alter: AGSMonthList
+	[Report: AGSMonthList]
+		Title: "List of Month & Year"
+		Form: AGSMonthList
+		Object: company
+		
+[Form: AGSMonthList]
+	Part: AGSMonthList
+	[Part: AGSMonthList]
+		Line: AGSMonthList
+		Repeat: AGSMonthList  :   AGSMonthList
+		Scroll: Vertical
+		Break On: $$IsEmpty:$AGSMonthListName
+		
+[Line: AGSMonthList]
+	Field: AGSMonthList
+	
+[Field: AGSMonthList]
+	Use: Name field
+	Storage: AGSMonthListName
+	Set Always: Yes
+	
+[System: UDF]
+	AGSMonthList: Aggregate : 100
+	AGSMonthListName: String: 101
+	AGSMonthShowList: String: 102
+	
+[#Part: EI Consignee]
+	Add: Line: After: EI Consignee: AGSMonthShowList
+	
+	[Line: AGSMonthShowList]
+		Field: MediumPrompt, AGSMonthShowList
+		Local: Field: medium prompt: Set as: "Month & year"
+		
+	
+[Field: AGSMonthShowList]
+	Use: Namefield
+	Table: Table_monthyear
+	Show Table: Always
+	Storage: AGSMonthShowList
+	Set Always: Yes
+	
+[Table: Table_monthyear]
+	Type: AGSMonthList: company
+	Child Of: ##SVCurrentCompany
+	Fetch: AGSMonthList
+	Fetch: AGSMonthListName
+	Format: $AGSMonthListName
+	
+	
+	

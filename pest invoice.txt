@@ -1,0 +1,1927 @@
+;;;726053976 kahlon trader
+;;;746082666 Goyal Brother
+;;;795143637 Jyoti Chouhan
+[#Menu: Gateway of Tally]
+	Add : Key Item : After : @@locQuit : Pest Master : D : Alter : RSPestMasterRPT
+[#Form : Ei Supplementary]
+
+[#Line: EI OrderRef]
+	Local 		: Field : Medium Prompt : Info : $$LocaleString:"Adhaar No."
+[#Field: EI OrderRef]
+	Set as	: if $$IsEmpty:$$Value then $LedAdharn:Ledger:$PartyledgerName else $$Value
+	
+[#Part: LED Contact]
+	Add	: Line	: LedAdharcc
+[Line	: LedAdharcc]
+    	Fields      : Medium Prompt, LedAdharcc
+        Local       : Field : Medium Prompt : Set as : $$LocaleString:"Adhaar No. :"
+[Field	: LedAdharcc]
+	Use	: Name Field
+	Storage	: LedAdharn
+[System:UDF]
+	LedAdharn : String	: 521
+[#Part: VTYP Behaviour]
+	Add : Option : ForInvoices 	: $$IsSales:$Parent or $$IsDelNote:$Parent
+
+[!Part : ForInvoices]
+	Add : Line : At End : ForInvoices,ForNormalInvoice,ForNormalline1,ForNormalline2,ForNormalline3
+[Line : ForInvoices]
+	Field : Long Prompt,ForInvoices
+	Local : Field : Long Prompt : Set as :"Print Pesticide Invoice ?"
+	[Field : ForInvoices]
+		Use 		: Logical Field
+		Storage 	: ForInvVtype
+		Set Always 	: Yes
+[Line	: ForNormalInvoice]
+	Field : Long Prompt,ForNormalInvoice
+	Local : Field : Long Prompt : Set as :"Print Additional Info. ?"
+	[Field : ForNormalInvoice]
+		Use 		: Logical Field
+		Storage 	: ForInvadditional
+		Set Always 	: Yes
+[Line	: ForNormalline1]
+	Field : Long Prompt,ForNormalline1
+	Local : Field : Long Prompt : Set as :"Additional Line 1 ?"
+	[Field : ForNormalline1]
+		Use 		: Name Field
+		Storage 	: VtypeLine1
+		Set Always 	: Yes
+	
+[Line	: ForNormalline2]
+	Field : Long Prompt,ForNormalline2
+	Local : Field : Long Prompt : Set as :"Additional Line 2 ?"
+	[Field : ForNormalline2]
+		Use 		: Name Field
+		Storage 	: VtypeLine2
+		Set Always 	: Yes
+[Line	: ForNormalline3]
+	Field : Long Prompt,ForNormalline3
+	Local : Field : Long Prompt : Set as :"Additional Line 3 ?"
+	[Field : ForNormalline3]
+		Use 		: Name Field
+		Storage 	: VtypeLine3
+		Set Always 	: Yes
+	
+
+[System : Formula]
+	IsINVVtype 	: $ForINVVtype:VoucherType:$VoucherTypeName
+
+[System : UDF]
+	ForINVVtype		: Logical  	: 6010
+	ForInvadditional: Logical	: 6011
+	VtypeLine1		: String	: 6012
+	VtypeLine2		: String	: 6013
+	VtypeLine3		: String	: 6014
+	
+
+[#Menu: Gateway of Tally]
+	Add : Key Item : After : @@locChartofAccounts : Crop Master : D : Alter : RSCropMasterRPT
+
+[Report : RSCropMasterRPT]
+	Form : RSCropMasterRPT
+	Title	: $$LocaleString:"Crop Master"
+	Object : Company
+[Form : RSCropMasterRPT]
+	Part : RSCropMasterRPT
+
+[Part : RSCropMasterRPT]
+	Line :  RSCropMasterRPTTitle, RSCropMasterRPTEntry
+	Repeat : RSCropMasterRPTEntry : RSCropMaster
+	Breakon : $$IsEmpty:$RSCropName
+	Scroll : Vertical
+[Line : RSCropMasterRPTTitle]
+	Field : RSCropNameFld
+	Local : Field : Default : Type	: String
+	Local : Field : Default : Delete : Storage
+	Local : Field : Default : Delete : Inactive
+	Local : Field : Default : Align  : Center
+	Local : Field : Default : Skip : Yes
+	Local : Field : RSCropNameFld	: Set as : "Crop Name"
+	Border	: Thin Top Bottom
+[Line : RSCropMasterRPTEntry]
+	Field : RSCropNameFld
+[Field : RSCropNameFld]
+	Use		: Name Field
+	Storage	: RSCropName
+	width	: 20
+	Style	: Small
+[System : UDF]
+	RSCropMaster 	: Aggregate : 401
+	RsCropName	: String	: 402
+
+[Collection:CmpCropName]
+	Title	: $$LocaleString:"Crop Master"
+	Type:  RSCropMaster : Company
+	Child Of:##SvCurrentCompany
+	Fetch	: RsCropName
+	Format:$RsCropName,20
+
+
+
+
+[Report : RSPestMasterRPT]
+	Form : RSPestMasterRPT
+	Title	: $$LocaleString:"Pest Master"
+	Object : Company
+[Form : RSPestMasterRPT]
+	Part : RSPestMasterRPT
+
+[Part : RSPestMasterRPT]
+	Line :  RSPestMasterRPTTitle, RSPestMasterRPTEntry
+	Repeat : RSPestMasterRPTEntry : RSPestMaster
+	Breakon : $$IsEmpty:$RSPestName
+	Scroll : Vertical
+[Line : RSPestMasterRPTTitle]
+	Field : RSPestNameFld
+	Local : Field : Default : Type	: String
+	Local : Field : Default : Delete : Storage
+	Local : Field : Default : Delete : Inactive
+	Local : Field : Default : Align  : Center
+	Local : Field : Default : Skip : Yes
+	Local : Field : RSPestNameFld	: Set as : "Pest Name"
+	Border	: Thin Top Bottom
+[Line : RSPestMasterRPTEntry]
+	Field : RSPestNameFld
+[Field : RSPestNameFld]
+	Use		: Name Field
+	Storage	: RSPestName
+	width	: 20
+	Style	: Small
+[System : UDF]
+	RSPestMaster 	: Aggregate : 405
+	RsPestName	: String	: 406
+
+[Collection:CmpPestName]
+	Title	: $$LocaleString:"Pest Master"
+	Type:  RSPestMaster : Company
+	Child Of:##SvCurrentCompany
+	Fetch	: RsPestName
+	Format:$RsPestName,20
+	
+[System  : UDF]
+	VchCropName	: String: 410
+	VchPestName	: String:411
+
+[#Line  : ei columnone]
+	Add  :  Option  :ItemCrops: @@issales and @@IsINVVtype
+[!Line :ItemCrops]
+	add:Right Field:At Beginning: ItemCropsTitle,ItemPestTitle
+[Field  :  ItemCropsTitle]
+	Use    : Name field
+	Set as : "Crop"
+	Width  : 15
+	Skip   : Yes
+	
+[Field  :  ItemPestTitle]
+	Use    : Name field
+	Set as : "Pest"
+	Width  : 15
+	Skip   : Yes
+
+[#Line  : ei Inv Info]
+	Add  : Option  : ItemcropDetails : @@issales and @@IsINVVtype
+[#Line  : Ci Inv Info]
+	Add  : Option  : ItemcropDetails : @@issales and @@IsINVVtype
+[!Line  : ItemcropDetails]
+    add:Right Field:At Beginning: ItemcropName,itempestName
+;	Local:Field:default:Type:Number
+[Field:ItemcropName]
+	Use       : name field
+	Table     : CmpCropName,not applicable
+    Show Table: Always
+	Storage    : VchCropName
+	Dynamic		: ""
+	;Set as:$ItemBrandname
+	Width     : 15
+
+[Field:ItempestName]
+	Use       : name field
+	Table     : CmpPestName,not applicable
+    Show Table: Always
+	Storage    : vchPestName
+	Dynamic		: ""
+	;Set as:$ItemBrandname
+	Width     : 15	
+
+	
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+[#Form	: Comprehensive Invoice]
+Add	: Option	: SaiRamAgriInvoice : @@ISSales and @@IsINVVtype
+[!Form	: SaiRamAgriInvoice]
+	Delete	: Parts
+	Delete	: Top Parts
+	Delete	: Bottom Parts
+	Delete:	Page Break
+	Add	: Part: ExpInvSaleOp,EXPINV Details
+	Add	: Bottom Part	: EXPINV Totals,ExpinvVatAna,ExpinvTermssairam,ExpInvBlank
+;		Use         : VATNG VATCSTAnalysis Variables
+;       Parts       : STDInvoiceTop, EXPINV OpPageBreak, 
+;     	BottomParts : EXPINV Totals , EXPINV SignOff , EXPINV Customer, EXPINV Jurisdiction, EXPINV InvoiceCompGen
+	Add	: Page Break	: ExpinvCl,ExpInvSaleOp
+	Add	: Space Bottom: 0.25 inch
+[Part	: ExpinvCl]
+	Part	: EXPINV Totals,ExpinvVatAna,ExpinvTermssairam,ExpInvBlank
+	Vertical: Yes
+;	Line	: ExpinvCl
+[Line	: ExpinvCl]
+	Field	: Name Field
+	Local	: Field	: Name Field : Set as: "...Continued"
+	Local	: Field	: Name Field : Full Width	: Yes
+	Local	: Field	: Name Field : Align	: Right
+	Border	: THin Top
+	Space Bottom	: 2
+	
+[Part: ExpInvSaleOp]
+	Part	: EXPINV TitleSale,EXPINV CompanyA,ExpInvPartyCmp, EXPINV Column
+	;Height	: 2.50 Inch 
+	Vertical: Yes
+	Border	: Thin Left Right
+	Local : Part: EXPINV Column: Common Border	: Yes
+
+[Part: ExpInvSaleOp1]
+	Part	: EXPINV TitleSale,EXPINV CompanyA,ExpInvPartyCmp, EXPINV Column1b
+	;Height	: 2.50 Inch 
+	Vertical: Yes
+	Border	: Thin Left Right
+	Local : Part: EXPINV Column: Common Border	: Yes
+
+[Part	: EXPINV TitleSale]
+	Part	: EXPINV TitleSale1,EXPINV TitleSale2,EXPINV TitleSale3
+	Border	: Thin Top
+[Part	: EXPINV TitleSale1]
+	Line	: ExpInvCmpBGST,ExpInvCmpBPest,FErt,SeedL,HolesaleL
+
+[Part	: EXPINV TitleSale2]
+	Line	:  EXPINV TitleSale,EXPINV TitleSale2A
+[Part	: EXPINV TitleSale3]
+	Line	:  Copy FieldLine,Annnxureline
+[Line	:  Copy FieldLine]
+	Field	:  Copy Field
+[Line	: Annnxureline]
+            Field      : Simple Field
+            Local      : Field : Info Field   	: Info       : ""
+            Local      : Field : Info Field   	: FullWidth  : Yes
+            Local      : Field : Simple Field	: Set as     : "(Annexure-A)"
+            Local      : Field : Simple Field	: Style      : Normal Bold
+            Local      : Field : Simple Field	: FullWidth  : Yes
+            Local      : Field : Simple Field	: Align      : Right
+            Local      : Field : Simple Field	: PrePrinted : Yes			
+	
+;;	,EXPINV TitleSale1,EXPINV TitleSale2
+        [Line: EXPINV TitleSale]
+            Field      : Simple Field
+            Local      : Field : Info Field   	: Info       : ""
+            Local      : Field : Info Field   	: FullWidth  : Yes
+            Local      : Field : Simple Field	: Set as     : If $$InExportMode AND @@IsExcelFormat Then ##ReportTitle Else If ##PrintWithPageNo Then ##ReportTitle + @@ExtraPageNo Else ##ReportTitle
+            Local      : Field : Simple Field	: Style      : Large Bold
+            Local      : Field : Simple Field	: FullWidth  : Yes
+            Local      : Field : Simple Field	: Align      : Centre
+            Local      : Field : Simple Field	: PrePrinted : Yes
+        [Line: EXPINV TitleSale2A]
+            Field      : Simple Field
+            Local      : Field : Info Field   	: Info       : ""
+            Local      : Field : Info Field   	: FullWidth  : Yes
+            Local      : Field : Simple Field	: Set as     : "Bill/Cash"
+            Local      : Field : Simple Field	: Style      : Normal Bold
+            Local      : Field : Simple Field	: FullWidth  : Yes
+            Local      : Field : Simple Field	: Align      : Centre
+            Local      : Field : Simple Field	: PrePrinted : Yes			
+[Line: EXPINV TitleSale1]
+            Field      : Simple Field
+            Local      : Field : Simple Field	: Set as     : "ISSUED UNDER SECTION 31 OF THE CENTRAL GOODS AND SUPPLY TAX ACT 2017"
+            Local      : Field : Simple Field	: Style      : Normal 
+            Local      : Field : Simple Field	: FullWidth  : Yes
+            Local      : Field : Simple Field	: Align      : Centre
+            Local      : Field : Simple Field	: PrePrinted : Yes
+[Line: EXPINV TitleSale2]
+            Field      : Simple Field
+            Local      : Field : Simple Field	: Set as     : "ORIGINAL FOR RECEIPIENT/DUPLICATE FOR TRANSPORTER/TRIPLICATE FOR SELLER"
+            Local      : Field : Simple Field	: Style      : Normal 
+            Local      : Field : Simple Field	: FullWidth  : Yes
+            Local      : Field : Simple Field	: Align      : Centre
+            Local      : Field : Simple Field	: PrePrinted : Yes
+			Space Bottom: .5
+			Border	: THIN BOTTOM
+[Line	: ExpInvCmpBGST]
+	Field	: Short Prompt,Name Field
+   	Local   : Field : Short Prompt : Set as 	: $$LocaleString:"GSTIN :"
+	Local	: Field	: Name Field : Set as	: @@CMPGSTaxNumber ;;$CMPPesticideLicNo:Company:##SVCurrentCompany
+;	Local	: Field	: Name Field : Style	: Normal
+	Local	: Field	: Name Field : Full Width	: Yes
+[Line	: ExpInvCmpPan]
+	Field	: Name Field
+   	Local   : Field : Short Prompt : Set as 	: $$LocaleString:"PAN :"
+	Local	: Field	: Name Field : Set as	: "PAN :" + $IncomeTaxNumber:Company:##SVCurrentCompany
+	Local	: Field	: Name Field : Align	: Center
+	Local	: Field	: Name Field : Full Width	: Yes
+	
+[Line	: ExpInvCmpBPest]
+	Field	: Short Prompt,Name Field
+   	Local   : Field : Short Prompt : Set as 	: $$LocaleString:"Pest. Lic. No. :"
+	Local	: Field	: Name Field : Set as	: $CMPPesticideLicNo:Company:##SVCurrentCompany
+;	Local	: Field	: Name Field : Style	: Normal
+	Local	: Field	: Name Field : Full Width	: Yes
+	
+[Line	: FErt]
+	Field	: Short Prompt,Name Field
+   	Local   : Field : Short Prompt : Set as 	: $$LocaleString:"Fert. Lic. No. :"
+	Local	: Field	: Name Field : Set as	: $CMPFertilizersLicNo:Company:##SVCurrentCompany
+;	Local	: Field	: Name Field : Style	: Normal
+	Local	: Field	: Name Field : Full Width	: Yes
+	
+
+[Line	: SeedL]
+	Field	: Short Prompt,Name Field
+   	Local   : Field : Short Prompt : Set as 	: $$LocaleString:"Seed Lic. No. :"
+	Local	: Field	: Name Field : Set as	: $CMPSeedLicNo:Company:##SVCurrentCompany
+;	Local	: Field	: Name Field : Style	: Normal
+	Local	: Field	: Name Field : Full Width	: Yes
+	Invisible:$$IsEmpty:$CMPSeedLicNo:Company:##SVCurrentCompany
+	
+[Line   :HolesaleL]
+Field	: Medium Prompt,Name Field
+Local   : Field :Medium  Prompt : Set as 	: $$LocaleString:"Wholesale Fert. LicNo. :"
+Local	: Field	: Name Field : Set as	: $CMPHOLESNO:Company:##SVCurrentCompany
+Local	: Field	: Name Field : Style	: Normal
+Local	: Field	: Name Field : Full Width	: Yes
+
+
+;[#Part:CMP GSTIN]
+	
+ ;          Add   : Line  : After  :  CMP GSTIN  : CMPHOlesaleno
+	 [Line       : CMPHOlesaleno]
+		Field    : mediumprompt, CMPHOLESNO
+		Local    : field  :mediumprompt : Set as  :"Wholesale License NO."
+		
+		
+		[Field   : CMPHOLESNO]
+			Use  : name field
+			Storage   : CMPHOLESNO
+	[System  : UDF]
+	
+	CMPHOLESNO : String  :  14014	
+	
+	
+	
+
+[Part	: EXPINV CompanyA]
+	Part	: EXPINV CompanyA1,EXPINV CompanyA2,EXPINV CompanyA3
+	Border	: Thin bottom
+[Part	: EXPINV CompanyA1]
+	Line	: EXPINV CompanyA1L1,EXPINV CompanyA1L2,EXPINV CompanyA1L3
+[Line	: EXPINV CompanyA1L1]
+	Field	: Name Field
+	Local	: Field	: Name Field : Set as	: "Bill/Invoice Format Approved"
+	Local	: Field	: Name Field : Style	: Normal
+;	Local	: Field	: Name Field : Full Width	: Yes
+	Local	: Field	: Name Field : Align: Left
+[Line	: EXPINV CompanyA1L2]
+	Field	: Name Field
+	Local	: Field	: Name Field : Set as	: "By GOI For Issue Cash/Credit"
+	Local	: Field	: Name Field : Style	: Normal
+;	Local	: Field	: Name Field : Full Width	: Yes
+	Local	: Field	: Name Field : Align: Left
+[Line	: EXPINV CompanyA1L3]
+	Field	: Name Field
+	Local	: Field	: Name Field : Set as	: "Memo To Farmers"
+	Local	: Field	: Name Field : Style	: Normal
+;	Local	: Field	: Name Field : Full Width	: Yes
+	Local	: Field	: Name Field : Align: Left
+	
+	
+[Part	: EXPINV CompanyA2]	
+	Line	: EXPINV CompanyAName,EXPINV CompanyAdd,ExpInvCmpcontact,ExpInvCmpPan
+	;Repeat	: EXPINV CompanyAdd : Company Address1
+[Line	: EXPINV CompanyAName]
+	Field	: Name Field
+	Local	: Field	: Name Field : Set as	: @@CmpMailName
+	Local	: Field	: Name Field : Style	: LargeBold14  ;;Large Bold
+	Local	: Field	: Name Field : Full Width	: Yes
+	Local	: Field	: Name Field : Align: Center
+
+[Line: EXPINV CompanyAdd]
+	Field	: Name Field
+	Local	: Field	: Name Field : Set as	: $$FullList:CompanyAddress1:$Address
+;	Local	: Field	: Name Field : Style	: Normal
+	Local	: Field	: Name Field : Full Width	: Yes
+	Local	: Field	: Name Field : Align: Center
+;	Local	: Field	: Name Field : Space left	: 25
+;	Local	: Field	: Name Field : Space Right	: 25
+[Line:ExpInvCmpcontact]
+	Field	: Name Field
+	Local	: Field	: Name Field : Set as	: @@CmpContacts + " " + @@CmpEmail + " " + @@CmpWebsite
+;	Local	: Field	: Name Field : Style	: Normal
+	Local	: Field	: Name Field : Full Width	: Yes
+	Local	: Field	: Name Field : Align: Center
+[Line:ExpinvWeb]
+	Field	: Name Field
+	Local	: Field	: Name Field : Set as	: ""
+;	Local	: Field	: Name Field : Style	: Normal
+	Local	: Field	: Name Field : Full Width	: Yes
+	Local	: Field	: Name Field : Align: Center
+	Local	: Field	: Name Field : Align: Center
+[Part	: EXPINV CompanyA3]
+	Line	: EXPINV CompanyA3
+[Line	: EXPINV CompanyA3]
+	Field	: Name Field
+
+[Part	: ExpCmpBankDet]
+	Line	: ExpInvCmpBank,ExpInvCmpBankAcc,ExpInvCmpBIfsc
+	Border	: Thin Left Right
+	Common Border:Yes
+
+[Part	: EXPINV CompanyB]
+	Line	: ExpInvCmpBGST,ExpInvCmpPan,ExpInvCmpBPest,FErt,ExpInvCmpBank,ExpInvCmpBankAcc,ExpInvCmpBIfsc
+	Border	: Thin Right
+	Local	: Field	: Default : Style	: Small
+
+
+[Part: ExpInvPartyCmp]
+	Part	: EXPINV CompanyC,EXPINV CompanyD
+[Line	: ExpInvCmpBankTITLE]
+	Field	: Name Field
+	Local	: Field	: Name Field : Set as	: "Bank Details" ;:If NOT $$IsEmpty:@@VchBankMailingName Then @@VchBankMailingName Else ##SABankName
+	Local	: Field	: Name Field : Align	: Center
+	Local	: Field	: Name Field : Full Width	: Yes
+	Border	: Thin Top
+	
+
+[Line	: ExpInvCmpBank]
+	            Left Fields : EXPINV SLNoTitle, EXPINV MarksTitle1, EXPINV PackagesTitle1, EXPINV DescTitle
+            RightFields :EXPINV HSNSACTotal, EXPINV PartNoTitle, EXPINV MRPTotal, VAT AccTotPerc, ExpInvRSBatch,ExpInvRSMfd ,ExpInvRSExpiry,ExpInvRSPkgs,EXPINV AccDueOn, EXPINV ActualQtyTotal, EXPINV BilledQtyTotal, EXPINV RateTotal, EXPINV RatePerTotal, EXPINV DiscTotal, EXPINV Total
+	Local : Field : EXPINV RateTotal	: Width	: 6
+	Local	: Field	: EXPINV HSNSACTotal	: Width	: 5
+   	Local   : Field : Default : Set as	: ""
+	Local	: Field	: EXPINV DescTitle : Set as	: If NOT $$IsEmpty:@@VchBankMailingName Then "Our Banker's :" + @@VchBankMailingName Else "Our Banker's :" + ##SABankName
+	Local	: Field	: EXPINV DescTitle : Border	: Thin Top
+	Local	: Field	: EXPINV DescTitle :  Align	: Left
+[Line	: ExpInvCmpBankAcc]
+	            Left Fields : EXPINV SLNoTitle, EXPINV MarksTitle1, EXPINV PackagesTitle1, EXPINV DescTitle
+            RightFields : EXPINV PartNoTitle, EXPINV MRPTotal, VAT AccTotPerc, ExpInvRSBatch,ExpInvRSMfd ,ExpInvRSExpiry,ExpInvRSPkgs,EXPINV AccDueOn, EXPINV ActualQtyTotal, EXPINV BilledQtyTotal, EXPINV RateTotal, EXPINV RatePerTotal, EXPINV DiscTotal, EXPINV Total
+	Local : Field : EXPINV RateTotal	: Width	: 6
+	Local	: Field	: EXPINV HSNSACTotal	: Width	: 5
+   	Local   : Field : Default : Set as	: ""
+	Local	: Field	: EXPINV DescTitle : Set as	: "Account No. :" + $BankDetails:Ledger:@@VchBankName
+	Local	: Field	: EXPINV DescTitle :  Align	: Left
+
+;	Field	: Short Prompt,Name Field
+ ;  	Local   : Field : Short Prompt : Set as 	: $$LocaleString:"Account No. :"
+	;Local	: Field	: Name Field : Set as	: $BankDetails:Ledger:@@VchBankName
+;	Local	: Field	: Name Field : Style	: Normal
+;	Local	: Field	: Name Field : Full Width	: Yes
+[Line	: ExpInvCmpBIfsc]
+	            Left Fields : EXPINV SLNoTitle, EXPINV MarksTitle1, EXPINV PackagesTitle1, EXPINV DescTitle
+            RightFields : EXPINV PartNoTitle, EXPINV MRPTotal, VAT AccTotPerc, ExpInvRSBatch,ExpInvRSMfd ,ExpInvRSExpiry,ExpInvRSPkgs,EXPINV AccDueOn, EXPINV ActualQtyTotal, EXPINV BilledQtyTotal, EXPINV RateTotal, EXPINV RatePerTotal, EXPINV DiscTotal, EXPINV Total
+	Local : Field : EXPINV RateTotal	: Width	: 6
+	Local	: Field	: EXPINV HSNSACTotal	: Width	: 5
+   	Local   : Field : Default : Set as	: ""
+	Local	: Field	: EXPINV DescTitle : Set as	: "IFSC :" + $IFSCode:Ledger:@@VchBankName
+	Local	: Field	: EXPINV DescTitle :  Align	: Left
+
+;	Field	: Short Prompt,Name Field
+ ;  	Local   : Field : Short Prompt : Set as 	: $$LocaleString:"IFSC :"
+	;Local	: Field	: Name Field : Set as	: $IFSCode:Ledger:@@VchBankName
+;	Local	: Field	: Name Field : Style	: Normal
+	;Local	: Field	: Name Field : Full Width	: Yes
+
+
+[Part	: EXPINV CompanyC]
+	Line:ExpInvBuyerTitle1,ExpInvBuyername,ExpInvBuyerAddress
+	Bottom Line:ExpInvBuyerMobile,ExpInvBuyerGST
+	;;Bottom Line	: ExpInvCmpBankTITLE,ExpInvCmpBank,ExpInvCmpBankAcc,ExpInvCmpBIfsc
+	Repeat	: ExpInvBuyerAddress : Basic Buyer Address
+	Border	: Thin Right
+	Local	: Field	: Default : Style	: Small
+	Height	: 7
+;	Width	: 50% Page	
+[Line:ExpInvBuyerTitle1]
+	Field	: Name Field
+	Local	: Field	: Name Field : Set as	: "Buyer's:"
+	Local	: Field	: Name Field : Style	: Small Bold
+	Local	: Field	: Name Field : Full Width	: Yes
+[Line:ExpInvBuyername]
+	Field	: Name Field
+	Local	: Field	: Name Field : Set as	: $BasicBuyerName ;;MailingName:Ledger:$PartyLedgerName
+;	Local	: Field	: Name Field : Style	: Normal Bold
+	Local	: Field	: Name Field : Full Width	: Yes
+	
+[Line:ExpInvBuyerAddress]
+	Field	: Name Field
+	Local	: Field	: Name Field : Set as	: $BasicBuyerAddress
+;	Local	: Field	: Name Field : Style	: Normal
+	Local	: Field	: Name Field : Full Width	: Yes
+[Line:ExpInvBuyerMobile]
+		Field	: Short Prompt,Name Field
+   	Local   : Field : Short Prompt : Set as 	: $$LocaleString:"Mobile No.:"
+   	Local   : Field : Short Prompt : Width		: 15
+	Local	: Field	: Name Field : Set as	: $LedgerMobile:Ledger:$PartyLedgerName
+;	Local	: Field	: Name Field : Style	: Normal
+	Local	: Field	: Name Field : Full Width	: Yes
+	
+
+[Line:ExpInvBuyerGST]
+	Field	: Name Field
+	Local	: Field	: Name Field : Set as	: "GSTIN : " + $PartyGSTIN
+;	Local	: Field	: Name Field : Style	: Normal
+	Local	: Field	: Name Field : Full Width	: Yes
+	
+
+[Part	: EXPINV CompanyD]
+	Line	: ExpInvCmpBillNO ,ExpInvCmpDate,ExpInvCmpTpt,ExpInvCmpGR,ExpInvCmpVehicle,ExpInvCmpMobNo,ExpInvCmpPos,ExpInvCmpStation,ExpInvCmprev	
+	Local	: Field	: Default : Style	: Small
+;	Width	: 20% Page
+	;Border	: thin right
+[Line	: ExpInvCmpBillNO]
+	Field	: Short Prompt,Name Field
+   	Local   : Field : Short Prompt : Set as 	: $$LocaleString:"Bill No. :"
+   	Local   : Field : Short Prompt : Width		: 15
+	Local	: Field	: Name Field : Set as	: $VoucherNumber
+	Local	: Field	: Name Field : Style	: Normal Bold
+	Local	: Field	: Name Field : Full Width	: Yes
+[Line	: ExpInvCmpDate]
+	Field	: Short Prompt,Name Field
+   	Local   : Field : Short Prompt : Set as 	: $$LocaleString:"Date :"
+   	Local   : Field : Short Prompt : Width		: 15
+	Local	: Field	: Name Field : Set as	: $Date
+;	Local	: Field	: Name Field : Style	: Normal
+	Local	: Field	: Name Field : Full Width	: Yes
+[Line	: ExpInvCmpTpt]
+	Field	: Short Prompt,Name Field
+   	Local   : Field : Short Prompt : Set as 	: $$LocaleString:"Transport :"
+   	Local   : Field : Short Prompt : Width		: 15
+	Local	: Field	: Name Field : Set as	: $BasicShippedBY
+;	Local	: Field	: Name Field : Style	: Normal
+	Local	: Field	: Name Field : Full Width	: Yes
+[Line	: ExpInvCmpGR]
+	Field	: Short Prompt,Name Field
+   	Local   : Field : Short Prompt : Set as 	: $$LocaleString:"G.R. No. :"
+   	Local   : Field : Short Prompt : Width		: 15
+	Local	: Field	: Name Field : Set as	: $BasicShipDocumentNo
+;	Local	: Field	: Name Field : Style	: Normal
+	Local	: Field	: Name Field : Full Width	: Yes
+[Line	: ExpInvCmpVehicle]
+	Field	: Short Prompt,Name Field
+   	Local   : Field : Short Prompt : Set as 	: $$LocaleString:"Vehicle No. :"
+   	Local   : Field : Short Prompt : Width		: 15
+	Local	: Field	: Name Field : Set as	: $BasicShipVesselNo
+;	Local	: Field	: Name Field : Style	: Normal
+	Local	: Field	: Name Field : Full Width	: Yes
+	
+[Line	:ExpInvCmpMobNo]
+	Field	: Short Prompt,Name Field
+   	Local   : Field : Short Prompt : Set as 	: $$LocaleString:"Mobile No. :"
+   	Local   : Field : Short Prompt : Width		: 15
+	Local	: Field	: Name Field : Set as	: $EIMobNO
+;	Local	: Field	: Name Field : Style	: Normal
+	Local	: Field	: Name Field : Full Width	: Yes
+	
+[Line	:ExpInvCmpPos]
+	Field	: Short Prompt,Name Field
+   	Local   : Field : Short Prompt : Set as 	: $$LocaleString:"POS :"
+   	Local   : Field : Short Prompt : Width		: 15
+	Local	: Field	: Name Field : Set as	: $EIPOSField
+;	Local	: Field	: Name Field : Style	: Normal
+	Local	: Field	: Name Field : Full Width	: Yes
+	
+[#Part          : EI DelNoteInfo]
+	Add          : Line  : After  : EI PreCarriage  : EIMobileNo,EIPOS
+	[Line        : EIMobileNo ]
+		Field    : mediumprompt, EIMobNO
+		Local    : field  :mediumprompt  :Set as  :"Mobile No."
+		
+		
+		[Field   : EIMobNO]
+			Use  : name field
+			Storage   : EIMobNO
+	[System  : UDF]
+	
+	EIMobNO : String  :  1409	
+	
+
+
+	 [Line    : EIPOS ]
+	Field : Mediumprompt,EIPOSField
+		
+		Local : field  :mediumprompt  :Set as  :"POS"
+		
+	 [Field   : EIPOSField]
+		 Use  : name field
+	Storage   : EIPOSField
+	[System   : UDF]
+	
+	EIPOSField : String  :  14010	
+	
+			
+
+
+	
+	
+			
+
+	
+[Line	: ExpInvCmpStation]
+
+	Field	: Short Prompt,Name Field
+   	Local   : Field : Short Prompt : Set as 	: $$LocaleString:"Place of Supply :"
+   	Local   : Field : Short Prompt : Width		: 15
+	Local	: Field	: Name Field : Set as	: $PlaceofSupply + " (State Code :" + $$GetGstStatecode:$PlaceofSupply + ")"
+;	Local	: Field	: Name Field : Style	: Normal
+	Local	: Field	: Name Field : Full Width	: Yes
+[Line	: ExpInvCmprev]
+	Field	: Short Prompt,Name Field
+   	Local   : Field : Short Prompt : Set as 	: $$LocaleString:"Adhaar No. :"
+   	Local   : Field : Short Prompt : Width		: 15
+	Local	: Field	: Name Field : Set as	: $BasicOrderRef
+;	Local	: Field	: Name Field : Style	: Normal
+	Local	: Field	: Name Field : Full Width	: Yes
+
+[Part	: ExpInvBankPart]
+	Line: ExpInvCmpBank,ExpInvCmpBankAcc,ExpInvCmpBIfsc
+	Height	: 3
+	Common Border: Yes
+	
+[Part: ExpinvVatAna]
+	Part	: ExpinvVatAna1,ExpinvVatAna2
+	Border	: Thin Box
+	Vertical	: Yes
+[Part	: ExpinvVatAna1]
+	Line	: Inwds
+[Line: Inwds]
+	Field       : Short Prompt,EXPINV AmtInWords1
+	Right Field	: Simple Prompt,ExpinvAAmt
+	Local	: Field: Simple Prompt : Set as: "Sub Total : "
+	
+	Local	: Field: Short Prompt : Set as	: "Rupees : "
+	
+[Field: EXPINV AmtInWords1]
+
+    Max         : @@MaxNarrWidth
+    Set as      : @ValueInWords ;$$SPrintf:@@AmtOnlyFormat:@ForexFormula + (If @@ShowAmtInDigits Then " (" + $$String:#EXPINVTotal:"NoSymbol" + ")" Else "")
+    ForexFormula: If @@ShowAmtInDigits Then $$InDigits:#EXPINVTotal:"Forex" Else $$InWords:#EXPINVTotal:"Forex"
+    ValueInWords: $$InWords:$Amount + " Only."
+    Style       : Normal 
+    Lines       : 0
+    FullWidth   : Yes
+    
+[Field	: ExpinvAAmt]
+	Use		: Amount Field
+	Set as	: $$CollAmtTotal:Inventoryentries:$AMount
+	Style	: Small Bold
+[Part	: ExpinvVatAna2]
+	Part	: ExpinvVatAna2B,ExpinvVatAna2D,ExpinvVatAna2A,ExpinvVatAna2C,
+	Height : 1 inch
+[Part	: ExpinvVatAna2A]
+	Line: ExpPCB,ExpPBill,ExpPBal
+;	Width	: 25% Page
+	Border	: Thin top
+	Invisible	: Yes
+[Line: ExpPCB]	
+	Field	: Medium Prompt,ExpIVal
+	Local	: Field	: Medium Prompt : Set as	: "Previous Balance Amount :"
+	Local	: Field	: ExpIVal : Set as	: $RsPartyBalance
+;	Indent	: 10
+[Line: ExpPBill]
+	Field	: Medium Prompt,ExpIVal
+	Local	: Field	: Medium Prompt : Set as	: "Current Bill Amount :"
+	Local	: Field	: ExpIVal : Set as	: $amount
+;	Indent	: 10
+[Line: ExpPBal]
+	Field	: Medium Prompt,ExpIVal
+	Local	: Field	: Medium Prompt : Set as	: "Total Balance Amount :"
+;	Indent	: 10
+	
+[Field	: ExpIVal]
+	Use	: Amount Field
+	Set as	: $ClosingBalance:Ledger:$PartyLEdgerName
+	Style	: Small Bold
+	Width	: 10
+	
+[Part	: ExpinvVatAna2B]
+	Use	: vch gst analysis details
+	Width:45% page
+	
+[Part:ExpinvVatAna2D]
+	Border:THIN TOP
+Line :ExpInvBankD,ExpInNOvAC,ExpInvBankif
+[Line:ExpInvBankD]
+		
+	Field: Medium prompt, ExpInvBankD
+	Local:Field:Default:Style :Normal Bold
+	Local:Field:Default:Border:Thin Right
+	Local:Field:Default:Type  :String
+	
+	Local:Field:Mediumprompt:Set as:"Bank Details :-"
+	
+   [Field:ExpInvBankD]
+   Use:Name Field
+   Set as:If NOT $$IsEmpty:@@VchBankMailingName Then @@VchBankMailingName Else ##SABankName
+   Full Width:Yes
+   
+
+[Line	: ExpInNOvAC]   
+			Field			: ExpInNOvACfIELD
+			[Field			: ExpInNOvACfIELD]
+				Border		: THIN BOTTOM
+				Use			: Name field
+				Set as		: "Account No. : " + $BankDetails:Ledger:@@VchBankName
+				
+	[Line	:ExpInvBankif]   
+			Field			: ExpInvBankifscfIELD			
+			[Field			: ExpInvBankifscfIELD]
+				Border		: THIN BOTTOM
+				Use			: Name field
+				Set as		: "IFSC Code : " + $IFSCode:Ledger:@@VchBankName
+				
+		
+	
+
+[Part	: ExpinvVatAna2c]
+	Line	: ExpInvLedgers
+	Bottom Line	: ExpINvBillTotal
+	Repeat	: ExpInvLedgers : Ledger Entries
+	Border	: Thin Top Left
+;	Width:30% page
+[Line	: ExpInvLedgers]
+	Right Field	: Simple Prompt,ExpinvAAmt
+	Local	: Field: Simple Prompt : Set as: $LedgerName
+	Local	: Field: ExpinvAAmt : Set as	: $Amount
+	Local	: Field: ExpinvAAmt : Style	: Small Bold
+	Empty	: $LedgerName = $PartyLedgerName
+[Line	: ExpINvBillTotal]
+	Right Field	: Simple Prompt,ExpinvAAmt
+	Local	: Field: Simple Prompt : Set as: "Grand Total"
+	Local	: Field: ExpinvAAmt : Set as	: $Amount
+	
+[Part: ExpinvTermsSairam]
+	Part	:  EXPINV Declaration,ExpinvTerms2,EXPSMP Signature ;ExpinvTerms3
+	Height : .80 inch
+	Border	: Thin Box
+	Local	: Field:EXPSMP Signature: Width:25% Page 
+	Local	: Part	: EXPINV Declaration : Height: .80 Inch
+[Part	: ExpinvTerms2]
+	Line	: ExpinvTerms2,ExpinvTerms9
+	Border	: Thin Left Right
+	Width	: 25% page
+
+	
+[Line	:ExpinvTerms2]
+	Field	: MEDIUM Prompt,Name Field
+   	Local   : Field : MEDIUM Prompt : Set as 	: $$LocaleString:"Terms & Condition :"
+	Local	: Field	: MEDIUM Prompt : Full Width	: Yes
+	[Line	:ExpinvTerms9]
+	Field  :Name Field
+   Local	: Field	: Name Field : Set as	    : $EItermcondition:VoucherType:$VoucherTypeName
+	Local	: Field	: Name Field : Style	    : Small
+	Local	: Field	: Name Field : Full Width	: Yes
+	
+
+
+[#Part: VTYP BehaviourMain]
+  Add : Line : After : VTYP Decl : VTYP TermCondtion
+    	Local   : Field : MEDIUMPrompt : Full Width	: Yes
+[Line        : VTYP TermCondtion  ]
+		Field   : MEDIUMPROMPT, EItermcondition
+		Local   : field  :MEDIUMPROMPT    :Set as    :"Terms & Condition"
+		
+	
+		
+		[Field   : EItermcondition]
+		Use      : name field
+	   Storage   : EItermcondition
+	   Lines: 4
+	[System  : UDF]
+	EItermcondition : String  :  14099	
+	
+[Part	: ExpInvBlank]
+	Line	: ExpInvBlank
+	Height	: .25 INch
+[Line	: ExpInvBlank]
+	Field:Name Field
+	Local	: Field	: Name Field : Set as	: ""
+	
+;Parts 		: EXPINV Company, EXPINV Consignee, EXPINV Buyer, EXPINV Contact
+            
+[#Line: DSP EXPINV Totals]
+	Add	: Right Field:  Before	: EXPINV BilledQtyTotal :  ExpInvRSBatchTitle,ExpInvRSMfdTitle,ExpInvRSExpiryTitle,ExpInvRSPkgsTitle
+	Local : Field : ExpInvRSBatchTitle	: Set as	: "" 
+	Local : Field : ExpInvRSMfdTitle	: Set as	: ""
+	Local : Field : ExpInvRSExpiryTitle	: Set as	: ""
+	Local : Field : ExpInvRSPkgsTitle	: Set as	: ""
+	Local : Field : EXPINV RateTotal	: Width	: 6
+	Local	: Field	: EXPINV HSNSACTotal	: Width	: 5
+	
+[#Line: EXPINV Totals]
+	Add	: Option	: EXPINV TotalsCol1 : @@IsINVVtype
+[!Line:EXPINV TotalsCol1]
+	Add	: Right Field:  Before	: EXPINV BilledQtyTotal :  EXPINVTechTitle,EXPINVCIRTitle,EXPINVMKTDTitle,EXPINVMFDTitle,EXPINVSCropTitle,EXPINVSpestTitle,ExpinvHSNfldTitle,ExpinvGSTfldTitle,ExpInvRSBatchTitle,ExpInvRSMfdTitle,ExpInvRSExpiryTitle,ExpInvRSPkgs
+	Local : Field : ExpInvRSBatchTitle	: Set as	: "" 
+	Local : Field : ExpInvRSMfdTitle	: Set as	: ""
+	Local : Field : ExpInvRSExpiryTitle	: Set as	: ""
+	Local : Field : ExpInvRSPkgs	: Set as	: $$Total:ExpInvRSPkgs ;;$$CollQtyTotal:InventoryEntries:$BilledQty
+	Local : Field : EXPINV RateTotal	: Width	: 6
+	Local	: Field	: EXPINV HSNSACTotal	: Width	: 5
+	Local : Field : EXPINVTechTitle	: Set as	: ""
+	Local : Field : EXPINVCIRTitle	: Set as	: ""
+	Local : Field : EXPINVMKTDTitle	: Set as	: ""
+	Local : Field : EXPINVMFDTitle	: Set as	: ""
+	Local : Field : EXPINVSCropTitle	: Set as	: ""
+	Local : Field : EXPINVSpestTitle	: Set as	: ""
+	Local : Field : ExpinvHSNfldTitle	: Set as	: ""
+	Local : Field : ExpinvGSTfldTitle	: Set as	: ""
+
+	Local : Field : EXPINVTechTitle	: Delete	: Border
+	Local : Field : EXPINVCIRTitle	: Delete	: Border
+	Local : Field : EXPINVMKTDTitle	: Delete	: Border
+	Local : Field : EXPINVMFDTitle	: Delete	: Border
+	Local : Field : EXPINVSCropTitle	:Delete	: Border
+	Local : Field : EXPINVSpestTitle	: Delete	: Border
+	Local : Field : ExpinvHSNfldTitle	: Delete	: Border
+	Local : Field : ExpinvGSTfldTitle	: Delete	: Border
+	Local : Field : ExpInvRSBatchTitle	: Delete	: Border
+	Local : Field : ExpInvRSMfdTitle	: Delete	: Border
+	Local : Field : ExpInvRSExpiryTitle	: Delete	: Border
+	Local : Field : ExpInvRSPkgs	: Delete	: Border
+
+
+[#Line: DSP EXPINV Column1]
+	Add	: Right Field:  Before	: EXPINV QtyTitle : ExpInvRSBatchTitle,ExpInvRSMfdTitle,ExpInvRSExpiryTitle,ExpInvRSPkgsTitle
+
+[#Line: EXPINV Column1]
+	Add	: Option	: ExpInvPestCol1 : @@IsINVVtype
+[!Line:ExpInvPestCol1]
+;	Add	: Left Field	: EXPINVTechTitle,EXPINVMKTDTitle,EXPINVCIRTitle,EXPINVMFDTitle,EXPINVSCropTitle,EXPINVSpestTitle
+	Add	: Right Field:  Before	: EXPINV QtyTitle : EXPINVTechTitle,EXPINVCIRTitle,EXPINVMKTDTitle,EXPINVCIRTitle,EXPINVMFDTitle,EXPINVSCropTitle,EXPINVSpestTitle,ExpinvHSNfldTitle,ExpinvGSTfldTitle,ExpInvRSBatchTitle,ExpInvRSMfdTitle,ExpInvRSExpiryTitle,ExpInvRSPkgsTitle
+	Add	: Right Field:  After	: EXPINV QtyTitle :EXPestInclusiveTitle	
+	Local	: Field:EXPINV RateTitle : Width	: 6
+	Local	: Field:EXPINVinclu RateTitle : Width	: 10
+;	Local	: Field:EXPINVTechTitle : Width	: 4.7
+;	Local	: Field:EXPINVMKTDTitle : Width	: 4.7
+;	Local	: Field:EXPINVCIRTitle : Width	: 4.7
+;	Local	: Field:EXPINVMFDTitle : Width	: 4.7
+;;	Local	: Field:EXPINVSCropTitle : Width	: 4.75
+	Local	: Field:EXPINVSpestTitle : Width	: 4.85
+	Set as      : if @@AcctsInvoice then $$LocaleString:"Particulars" else $$LocaleString:"Description"
+	Local	: Field:EXPINV QtyTitle:Border          : Thin left 
+	Local	: Field:EXPINV RatePerTitle:Border	    : Thin left 
+	Local	: Field:EXPINV DiscTitle:Border	        : Thin left 
+	Local	: Field:EXPINV AmountTitle:Border	    : Thin left
+	Local	: Field:EXPINVinclu RateTitle : Border	: Thin left
+	
+
+[#Field: EXPINV DescTitle]
+	Add	: Option	: EXPINV DescTitleCol1 : @@IsINVVtype
+[!Field:EXPINV DescTitleCol1]
+	
+	Set as      : "" ;;if @@AcctsInvoice then $$LocaleString:"Particulars" else $$LocaleString:"Description"
+	Full Width	: No
+	Width		: 15
+[#Field: EXPINV Desc]
+	Add	: Option	: EXPINV DescCol1 : @@IsINVVtype
+[!Field:EXPINV TitleCol1]
+	Full Width	: No
+	Width		: 14.9
+[#Line: EXPINV Column2]
+	Add	: Option	: ExpInvPestCol2 : @@IsINVVtype
+[!Line:ExpInvPestCol2]
+	;Add	: Left Field	: EXPINVTechTitle,EXPINVMKTDTitle,EXPINVCIRTitle,EXPINVMFDTitle,EXPINVSCropTitle,EXPINVSpestTitle
+	Add	: Right Field:  Before	: EXPINV ActualQtyTitle : EXPINVTechTitle,EXPINVCIRTitle,EXPINVMKTDTitle,EXPINVMFDTitle,EXPINVSCropTitle,EXPINVSpestTitle,ExpinvHSNfldTitle,ExpinvGSTfldTitle, ExpInvRSBatchTitle,ExpInvRSMfdTitle,ExpInvRSExpiryTitle,ExpInvRSPkgsTitle
+	Local : Field : ExpInvRSBatchTitle	: Set as	: "" 
+	Local : Field : ExpInvRSMfdTitle	: Set as	: ""
+	Local : Field : ExpInvRSExpiryTitle	: Set as	: ""
+	Local : Field : ExpInvRSPkgsTitle	: Set as	: ""
+	Local : Field : EXPINVTechTitle	    : Set as	: ""
+	Local : Field : EXPINVCIRTitle	    : Set as	: ""
+	Local : Field : EXPINVMKTDTitle	    : Set as	: ""
+	Local : Field : EXPINVMFDTitle	    : Set as	: ""
+	Local : Field : EXPINVSCropTitle	: Set as	: ""
+	Local : Field : EXPINVSpestTitle	: Set as	: ""
+	Local : Field : ExpinvHSNfldTitle	: Set as	: ""
+	Local : Field : ExpinvGSTfldTitle	: Set as	: ""
+	
+	Local	: Field:EXPINVincluRateTitle : Width	: 10
+	Local	: Field:EXPINV RateTitle : Width	: 6
+	Local	: Field	: Default : Delete: Border
+;[#Field:  EXPINV HSNSACTitle]
+;	Width	: 5
+[#Line: DSP EXPINV AccDetails]
+	Add	: Option	: DSP EXPINV AccDetails1 : @@IsINVVtype
+[!Line:DSP EXPINV AccDetails1]
+	Add	: Right Field:  Before	: EXPINV AccQty :  ExpInvRSBatchTitle,ExpInvRSMfdTitle,ExpInvRSExpiryTitle,ExpInvRSPkgsTitle
+	Local : Field : ExpInvRSBatchTitle	: Set as	: "" 
+	Local : Field : ExpInvRSMfdTitle	: Set as	: ""
+	Local : Field : ExpInvRSExpiryTitle	: Set as	: ""
+	Local : Field : ExpInvRSPkgsTitle	: Set as	: ""
+	
+;[#Line: EXPINV AccDetails]
+;	Add	: Option	: EXPINV AccDetails1 : @@IsINVVtype
+[!Line:EXPINV AccDetails1]
+	Add	: Right Field:  Before	: EXPINV AccQty :  ExpInvRSBatchTitle,ExpInvRSMfdTitle,ExpInvRSExpiryTitle,ExpInvRSPkgsTitle
+	Local : Field : ExpInvRSBatchTitle	: Set as	: "" 
+	Local : Field : ExpInvRSMfdTitle	: Set as	: ""
+	Local : Field : ExpInvRSExpiryTitle	: Set as	: ""
+	Local : Field : ExpInvRSPkgsTitle	: Set as	: ""
+	;Local	: Field:EXPINV AccRate : Width	: 6
+;	Local: Field	: EXPINV AccHSNSACDetails : Width	: 5
+
+
+[Field: ExpInvRSBatchTitle]
+	Use		: Name Field
+	Set as	: "Batch Name"
+	Width	: 5
+	Style	: Small ; Bold
+	Border	: Thin Left
+	Invisible: NOt @@IsSales OR NOT @@InvWithBatches
+[Field: ExpInvRSMfdTitle]
+	Use		: Name Field
+	Set as	: "Mfd On"
+	Width	: 5
+	Style	: Small ; Bold
+	Border	: Thin Left
+	Invisible: NOt @@IsSales OR NOT @@InvWithBatches
+[Field: ExpInvRSExpiryTitle]
+	Use		: Name Field
+	Set as	: "Expiry On"
+	Width	: 5
+	Style	: Small ; Bold
+	Border	: Thin Left
+	Invisible: NOt @@IsSales OR NOT @@InvWithBatches
+	
+[Field: ExpInvRSPkgsTitle]
+	Use		: Name Field
+	Set as	: "Packages"
+	Width	: 4
+	Style	: Small ; Bold
+	Border	: Thin Left
+;	Invisible: NOt @@IsSales
+
+[Field	: EXPINVTechTitle]
+	Use		: Name Field
+	Set as	: "Name of Pest"
+	Width	: 10
+	Style	: Small ; Bold
+	Border	: Thin Left
+	
+[Field	: EXPINVCIRTitle]
+	Use		: Name Field
+	Set as	: "CIR No."
+	Width	: 8
+	Style	: Small ; Bold
+	Border	: Thin Left
+	
+[Field	: EXPINVMKTDTitle]
+	Use		: Name Field
+	Set as	: "Mktd By"
+	Width	: 10
+	Style	: Small ; Bold
+	Border	: Thin Left
+
+[Field	: EXPINVMFDTitle]
+	Use		: Name Field
+	Set as	: "Mfd By"
+	Width	: 5
+	Style	: Small ; Bold
+	Border	: Thin Left
+[Field	: EXPINVSCropTitle]
+	Use		: Name Field
+	Set as	: "S. Crop"
+	Width	: 5
+	Style	: Small ; Bold
+	Border	: Thin Left
+	;;Invisible	: Yes ;$$NumItems:CmpCropName = 0
+[Field	: EXPINVSpestTitle]
+	Use		: Name Field
+	Set as	: "S. Pest"
+	Width	: 5
+	Style	: Small ; Bold
+	Border	: Thin Left
+[Field: ExpinvHSNfldTitle]
+	Use		: Name Field
+	Set as	: "HSN"
+	Width	: 5
+	Style	: Small ; Bold
+	Border	: Thin Left
+	
+[Field: ExpinvGSTfldTitle]
+	Use		: Name Field
+	Set as	: "GST %"
+	Width	: 5
+	Style	: Small ; Bold
+	Border	: Thin Left
+	
+[#Part: EXPINV Details]
+	Add	: Option	: EXPINV DetailsSales : @@IsSales and @@IsINVVtype
+[!Part: EXPINV DetailsSales]
+	Delete	: Parts	: EXPINV AccInfo
+	Add: Total: ExpInvRSPkgs
+	;;Add : Bottom Part: ExpInvBankPart
+	
+;[#Part: EXPINV InvInfo]
+;	Add: Bottom Line: ExpInvCmpBank,ExpInvCmpBankAcc,ExpInvCmpBIfsc
+;	Scroll	 : Vertical	
+[#Part: EXPINV InvInfo]
+	Delete	: Line	:  EXPINV InvSubTotal
+    
+
+
+[#Part: DSP EXPINV InvInfo]
+	Add	: Option	: EXPINVINFOSALESDISP : @@IsSales and @@IsINVVtype
+[!Part: EXPINVINFOSALESDISP]
+	Delete	: Repeat
+	add : Repeat      : DSP EXPINV InvDetails    : InvBatches
+[#Line: DSP EXPINV InvDetails]
+;	Add	: Left Field	: EXPINVTech,EXPINVMKTD,EXPINVCIR,EXPINVMFD,EXPINVSCrop,EXPINVSpest
+	Add	: Right Field	: Before	: EXPINV Qty 	: EXPINVTech,EXPINVMKTD,EXPINVCIR,EXPINVMFD,EXPINVSCrop,EXPINVSpest,ExpInvRSBatch,ExpInvRSMfd ,ExpInvRSExpiry,ExpInvRSPkgs
+;	Delete	: Left Field	: EXPINV Packages
+	;Local: Field	: EXPINV HSNSACDetails : Set as	: $MyHSNCode:StockITem:$StockITemNAme
+
+;            Left Fields : EXPINV SLNo, EXPINV Marks, EXPINV Packages, EXPINV Desc
+ ;           Right Fields: EXPINV PartNo, EXPINV MRPValue, EXPINV VATPerc, EXPINV DueOn, EXPINV ActualQty, EXPINV Qty, EXPINV Rate, EXPINV RatePer, EXPINV Discount, EXPINV Amount
+;	            Left Fields : EXPINV SLNo, EXPINV Marks, EXPINV Packages, EXPINV Desc
+;	            Right Fields: EXPINV PartNo, EXPINV MRPValue, EXPINV VATPerc, EXPINV DueOn, EXPINV ActualQty, EXPINV Qty, EXPINV Rate, +
+;	            			 EXPINV RatePer, EXPINV Discount, EXPINV Amount
+	Local	: Field	: EXPINV Desc : Style	: Small
+	Local	: Field:EXPINV Rate : Width	: 6
+	;Local: Field	: EXPINV HSNSACDetails : Width	: 5
+[#Part: EXPINV InvInfo]
+	Add	: Option	: EXPINVINFOSALES : @@IsSales and @@IsINVVtype
+[!Part	: EXPINVINFOSALES]	
+	Delete	: Repeat
+    Add : Repeat      : EXPINV InvDetails    : InvBatches ;Batch Allocations
+
+[#Line: EXPINV InvDetails]
+	Add	: Option	: EXPINV InvDetailsSALES : @@IsSales and @@IsINVVtype
+	;Local: Field	: EXPINV HSNSACDetails : Width	: 5
+[!Line	: EXPINV InvDetailsSALES]	
+;	Add	: Left Field	: EXPINVTech,EXPINVMKTD,EXPINVCIR,EXPINVMFD,EXPINVSCrop,EXPINVSpest
+	Add	: Right Field	: Before	: EXPINV Qty 	: EXPINVTech,EXPINVCIR,EXPINVMKTD,EXPINVMFD,EXPINVSCrop,EXPINVSpest,ExpinvHSNfld,ExpinvGSTfld,ExpInvRSBatch,ExpInvRSMfd ,ExpInvRSExpiry,ExpInvRSPkgs
+	Add	: Right Field	: After		: EXPINV Qty 	: EXPestInclusiveTitleDetails
+;	Delete	: Left Field	: EXPINV Packages
+	;Local: Field	: EXPINV HSNSACDetails : Set as	: $MyHSNCode:StockITem:$StockITemNAme
+	;Local	: Field	: EXPINV HSNSACDetails	: Delete: Border 
+	Local	: Field	: EXPINV Desc : Style	: Small
+	Local	: Field:EXPINV Rate : Width	: 6
+;	Local: Field	: EXPINV HSNSACDetails : Width	: 5
+	
+	Delete	: Explode	;: EXPINV BatchDetails
+	;Delete	: Explode   : EI DescExplosion  
+;	Add		: Explode   : EI DescExplosion1  : NOT $$IsEmpty:$StockItemName AND ##PRNWithItemDesc
+;;	Delete	: Explode
+;;	Add	: Explode: MyitemBatchesPrint
+[Part: MyitemBatchesPrint]
+	Line	: MyitemBatchesPrint
+	Repeat	: MyitemBatchesPrint : Batch Allocations
+	
+[Line	: MyitemBatchesPrint]
+	Left Fields : EXPINV SLNo, EXPINV Marks, EXPINV Packages, EXPINV Desc
+    Right Fields: EXPINV PartNo, EXPINV MRPValue, EXPINV VATPerc, EXPINV DueOn, EXPINV ActualQty,ExpInvRSBatch,ExpInvRSMfd ,ExpInvRSExpiry,ExpInvRSPkgs, EXPINV Qty,EXPestInclusiveTitleDetails,  EXPINV RatePer,EXPINV RateNet, EXPINV Discount, EXPINV Amount
+	Local	: Field:EXPINV Rate : Width	: 6
+;	Local: Field	: EXPINV HSNSACDetails : Width	: 5
+
+	Local : Field  : EXPINV SLNo		: Set as	: ""
+	Local : Field  : EXPINV Marks		: Set as	: ""
+	Local : Field  : EXPINV Packages	: Set as	: ""
+	Local : Field  : EXPINV Desc		: Set as	: if $$Line=1 then $Description:StockItem:$StockItemName else ""
+    Local : Field  : EXPINV PartNo		: Set as	: ""
+	Local : Field  : EXPINV MRPValue	: Set as	: ""
+	Local : Field  : EXPINV VATPerc		: Set as	: ""
+	Local : Field  : EXPINV DueOn		: Set as	: ""
+	Local : Field  : EXPINV ActualQty	: Set as	: ""
+	Local : Field  : ExpInvRSBatch		: Set as	: if $$NumItems:BatchAllocations = 1 then "" else $BatchName ;$$CollectionField:$BatchName:($$Line+1):BatchAllocations
+	Local : Field  : ExpInvRSMfd 		: Set as	: if $$NumItems:BatchAllocations = 1 then "" else @@MyMfdVal ;$$CollectionField:$Mfdon:($$Line+1):BatchAllocations
+	Local : Field  : ExpInvRSExpiry		: Set as	: if $$NumItems:BatchAllocations = 1 then "" else  @@MyExpVal ;$$CollectionField:$BatchName:($$Line+1):BatchAllocations
+	Local : Field  : ExpInvRSPkgs		: Set as	: ""
+	Local : Field  : EXPINV Qty			: Delete	: Storage
+	Local : Field  : EXPINV Qty			: Set as	: if $$NumItems:BatchAllocations = 1 then 0 else $Billedqty ;$$CollectionField:$Billedqty:($$Line+1):BatchAllocations
+	Local : Field  : EXPINV Qty			: Style		: Small
+	Local : Field  : EXPINV RatePer		: Set as	: ""
+	Local : Field  : EXPINV RateNet		: Set as	: ""
+	Local : Field  : EXPINV Discount	: Set as	: ""
+	Local : Field  : EXPINV Amount		: Set as	: ""
+
+[System	: Formulae]
+	MyMfdVal: ($$StringPart:@@MyMonth:0:3)  + "-" + $$StringPart:@@Myyr:2:2
+	MyMonth	: $$FullMonthName:$Mfdon ;($$CollectionField:$Mfdon:($$Line+1):BatchAllocations)
+	MyYr	: $$YearOfDate:$Mfdon ;($$CollectionField:$Mfdon:($$Line+1):BatchAllocations)
+	
+	;Set as	: IF $BatchName = "." THEN ""  ELSE @MyMfdVal ;$$CollectionField:$ExpiryPeriod:1:BatchAllocations
+	MyExpVal: ($$StringPart:@@MyEMonth:0:3)  + "-" + $$StringPart:@@MyEyr:2:2
+	MyEMonth	: $$FullMonthName:$ExpiryPeriod ;($$CollectionField:$ExpiryPeriod:($$Line+1):BatchAllocations)
+	MyEYr	: $$YearOfDate:$ExpiryPeriod ;($$CollectionField:$ExpiryPeriod:($$Line+1):BatchAllocations)
+
+
+[#Form: GST Comprehensive Invoice AnalysisWithItem]
+    Local : Line    :  EXPINV InvDetails     : Delete       : Explode : GST EXPINV BatchDetails  ;;: (@@HasBatchWise OR @@IsOrderVch) AND @@InvWithBatches AND (NOT @@IsOrderVch OR @@OrdExplBatch) AND NOT @@InvWithGodowns		
+
+
+[Part: EI DescExplosion1]
+	Line    : EI DescExplosion1
+	[Line: EI DescExplosion1]
+		Field  : EI Desc1
+		Indent  : If ($$InPrintMode AND NOT ($$IsStockJrnl:##SVVoucherType OR $$IsPhysStock:##SVVoucherType)) Then 3 Else 2
+								
+[Field  : EI Desc1]
+Use     : Name Field
+Style   : Tiny ;Small Italic
+Set as  : $Description:StockItem:$StockItemName
+Cells   : @@ExcelItemColumn
+Width	: 25
+
+[#Field: EXPINV Packages]
+	Invisible	: Yes
+[#Field	: EXPINV AccPackages]
+	Invisible	: Yes
+[Field : ExpInvRSBatch]
+	Use		: Name Field
+	Set as	: $BatchName ;;if $$NumItems:BatchAllocations > 1 then "" else  $BatchName
+	Width	: 5
+	Style	: Small ; Bold
+	Border	: Thin Left
+	Lines	: 0
+	Invisible: NOt @@IsSales OR NOT @@InvWithBatches
+[Field : ExpInvRSMfd]
+	Use		: Short Date Field
+	Set as	: $Mfdon ; @MyMfdVal ;IF $BatchName = "." or $$NumItems:BatchAllocations > 1 THEN "" ELSE @MyMfdVal ;;$$CollectionField:$Mfdon:1:BatchAllocations
+	Width	: 5
+	MyMfdVal: ($$StringPart:@MyMonth:0:3)  + "-" + $$StringPart:@Myyr:2:2
+	MyMonth	: $$FullMonthName:$Mfdon
+	MyYr	: $$YearOfDate:$MfdOn
+	
+	Style	: Small ;Bold
+	Border	: Thin Left
+	Invisible: NOt @@IsSales OR NOT @@InvWithBatches
+[Field : ExpInvRSExpiry]
+	Use		: Short Date Field
+	Set as	: $ExpiryPeriod ;@MyMfdVal ;IF $BatchName = "." or $$NumItems:BatchAllocations > 1 THEN ""  ELSE @MyMfdVal ;$$CollectionField:$ExpiryPeriod:1:BatchAllocations
+	Width	: 5
+	MyMfdVal: ($$StringPart:@MyMonth:0:3)  + "-" + $$StringPart:@Myyr:2:2
+	MyMonth	: $$FullMonthName:$ExpiryPeriod
+	MyYr	: $$YearOfDate:$ExpiryPeriod
+
+	Style	: Small ;Bold
+	Border	: Thin Left
+	Invisible: NOt @@IsSales OR NOT @@InvWithBatches
+[Field : ExpInvRSPkgs]
+	Use		: Name Field ;Qty Secondary Field
+	Set as	: $RSPackages:StockItem:$StockITemName ;BasicNumPackages
+	Width	: 4
+	Style	: Small ;Bold
+	Border	: Thin Left
+;	Format	: "NoSymbol"
+[Field	: EXPINVTech]
+	Use		: Name Field
+	Set as	: $RSTechName:Stockitem:$StockITemName
+	Width	: 10
+	Style	: Small ; Bold
+	Border	: Thin Left
+	Lines	: 0
+	
+[Field	: EXPINVCIR]
+	Use		: Name Field
+	Set as	: $RSCIRNO:Stockitem:$StockITemName
+	Width	: 8
+	Style	: Small ; Bold
+	Border	: Thin Left
+	Lines	: 0
+[Field	: EXPINVMKTD]
+	Use		: Name Field
+	Set as	: $RSMrtdBy:Stockitem:$StockITemName
+	Width	: 10
+	Style	: Small ; Bold
+	Border	: Thin Left
+	Lines	: 0
+
+[Field	: EXPINVMFD]
+	Use		: Name Field
+	Set as	: $RSMfdBY:Stockitem:$StockITemName
+	Width	: 5
+	Style	: Small ; Bold
+	Border	: Thin Left
+	Lines	: 0
+[Field	: EXPINVSCrop]
+	Use		: Name Field
+	Set as	: $VchCropName1 ;$RSScrop:Stockitem:$StockITemName
+	Width	: 5
+	Style	: Small ; Bold
+	Border	: Thin Left
+	Lines	: 0
+	;;Invisible	: Yes ;$$NumItems:CmpCropName = 0
+
+[Field	: EXPINVSpest]
+	Use		: Name Field
+	Set as	: $VchPestName1 ;;$RSSpest:Stockitem:$StockITemName
+	Width	: 5
+	Style	: Small ; Bold
+	Border	: Thin Left
+	Lines	: 0
+[Field	: ExpinvHSNfld]
+	Use		: Name Field
+	Set as	: $MyHSNCode:StockITem:$StockITemNAme
+	Width	: 5
+	Style	: Small ; Bold
+	Border	: Thin Left
+	
+[Field	: ExpinvGSTfld]
+	Use		: NUMBER Field
+	Set as	: $MyGSTRATE:Stockitem:$StockITemName
+	Width	: 5
+	Style	: Small ; Bold
+	Border	: Thin Left
+	Format	: "pERCENTAGE,NOZERO"
+	Align	: Center
+[Collection	: InvBatches]
+	Source Collection	: ..
+	Walk	: Inventory Entries,Batch Allocations
+	Compute	: StockItemName	: $..StockItemname
+	Compute	: BatchName		: $BatchName
+	Compute	: BilledQty		: $BilledQty
+	Compute	: RAte			: $RAte
+	Compute	: Amount		: $Amount
+	Compute	: BasicNumPackages : $..BasicNumpackages
+	Compute	: MfdON			: $MfdOn
+	Compute	: ExpiryPeriod	: $ExpiryPeriod
+	Compute	: VchCropName1	: $..VchCropName
+	Compute	: VchPestName1	: $..VchPestName
+	Compute	: INCLVATRATE	: $INCLVATRATE
+[#Object: StockITem]
+	MyHSNCode : $$CollectionField:$HSNCODE:(-1):GSTDETAILS
+	MyGSTRATE	: $GSTDETAILS[1].STATEWISEDETAILS[1].RATEDETAILS[3].GSTRATE
+
+[#Field :EXPINV PackagesTitle1]
+	Invisible	: Yes
+[#Field	: EXPINV PackagesTitle2]
+	Invisible	: Yes
+	
+
+
+[System	: UDF]
+	EITPTNAME	: String	: 1000
+	EiVehNO		: String	: 1001
+	EIDelFrom	: String	: 1002
+	EIContactName: String	: 1003
+	EIMobileNo	: String	: 1004
+	
+[#Form: EiSupplementary] 
+	Add	: Part: EiInvCols
+
+[Part: EiInvCols]
+	Line	: EIWTLine,EIPvtLine,EIDelFrom,EIVchContName,EiVchContNo
+[Line	: EIWTLine]
+	Field	: Short Prompt,EIWTLine
+	Local: Field	: Short Prompt : Set as: "Transport Name : "
+	Border	: thin top
+	
+	[Field	: EIWTLine]
+		Use	: Name Field
+		Storage	: EITPTNAME
+		Style	: Small Bold
+[Line	: EIPvtLine]
+	Field	: Short Prompt,EIPvtLine
+	Local: Field	: Short Prompt : Set as: "Vehicle No. : "
+	[Field	: EIPvtLine]
+		Use	: Name Field
+		Storage	: EiVehNO
+		Style	: Small Bold
+	
+[Line	: EIDelFrom]
+	Field	: Short Prompt,EIDelFrom
+	Local: Field	: Short Prompt : Set as: "Delivery From : "
+	Invisible	: Not @@IsPurcOrder
+	[Field	: EIDelFrom]
+		Use	: Name Field
+		Storage	: EIDelFrom
+		Style	: Small Bold
+ [Line : EIVchContName]
+	Field	: Short Prompt,EIVchContName
+	Local: Field	: Short Prompt : Set as: "Contact Person : "
+	[Field	: EIVchContName]
+		Use	: Name Field
+		Storage	: EIContactName
+		Style	: Small Bold
+[Line :  EiVchContNo]
+	Field	: Short Prompt,EiVchContNo
+	Local: Field	: Short Prompt : Set as: "Mobile No. : "
+	[Field	: EiVchContNo]
+		Use	: Name Field
+		Storage	: EIMobileNo
+		Style	: Small Bold
+	
+;[#Part: EXPINV SaleTopLeft]
+;	Height      : 21% Page ;(If (($$InExportMode OR $$InMailAction OR $$InUploadAction) AND ($$IsSysNameEqual:Excel:##SVExportFormat OR $$IsSysNameEqual:HTML:##SVExportFormat)) THEN +
+;							;(13 + 13 + @WithOrderVch + @WithOrderTerms + @WithBuyer + @WithCountry)  ELSE +
+;							;IF ##SVPreprinted THEN @@PreprintedDimension Else @@PlainPaperDimension) % page
+;		
+;[#Part: EXPINV Consignee]
+;	Height		: 10% Page ;(If ((NOT $$InPrintMode) AND ($$InExportAction OR $$InMailAction)) Then 15 Else If ##SAFullListAddress then 10 Else 10+@lfBuyerWithoutContactHt)% Page
+;
+;[#Part: EXPINV Terms]
+;[#Part: EXPINV TopRight]
+;	Add: Part	: ExpinvTermsBottom
+;[Part	: ExpinvTermsBottom]	
+;	Add	: Bottom Line	: EIWTLine1,EIPvtLine1,ExpDelFrom,ExpContName,ExpMobileNo ;;,EiCaseLine1
+;	Invisible	: Not @@IsSales
+;[Line	: EIWTLine1]
+;	Field	: Short Prompt,EIWTLine1
+;	Local: Field	: Short Prompt : Set as: "Transport Name : "
+;	Border	: thin top
+;	
+;	[Field	: EIWTLine1]
+;		Use		: Name Field
+;		Set as	: $EITPTNAME
+;		Style	: Small
+;[Line	: EIPvtLine1]
+;	Field	: Short Prompt,EIPvtLine1
+;	Local: Field	: Short Prompt : Set as: "Vehicle No. : "
+;	[Field	: EIPvtLine1]
+;		Use	: Name Field
+;		Set as	: $EIVEHNo
+;		Style	: Small 
+;[Line	: ExpDelFrom]
+;	Field	: Short Prompt,ExpDelFrom
+;	Local: Field	: Short Prompt : Set as: "Delivery From : "
+;	Invisible	: Not @@IsPurcOrder
+;	[Field	: ExpDelFrom]
+;		Use	: Name Field
+;		Set as	: $EIDelFrom
+;		Style	: Small 
+;[Line	: ExpContName]
+;	Field	: Short Prompt,ExpContName
+;	Local: Field	: Short Prompt : Set as: "Contact Person : "
+;	[Field	: ExpContName]
+;		Use	: Name Field
+;		Set as	: $EIContactName
+;		Style	: Small 
+;[Line	: ExpMobileNo]
+;	Field	: Short Prompt,ExpMobileNo
+;	Local: Field	: Short Prompt : Set as: "Mobile No : "
+;	[Field	: ExpMobileNo]
+;		Use	: Name Field
+;		Set as	: $EIMobileNo
+;		Style	: Small 
+;
+;[#Part: EXPINV AccInfo]
+;	Delete: Option
+;
+
+;;;;;;;;;;;;;;;;;;;;;Pesticide Lic No
+[#Part: DSP EXPINV Company]
+	Add	: Bottom Line: ExpInvPCNo,ExpInvFENo,ExpInvSeedNo	
+						
+[#Part: EXPINV Company]
+	Add	: Bottom Line: ExpInvPCNo,ExpInvFENo,ExpInvSeedNo	
+;	Height		: If ((NOT $$InPrintMode) AND ($$InExportAction OR $$InMailAction)) Then 18% Else 14% Page
+                
+[Line: ExpInvPCNo]
+	Fields		:  ExpInvPCNo
+   	Local       : Field : Short Prompt : Set as 	: $$LocaleString:"Pesticides Lic. No. :"
+;    Space Top   : 0.1
+    [Field	: ExpInvPCNo]
+		Use		: Name Field
+		Set as	: "Pesticides Lic. No. : " + $CMPPesticideLicNo:Company:##SVCurrentCompany
+		Style	: Small
+		Width	: 30
+[Line: ExpInvFENo]
+	Fields		:  ExpInvFENo
+   	Local       : Field : Short Prompt : Set as 	: $$LocaleString:"Fertilizers Lic. No. :"
+;	Local       : Field : Short Prompt 	: Width	: 12
+;    Space Top   : 0.1
+    [Field	: ExpInvFENo]
+		Use		: Name Field
+		Set as	: "Fertilizers Lic. No. : " + $CMPFertilizersLicNo:Company:##SvCurrentCompany
+		Style	: Small
+		Width	: 30
+
+[Line: ExpInvSeedNo]
+	Fields		:  ExpInvSeedNo
+   	Local       : Field : Short Prompt : Set as 	: $$LocaleString:"Seed Lic. No. :"
+;	Local       : Field : Short Prompt 	: Width	: 12
+;    Space Top   : 0.1
+    [Field	: ExpInvSeedNo]
+		Use		: Name Field
+		Set as	: "Seed Lic. No. : " + $CMPSeedLicNo:Company:##SvCurrentCompany
+		Style	: Small
+		Width	: 30	
+
+[#Part: Company MailingDetails]
+	Add	: Part: CMpMisc
+[Part: CMpMisc]	
+	Add	: Line:  CMPPesticideLic,CmpFertilizersLic,CmpSeedLic,CMPHOlesaleno ;;HolesaleL
+	Height	: 4
+[Line	: CMPPesticideLic]
+	Fields		: Medium Prompt, CMP PesticideLic
+   	Local       : Field : Medium Prompt : Set as 	: $$LocaleString:"Pesticides Lic. No. :"
+    Space Top   : 0.1
+    [Field	: CMP PesticideLic]
+		Use		: Name Field
+		Storage	: CMPPesticideLicNo
+		Style	: Small
+[Line	: CmpFertilizersLic]
+	Fields		: Medium Prompt, CMP FertilizersLic
+   	Local       : Field : Medium Prompt : Set as 	: $$LocaleString:"Fertilizers Lic. No. :"
+    Space Top   : 0.1
+    [Field	: CMP FertilizersLic]
+		Use		: Name Field
+		Storage	: CMPFertilizersLicNo
+		Style	: Small
+[Line	: CmpSeedLic]
+	Fields		: Medium Prompt, CmpSeedLic
+   	Local       : Field : Medium Prompt : Set as 	: $$LocaleString:"Seed Lic. No. :"
+    Space Top   : 0.1
+    [Field	: CmpSeedLic]
+		Use		: Name Field
+		Storage	: CMPSeedLicNo
+		Style	: Small
+
+[System : UDF]
+	CMPPesticideLicNo	: String	: 3511
+	CMPFertilizersLicNo	: String	: 3512
+	CMPSeedLicNo		: String	: 3513
+
+;;;;;;;;;;;;;;
+[#Form: Comprehensive Invoice]
+	
+[#Line: EXPSMP Authourity]
+	Local           : Field : Name Field : Set as 		: $$LocaleString:""
+	Local           : Field : Name Field : Invisible	: NOt @@IsSales
+            
+
+[#Collection: Company Address]
+[Collection: Company Address1]
+    Type        : Address   : Company
+    Child of    : ##SVCurrentCompany
+    Object      : Company State
+;;	Object  	: Company CINumber
+;	Object      : Company Contacts
+;	Object		: Company FaxNo
+;;	Object      : Company Email
+;	Object		: Company Website
+	
+[Collection: Company Address2]
+	Object      : Company Contacts
+	Object      : Company Email
+	Object		: Company Website
+
+;CmpContacts     : If $$IsEmpty:@@CmpTelNo and $$ISEmpty:@@CmpMobNo then "" Else +
+;				    If $$ISEmpty:@@CmpTelNo then $$LocaleString:"Contact :" + " " + @@CmpMobNo Else +
+;					If $$IsEmpty:@@CmpMobNo then $$LocaleString:"Contact :" + " " + @@CmpTelNo Else $$LocaleString:"Contact :" + " " + @@CmpTelMobNo
+;					
+ ; CmpEmail        : If $$IsEmpty:($Email:Company:##SVCurrentCompany) then "" else $$LocaleString:"E-Mail :" + " " + $Email:Company:##SVCurrentCompany
+  ;CmpFaxNo	      : If $$IsEmpty:($FaxNumber:Company:##SVCurrentCompany) Then "" Else $$LocaleString:"Fax :" + " " + $FaxNumber:Company:##SVCurrentCompany
+  ;CmpWebsite	  : If $$IsEmpty:($Website:Company:##SVCurrentCompany) Then "" Else $Website:Company:##SVCurrentCompany
+  
+;;;;;;Terms & Conditions in Ledger & Balance Print
+[#Part: DBLLINE Narration]
+	Add: Line: At Beginning : RSPartyBalance
+[Line : RSPartyBalance]
+	Field:Short Prompt,RSPartyBalance
+	Local: Field: Short Prompt : Set as: "Closing Balance : "
+	Invisible: Not @@IsSales 
+[Field: RSPartyBalance]
+	Use	: Amount Field
+	Set as: if $$IsEmpty:$$Value and $$Increatemode then $ClosingBalance:Ledger:#EiConsignee else $$Value
+	Set Always: Yes 
+	Storage: RsPartyBalance
+	Format	: "DRCR"
+[System: UDF] 
+	RsPartyBalance 	: Amount:  701
+
+;;;;;;;
+;[#Part: EXPINV InvInfo]
+;	Delete	: Repeat	
+;	Add : Repeat      : EXPINV InvDetails    : Inventory EntriesBatch
+        
+
+[Collection	: Inventory EntriesBatch]
+		Source Collection	: ..
+		Walk	: InventoryEntries,BatchAllocations
+		Compute	: Stockitemname : $..Stockitemname
+		Compute	: BilledQty		: $BilledQty
+		Compute	: Rate			: $Rate
+		Compute	: Amount		: $Amount
+		Compute	: BatchName		: $BatchName
+		Compute	: Mfdon			: $Mfdon
+		Compute	: ExpiryPeriod	: $ExpiryPeriod
+		Compute	: VchCropName1	: $..VchCropName
+		Compute	: VchPestName1	: $..VchPestName
+				
+
+[#Field:  EXPINV TaxableAmt]
+    
+    Set as      : $Amount ;If NOT $GSTIsTransLedEx Then "" Else If ##vIsDebit Then $$AsDrAmt:@taxableamt Else $$AsCrAmt:@taxableamt
+    taxableamt1  : $$ReportObject:$$CollectionFieldByKey:$GSTInvoice_GSTAssesableValue:@@GSTTaxAnalysisItemLedName:GSTTaxAnalysiAlongWithSummary1
+
+[#Field: EXPINV CGSTRate]
+    Set as      : $$String:@cgstrate1 + "%" ;If NOT $GSTIsTransLedEx Then "" Else If $$IsEmpty:$GSTClsfnCGSTRateEx Then "0%" Else $$Sprintf:"%s%%":$GSTClsfnCGSTRateEx
+    cgstrate1    : $$ReportObject:$$CollectionFieldByKey:$GSTItemTaxCGSTRate:@@GSTTaxAnalysisItemLedName:GSTTaxAnalysiAlongWithSummary1
+	Add :Format	: "Percentage,Nozero"
+ 
+[#Field: EXPINV SGSTRate]
+    Set as      : $$String:@sgstrate1 + "%" ;If NOT $GSTIsTransLedEx Then "" Else If $$IsEmpty:$GSTClsfnSGSTRateEx Then "0%" Else $$Sprintf:"%s%%":$GSTClsfnSGSTRateEx
+    sgstrate1    : $$ReportObject:$$CollectionFieldByKey:$GSTItemTaxSGSTRate:@@GSTTaxAnalysisItemLedName:GSTTaxAnalysiAlongWithSummary1
+    ;;Invisible   : ##GSTFirstTransNatureType != 1 OR  (NOT ##IsRevChargeAppl AND $$IsEmpty:##GSTActualSGSTAmount)
+	Add :Format	: "Percentage,Nozero"
+    
+[#Field: EXPINV IGSTTaxRate]
+    Set as      : $$String:@igstrate1 + "%" ;;If NOT $GSTIsTransLedEx Then "" Else  If $$IsEmpty:$GSTClsfnIGSTRateEx Then "0%" Else $$Sprintf:"%s%%":$GSTClsfnIGSTRateEx
+    igstrate1    : $$Number:@sgstrate1  + $$Number:@cgstrate1 ;;$$ReportObject:$$CollectionFieldByKey:$GSTItemTaxSGSTRate:@@GSTTaxAnalysisItemLedName:GSTTaxAnalysiAlongWithSummary1
+
+    sgstrate1    : $$ReportObject:$$CollectionFieldByKey:$GSTItemTaxSGSTRate:@@GSTTaxAnalysisItemLedName:GSTTaxAnalysiAlongWithSummary1
+    cgstrate1    : $$ReportObject:$$CollectionFieldByKey:$GSTItemTaxCGSTRate:@@GSTTaxAnalysisItemLedName:GSTTaxAnalysiAlongWithSummary1
+    ;Invisible   : ##GSTFirstTransNatureType NOT IN (2, 3) OR  (NOT ##IsRevChargeAppl AND $$IsEmpty:##GSTActualIGSTAmount)
+	Add :Format	: "Percentage,Nozero"
+
+[#Field:  EXPINV CGSTAmt]
+    Set as      : $$AsAmount:@MyVal
+	MyVal		:	$$Number:@cgstrate1 * $$Number:$Amount /100 ;If NOT $GSTIsTransLedEx Then "" Else If $$IsEmpty:$GSTClsfnCGSTRateEx Then "0%" Else $$Sprintf:"%s%%":$GSTClsfnCGSTRateEx
+    cgstrate1    : $$ReportObject:$$CollectionFieldByKey:$GSTItemTaxCGSTRate:@@GSTTaxAnalysisItemLedName:GSTTaxAnalysiAlongWithSummary1
+    
+[#Field: EXPINV SGSTAmt]
+    Set as      : $$AsAmount:@MyVal
+	MyVal		:	$$Number:@sgstrate1 * $$Number:$Amount /100 ;If NOT $GSTIsTransLedEx Then "" Else If $$IsEmpty:$GSTClsfnCGSTRateEx Then "0%" Else $$Sprintf:"%s%%":$GSTClsfnCGSTRateEx
+    sgstrate1    : $$ReportObject:$$CollectionFieldByKey:$GSTItemTaxSGSTRate:@@GSTTaxAnalysisItemLedName:GSTTaxAnalysiAlongWithSummary1
+    ;;Invisible   : ##GSTFirstTransNatureType != 1 OR  (NOT ##IsRevChargeAppl AND $$IsEmpty:##GSTActualSGSTAmount)
+    
+    
+[#Field: EXPINV IGSTAmt]
+    Set as      : $$AsAmount:@MyVal
+	MyVal		:	$$Number:@igstrate1 * $$Number:$Amount /100 ;If NOT $GSTIsTransLedEx Then "" Else If $$IsEmpty:$GSTClsfnCGSTRateEx Then "0%" Else $$Sprintf:"%s%%":$GSTClsfnCGSTRateEx
+    igstrate1    : $$Number:@sgstrate1  + $$Number:@cgstrate1 ;;$$ReportObject:$$CollectionFieldByKey:$GSTItemTaxSGSTRate:@@GSTTaxAnalysisItemLedName:GSTTaxAnalysiAlongWithSummary1
+
+    sgstrate1    : $$ReportObject:$$CollectionFieldByKey:$GSTItemTaxSGSTRate:@@GSTTaxAnalysisItemLedName:GSTTaxAnalysiAlongWithSummary1
+    cgstrate1    : $$ReportObject:$$CollectionFieldByKey:$GSTItemTaxCGSTRate:@@GSTTaxAnalysisItemLedName:GSTTaxAnalysiAlongWithSummary1
+    
+    
+
+[#Field: EXPINV TotalTaxAmt]
+	Set as	: $$AsAmount:@MyVal
+	MyVal	: $$Number:$Amount + $$Number:#EXPINVCGSTAmt + $$Number:#EXPINVSGSTAmt + $$Number:#EXPINVIGSTAmt
+    
+[Collection: GSTTaxAnalysiAlongWithSummary1] 
+ 
+    Source Collection: GSTAnalysisPrintSummarySrc
+    
+    Compute Var : vIsAnyValuationTypeOnQty  : Logical : ##CGSTValType CONTAINS "Quantity" OR ##SGSTValType CONTAINS "Quantity" OR  ##IGSTValType CONTAINS "Quantity" OR ##CessValType CONTAINS "Quantity"
+    
+    Compute      : GSTInvoice_ItemCalcType       : If ##vIsAnyValuationTypeOnQty Then ##GSTItemValType Else ""
+     
+    Compute      : GSTInvoiceItemLedName         : If $$IsEmpty:$GSTStockItemName Then $GSTLedgerName Else $GSTStockItemName
+                                                 
+    Compute      : GSTInvoice_EntryLedgerName    : $GSTLedgerName
+    Compute      : GSTInvoice_TransLedName       : $GSTLedgerName
+    Compute      : GSTInvoice_TransNature        : $GSTTransNature 
+    Compute      : GSTInvoice_IsGSTTaxableTrn    : $GSTTransNature
+    Compute      : GSTInvoice_StockItemNAme      : $GSTStockItemName
+    Compute      : GSTInvoice_IsGSTLocalTransNat : $IsGSTLocalTransNat 
+    Compute      : GSTInvoice_FirstTransNature   : $GSTFirstTransNatureType 
+                   
+    Compute      : GSTItemTaxCGSTRate            : $CGSTTaxate   
+    Compute      : GSTItemTaxSGSTRate            : $SGSTTaxate   
+    Compute      : GSTItemTaxIGSTRate            : $IGSTTaxate    
+    Compute      : GSTItemTaxCessGSTRate         : $CessGSTTaxate
+	Compute		 : GSTItemTaxCessGSTRateQty      : $CessGSTTaxRateQty
+	
+    Compute      : GSTInvoice_VchTransType       : $GSTVchTransType
+    Compute      : GSTInvoice_VoucherTypeName    : $IsGSTDelNoteVoucher
+    Compute      : GSTInvoice_GSTStockItemUOM    : $GSTStockItemUOM
+                                                    
+    Compute      : GSTInvoice_GSTAssesableValue  : $GSTAssesableAmount
+    
+    Compute      : GSTInvoiceGSTItemLedIndex     : $GSTItemLedIndex 
+    Compute      : GSTInvoice_GSTApprExpAmount   : $GSTApprExpAmount
+                                                 
+    Compute     : GSTItemTaxCGSTTaxAmt           : $CGSTAmount   
+    Compute     : GSTItemTaxSGSTTaxAmt           : $SGSTAmount   
+    Compute     : GSTItemTaxIGSTTaxAmt           : $IGSTAmount   
+    Compute     : GSTItemTaxCessGSTTaxAmt        : $$NettAmount:$CessOnValGSTAmount:$CessOnQtyGSTAmount
+                                                 
+    Compute     : GSTInvoice_CGSTClsValType      : $CGSTValType   
+    Compute     : GSTInvoice_SGSTClsValType      : $SGSTValType   
+    Compute     : GSTInvoice_IGSTClsTValType     : $IGSTValType   
+    Compute     : GSTInvoice_CessGSTClsValType   : $CessGSTValType
+
+    Filter       : GSTInvoice_IsNonEmpryGStNature
+    Client Only  : Yes
+    
+    Search Key   : $GSTInvoiceItemLedName ;;+$$SeparatorChar+($$String:$GSTInvoiceGSTItemLedIndex)
+
+;;;;;;;;;;;;;;;
+;[#Field : Plain Vch Date]
+;	Add : Option : Plain Vch Date Sales : @@IsSales or @@isDelNote or @@IsCreditNote
+;[!Field : Plain Vch Date Sales]
+;	Type : DAte : Forced
+;	Set as : if $$InCreatemode then $$MachineDate else $$Value
+;
+;;;;;;
+;[#Report: Ledger Vouchers]
+;	Set	: ExplodeNarrFlag : Yes
+;	
+;
+;;;;;;;Trial Balance Setting Change
+;[#Report	: Trial Balance]
+;	Set: DSPShowOpening	: Yes
+;	Set: DSPShowTrans	: Yes
+;	Set: DSPShowNett	: Yes
+;
+;;		[Line: EXPINV InvDetails]
+
+
+;;;;;StockItem Changes
+
+[#Form : Stockitem]
+
+[#Part: STKI Basic Features]
+	Add	: Part: STKIPestFeatures
+[Part: STKIPestFeatures]
+	Line	: STKITechName,STKIMrtdBy,StkiCIRNO,STKIMfdBY ,StkiPACKAGE ;;,STKISpest
+[Line	: STKITechName]
+	Field	: Short Prompt,STKITechName
+	Local	: Field	: Short Prompt : Set as: "Tech. Name :"
+	[Field	: STKITechName]
+		Use		: Name Field
+		Storage	: RSTechName
+		
+[Line	: StkiCIRNO]
+	Field	: Short Prompt,StkiCIRNO
+	Local	: Field	: Short Prompt : Set as: "CIR No. :"
+	[Field	: StkiCIRNO]
+		Use		: Name Field
+		Storage	: RSCIRNO
+		
+[Line	: STKIMrtdBy]
+	Field	: Short Prompt,STKIMrtdBy
+	Local	: Field	: Short Prompt : Set as: "Mktd. By :"
+	[Field	: STKIMrtdBy]
+		Use		: Name Field
+		Storage	: RSMrtdBy
+
+[Line	: STKIMfdBY]
+	Field	: Short Prompt,STKIMfdBY
+	Local	: Field	: Short Prompt : Set as: "Mfd. By :"
+	[Field	: STKIMfdBY]
+		Use		: Name Field
+		Storage	: RSMfdBY
+[Line	: StkiPACKAGE]
+	Field	: Short Prompt,StkiPACKAGE
+	Local	: Field	: Short Prompt : Set as: "Package :"
+	[Field	: StkiPACKAGE]
+		Use		: Name Field
+		Storage	: RSPackages
+		
+[Line	: STKISpest]
+	Field	: Short Prompt,STKISpest
+	Local	: Field	: Short Prompt : Set as: "S. Pest :"
+	[Field	: STKISpest]
+		Use		: Name Field
+		Storage	: RSSpest
+
+[System	: UDF]
+RSTechName	: String        : 3590
+RSMrtdBy	: String	    : 3591
+	RSCIRNO	: String	    : 3592
+	RSMfdBY	: String	    : 3593
+	RSScrop	: String	    : 3594
+	RSSpest	: String	    : 3595
+RSPackages  : String	    : 3596
+	
+
+;;;;;
+[Style: LargeBold14]
+    Use     : Normal
+    Height  : 14
+	Bold:Yes
+
+
+[#Field:  EXPINV HSNSACTitle]
+	Add	: Option	: PrintGstHSNCC : @@IsSales and @@IsINVVtype
+[#Field:  EXPINV IGSTRateTitle]
+	Add	: Option	: PrintGstHSNCC : @@IsSales and @@IsINVVtype
+[#Field: EXPINV HSNSACTitle2]
+	Add	: Option	: PrintGstHSNCC : @@IsSales and @@IsINVVtype
+[#Field:  EXPINV IGSTRateTitle2]
+	Add	: Option	: PrintGstHSNCC : @@IsSales and @@IsINVVtype
+[#Field: EXPINV HSNSACDetails]
+	Add	: Option	: PrintGstHSNCC : @@IsSales and @@IsINVVtype
+	
+[#Field: EXPINV IGSTRate]
+	Add	: Option	: PrintGstHSNCC : @@IsSales and @@IsINVVtype
+[!Field:PrintGstHSNCC]
+	Invisible: Yes
+
+
+[Part: EXPINV Column1A]
+	Line	: EXPINV Column1A
+[Line: EXPINV Column1A]	
+	Field	: ExPestSnoTitle,ExPestItemTitle
+	Right Field: EXPINVTechTitle,EXPINVMKTDTitle,EXPINVCIRTitle,EXPINVMFDTitle,EXPINVSCropTitle,EXPINVSpestTitle,ExpinvHSNfldTitle,ExpinvGSTfldTitle,ExpInvRSBatchTitle,ExpInvRSMfdTitle,ExpInvRSExpiryTitle,ExpInvRSPkgsTitle
+	Right Field	: ExPestQtyTitle,ExPestIncluRateTitle ,ExPestRateNetTitle,ExPestRatePerTitle,ExPestAmtTitle
+	Local	: Field	: ExPestRatePerTitle :Width	: 3.1
+	Local	: Field	: Default : Lines: 2
+	Border	: Column Titles
+[Field	: ExPestSnoTitle]
+	Use		: Name Field
+	Set as	: "S. No."
+	Style	: Small
+	Width	: 3
+	Border	: Thin Left 
+[Field	: ExPestItemTitle]
+	Use		: Name Field
+	Set as	: "Description of Goods"
+	Style	: Small
+	Width:15
+	Border	: Thin Left 
+[Field	: ExPestQtyTitle]
+	Use		: Name Field
+	Set as	: "Quantity"
+	Style	: Small
+	Width	: 8
+	Border	: Thin Left 
+[Field	: ExPestIncluRateTitle]
+	Use		: Name Field
+	Set as	: "Inclusive of tax Rate"
+	Style	: Small
+	Width	: 8
+	Border	: Thin Left 
+	[Field	: ExPestRateNetTitle]
+	Use		: Name Field
+	Set as	: "Net/Rate"
+	Style	: Small
+	Width	: 3
+	Border	: Thin Left 
+[Field	: ExPestRatePerTitle]
+	Use		: Name Field
+	Set as	: "Per"
+	Style	: Small
+	Width	: 3
+	Border	: Thin Left 
+	
+
+	
+
+[Field	: ExPestAmtTitle]
+	Use		: Name Field
+	Set as	: "Amount"
+	Style	: Small
+	Width	: 12
+	Border	: Thin Left Right
+	
+[Part	: EXPINV Details1A]
+	Line	: EXPINV Details1A
+	Repeat	: EXPINV Details1A : InventoryEntries
+	Scroll	: Vertical
+[Line	: EXPINV Details1A]
+	Field	: ExPestSno,ExPestItem
+	Right Field	: EXPINVTech,EXPINVMKTD,EXPINVCIR,EXPINVMFD,EXPINVSCrop,EXPINVSpest,ExpinvHSNfld,ExpinvGSTfld,ExpInvRSBatch,ExpInvRSMfd ,ExpInvRSExpiry,ExpInvRSPkgs
+	Right Field	: ExPestQty,EXPestInclusiveTitleDetails,ExPestRate,ExPestRatePer,ExPestAmt
+;	Add	: Right Field	: Before	: EXPINV Qty 	: 
+	
+	
+[Field	: ExPestSno]
+	Use		: Name Field
+	Set as	: $$Line
+	Style	: Small
+	Width	: 3
+	Border	: Thin Left 
+[Field	: ExPestItem]
+	Use		: Name Field
+	Set as	: $StockitemName
+	Style	: Small
+	Width:15
+	Lines	: 0
+	Border	: Thin Left 
+[Field	: ExPestQty]
+	Use		: Qty Primary Field
+	Set as	: $BilledQty
+	Style	: Small
+	Width	: 8
+	Border	: Thin Left
+
+
+[Field	: ExPestRate]
+	Use		: Rate Price Field
+	Set as	: $Rate
+	Style	: Small
+	Width	: 8
+	Border	: Thin Left 
+[Field	: ExPestRatePer]
+	Use		: Rate Units Field
+	Set as	: $Rate
+	Style	: Small
+	Width	: 3
+	Border	: Thin Left 
+[Field	: ExPestAmt]
+	Use		: Amount Field
+	Set as	: $Amount
+	Style	: Small
+	Width	: 12.1
+	Border	: Thin Left Right
+
+	
+	
+[Part: EXPINV Column1b]
+	Line	: EXPINV Column1b
+[Line: EXPINV Column1b]	
+	Field	: ExPestSnoTitle,ExPestItemTitle
+	Right Field: EXPINVTechTitle,EXPINVMKTDTitle,EXPINVCIRTitle,EXPINVMFDTitle,EXPINVSCropTitle,EXPINVSpestTitle,ExpinvHSNfldTitle,ExpinvGSTfldTitle,ExpInvRSBatchTitle,ExpInvRSMfdTitle,ExpInvRSExpiryTitle,ExpInvRSPkgsTitle
+	Right Field	: ExPestQtyTitle,EXPestInclusiveTitle,ExPestRateTitle,ExPestRatePerTitle,ExPestAmtTitle
+	Local	: Field	: Default : Lines: 2
+	Border	: Column Titles
+
+;	Field	: ExPestSnoTitle,ExPestItemTitle
+;	Right Field: EXPINVTechTitle,EXPINVMKTDTitle,EXPINVCIRTitle,EXPINVMFDTitle,EXPINVSCropTitle,EXPINVSpestTitle,ExpinvHSNfldTitle,ExpinvGSTfldTitle,ExpInvRSBatchTitle,ExpInvRSMfdTitle,ExpInvRSExpiryTitle,ExpInvRSPkgsTitle
+;	Right Field	: ExPestQtyTitle,ExPestRateTitle,ExPestRatePerTitle,ExPestAmtTitle
+	Local	: Field	: ExPestAmtTitle      : Width	   : 11.9
+	Local	: Field	: ExPestQtyTitle      : Width	   : 7.9
+	Local	: Field	: ExpInvRSPkgsTitle	  : Width      : 3.9
+	Local	: Field	: ExpInvRSMfdTitle    : Width	   : 4.9
+	Local	: Field	: ExPestRateTitle     :Width       : 7.9
+	
+
+
+;;;;;;;;;;;;;;;;;;;;;;;Normal Invoice
+[#Form: Comprehensive INvoice]
+
+[#Part: EXPINV SaleTopLeft]
+	Add	: Option: AdditionalPArt : @@IsAdditionalinfo
+[!Part	: AdditionalPArt]	
+	Add	: Part	: After:  EXPINV Company : ExpInvAdditional
+	Height      : (If (($$InExportMode OR $$InMailAction OR $$InUploadAction) AND ($$IsSysNameEqual:Excel:##SVExportFormat OR $$IsSysNameEqual:HTML:##SVExportFormat)) THEN +
+							(13 + 13 + @WithOrderVch + @WithOrderTerms + @WithBuyer + @WithCountry + 5)  ELSE +
+							IF ##SVPreprinted THEN @@PreprintedDimension Else @@PlainPaperDimension + 5) % page
+[Part	: ExpInvAdditional]
+	Line	: ExpInvAdditional1,ExpInvAdditional2,ExpInvAdditional3
+	Border:Thin Top
+[Line	: ExpInvAdditional1]
+	Field	: Name Field
+	Local	: Field	: Name Field : Set as: $VtypeLine1:VoucherType:$VoucherTypeName
+	Local	: Field	: Name Field : Style	: Normal
+	Local	: Field	: Name Field : Full Width	: Yes
+	
+[Line	: ExpInvAdditional2]
+	Field	: Name Field
+	Local	: Field	: Name Field : Set as: $VtypeLine2:VoucherType:$VoucherTypeName
+	Local	: Field	: Name Field : Style	: Normal
+	Local	: Field	: Name Field : Full Width	: Yes
+[Line	: ExpInvAdditional3]
+	Field	: Name Field
+	Local	: Field	: Name Field : Set as: $VtypeLine3:VoucherType:$VoucherTypeName
+	Local	: Field	: Name Field : Style	: Normal
+	Local	: Field	: Name Field : Full Width	: Yes
+	
+[System	: Formula]
+	IsAdditionalinfo : $ForInvadditional:VoucherType:$VoucherTypeName
+	
+	
+
+;	: Logical	: 6011
+;	VtypeLine1		: String	: 6012
+;	VtypeLine2		: String	: 6013
+;	VtypeLine3		: String	: 6014
+
+
+;[#Part: ExpinvVatAna2c]
+;	Add: Line: Before:ExpInvLedgers:ExpInvBankled,ExpInvBankifsc
+;	[Line: ExpInvBankled]
+;		Field: Medium prompt, ExpInvBankled
+;	Local:Field:Default:Style :Normal Bold
+;	Local:Field:Default:Border:Thin Right
+;	Local:Field:Default:Type  :String
+;	
+;	Local:Field:Mediumprompt:Set as:"Bank Details :-"
+;   
+;[Field:ExpInvBankled]
+;   Use:Name Field
+;   Set as:If NOT $$IsEmpty:@@VchBankMailingName Then @@VchBankMailingName Else ##SABankName
+;   Full Width:Yes
+;   
+;
+;[Line	: ExpInvBankifsc]   
+;			Field			: ExpInvAC NO, ExpInvIFSC
+;			[Field			: ExpInvAC NO]
+;				Border		: THIN BOTTOM
+;				Use			: Name field
+;				Set as		: "Account No. : " + $BankDetails:Ledger:@@VchBankName
+;				
+;				
+;			[Field			: ExpInvIFSC]
+;				Border		: THIN BOTTOM
+;				Use			: Name field
+;				Set as		: "IFSC Code : " + $IFSCode:Ledger:@@VchBankName
+				
+   
+[#Line: EXPINV Column1A]
+	Add:Right Field:After:ExPestQtyTitle:EXPestInclusiveTitle
+	[Field:EXPestInclusiveTitle]
+		Use:Name Field
+		Set as:"Incl. Rate"
+		Width:7
+		Border : thin left		
+		Style: Small
+[#Line	: EXPINV Details1A]
+	Add:Right Field:After:ExPestQty:EXPestInclusiveTitleDetails
+	[Field:EXPestInclusiveTitleDetails]
+	  Use : Rate Price Field
+	  Set as:$INCLVATRATE
+		Width : 7
+		Border : thin left
+		Format	: "NoSymbol"
+		Style	: Small

@@ -1,0 +1,677 @@
+;;756847026
+
+;[#Menu:gateway of tally]
+;	Add:Item:Mohindra Invoice:Display:Mohindra Invoice
+[System  : UDF]
+	MSMENo  : String  : 1890
+;[#Form:Sales color]
+;	Add:Print:Mohindra Invoice
+[#Form: Comprehensive INvoice]
+	Delete:Option
+	Add	: Option	: MohindraInvoice : @@ISSales
+	Delete:Parts
+	Delete:Bottom Parts
+	;Delete:Options
+[Report:Mohindra Invoice]
+	Form:Mohindra Invoice
+	Object  :  Voucher
+[!Form:MohindraInvoice]
+	Part:gstinv,mohindratitle,invaddress,Titlename,mohdetails,invbankdetails,amtinwords
+;	Height:100% screen
+;	Width:100% screen
+	Use:dsp template
+	
+[Part:gstinv]
+	Part	: EXPINV Image,	gstinv1
+	Height	: .80 inch
+	Border	: Thin Top Left Right
+[Part	: gstinv1]	
+	Line:GstInv,msmeno,gstin,PanNo ;;,Telephn
+[Line:gstinv]
+	Field:CINNo,Gstinv,Offccopy
+[Field:cinno]
+	Use:name field
+	Set as:"CIN : " + $CorporateIdentityNo:Company:##SVCurrentCompany
+	Align:Left
+	Style:small
+	Width:30
+[Field:Gstinv]
+	Use:name field
+	Set as:"GST INVOICE"
+	Align:Center
+	Style:normal bold
+	Full Width:Yes
+[Field:offccopy]
+	Use:Copy field
+	;Set as:"OFFICE COPY"
+	Align:Right
+	Style:small
+	Full Width	: No
+	Width:30
+[Part:msmeno]
+	Line:msmeno
+[Line:msmeno]
+	Field:msmeno,billname
+	Right Field:teleno
+	Local  : Field  : Short prompt  : Set as  : "MSME EM No. :"
+[Field:msmeno]
+	Use     : name field
+	Set as  : "MSME EM No. :" + $MSMENo:company:##svcurrentcompany
+	Style:small
+	Width	: 30
+[Field:billname]
+	Use:name field
+	Set as:"BILL"
+	Style:large  bold
+	Full Width:Yes
+	Align:Center
+
+[Field:teleno]
+	Use:name field
+	Set as:"Tele:"+$phonenumber:company:##svcurrentcompany
+	Style:small
+	Align:Right
+	Width	: 30
+[Line:gstin]
+	Field:gstin
+	Right Field:mobno
+	Local  : Field  : Short prompt  : Set as  : "GSTIN : "
+[Field:gstin]
+	Use:name field
+	Set as:"GSTIN : " + @@CMPGSTaxNumber 
+	Align:Left
+	Style:small
+[Field:mobno]
+	Use:name field
+	Set as:"Mob:"+$mobileno:company:##svcurrentcompany
+	Align:Right
+	Style:small
+	
+[Line:telephn]
+	Right Field:telephn
+[Field:telephn]
+	Use:name field
+	Set as:"Mob:"
+	Align:Right
+	Style:small
+	
+[Line:PanNo]
+	Field: PanNo
+	Right Field:Email
+	Local  : Field  : Short prompt  : Set as  : "PAN No. :"
+[Field:PanNo]
+	Use:name field
+	Set as: "PAN No. :" + @@VATCMPGSTNumber 
+	Align:Left
+	Style:small
+
+[Field:Email]
+	Use:name field
+	Set as: "Email  : " + $email:company:##svcurrentcompany
+	Align:Right
+	Style:small	
+	
+
+[Part:mohindratitle]
+	Line:mohindratitle,mohaddress;,Mohtitle
+	Border	: Thin Left Right
+[Line:mohindratitle]
+	Field:mohindratitle
+[Field:mohindratitle]
+	Use:name field
+	Set as:@@CmpMailName;"MOHINDRA PRECISION TOOLS PVT. LIMITED"
+	Style: CmpStyle
+	Full Width:Yes
+	Align:Center
+[Style  : CmpStyle]
+    Bold  : Yes
+	Height: 26
+;[Line:Mohtitle]
+;	;Field:mohtitle
+;	Border:thin bottom
+;	Space Bottom:0.5
+;[Field:mohtitle]
+;	Use:name field
+;	Set as:"MFRS: THREAD ROLLING DIES & THREADING TOOLS"
+;	Style:large bold
+;	Full Width:Yes
+;	Align:Center
+[Line:mohaddress]
+	Field:mohaddress
+	Border:thin bottom
+	Space Bottom:0.5
+    Space Top:0.5
+[Field:mohaddress]
+	Use:name field
+	Set as:$address:company:##svcurrentcompany+ $pincode:company:##svcurrentcompany;+ $email:company:##svcurrentcompany;"C-160, INDUSTRIAL FOCAL POINT,PATIALA -147003 info@mohindratools.com"
+	Style:large bold
+	Full Width:Yes
+	Align:Center
+[Part:invaddress]
+	Part:invapartyinfo,invcmptransport
+	Border	: Thin Box
+[Part:invapartyinfo]
+	Line:invpartyname,invpartyaddress,invpartycontact,invstate,invgstin,placeofsupply
+	Repeat:invpartyaddress:partyaddress
+	Border:thin right
+[Line:invpartyname]
+	   
+	Field:invpartyname
+	
+	;Local:Field:short prompt:Set as:"Party Name"
+[Field:invpartyname]
+	Use:name field
+	Set as:$partyledgername;$partyledgername
+    Style:Normal bold
+	Full Width:Yes
+    Align:Left
+[Line:invpartyaddress]
+	Field:Invpartyaddress
+[Field:invpartyaddress]
+	Use:name field
+	Set as:$address
+	Style:small
+[Line:invpartycontact]
+	Field:invpartycontact
+[Field:invpartycontact]
+	Use:name field
+	Set as:$MobileNo:ledger:$partyledgername
+[Line:Invstate]
+	Field:invstate,INVcode
+;	Space Bottom:.5
+[Field:invstate]
+	Use:name field
+	Set as:"STATE:  "+$statename
+	Style:small
+[Field  : INVCode]
+	Use  : name field
+	Set as : "Pincode:  "+$Pincode:ledger:$partyledgername
+	Style:small
+[Line:invgstin]
+	Field:invgstin,invPan
+[Field:invgstin]
+	Use:name field
+	Set as:"GST No. :" + $partygstin:ledger:$partyledgername
+	Style:small
+[Field:invPan]
+	Use:name field
+	Set as:"Pan No. :" + $IncomeTaxNumber:ledger:$partyledgername
+	Style:small
+	
+[Line:placeofsupply]
+	Field:placeofsupply,invstateCode
+[Field:placeofsupply]
+	Use:name field
+	Set as:"Place of Supply : " + $statename
+	
+[Field:invstate1]
+	Use:name field
+	Set as:$statename
+	Style:small
+[Field	: invstateCode]
+	Use:name field
+	Set as:"STATE Code:  "+ @Myval 
+	myval : $$getgststatecode:$statename
+	;;Style:small
+	
+
+[Part:invcmptransport]
+	Line:invbillno,motransport,vehicleno,grno,pono,packages,datetime
+[Line:invbillno]
+	Field:short prompt,invbillno,Medium Prompt,invdate
+    Local:Field:short prompt:Set as:"BILL No"
+	Local : Field:Medium Prompt:Set as:"DATE :"
+	Local : Field:Medium Prompt:Width	: 5
+	Local:Field:default:Type:String
+	Border:thin bottom
+[Field:invbillno]
+	Use:name field
+	Set as:$VoucherNumber
+	Style:Large Bold
+	Border:thin right
+	Width	: 12
+[Field:invdate]
+	Use:unidate field
+	Set as:$Date
+	Style:NormalBold
+	Width	: 12
+[Line:motransport]
+	Field:short prompt,motransport
+	Local:Field:short prompt:Set as:"Mode of Transport"
+	Local:Field:short prompt:Width:15
+[Field:motransport]
+	Use:name field
+	Set as:$BasicShippedBy
+	Style  : small
+	
+[Line:vehicleno]
+	Field:short prompt,vehicleno,Medium Prompt,invFreight
+	Local : Field:Medium Prompt:Set as:"Freight :"
+	Local : Field:Medium Prompt:Width	: 6
+	Local:Field:short prompt:Set as:"Vehicle No"
+[Field:vehicleno]
+	Use:name field
+    Set as:$BasicShipVesselNo
+	Style  : small
+	Width	: 15
+
+[Field	: invFreight]
+	Use:name field
+	Set as:$salefreight
+	Style:Small
+	Width	: 12
+[Line:grno]
+	Field:short prompt,grno
+	Local:Field:short prompt:Set as:"GR No & Date : "
+[Field:grno]
+	Use:name field
+	Set as:$BasicShipDocumentNo
+	Style  : small
+[Line:pono]
+	Field:short prompt,pono,Medium Prompt,invPODATE
+	Local : Field:Medium Prompt:Set as:"Date :"
+	Local : Field:Medium Prompt:Width	: 6
+	Local:Field:short prompt:Set as:"PO No"
+[Field:pono]
+	Use:name field
+	Set as:$Basicpurchaseorderno
+	Width	: 15
+	Style	: small
+[Field	: invPODATE]
+	Use:Uni Date field
+	Set as:$BasicOrderDate
+	Style:Small
+	Width	: 12
+	Align	: Left
+	
+[Line:packages]
+	Field:short prompt,packages
+	Local:Field:short prompt:Set as:"Packages"
+[Field:packages]
+	Use:name field
+	Set as:$salepackage
+	Style:Small
+	
+[Line:datetime]
+	Field:short prompt,datetime,Medium Prompt,invRCM
+	Local : Field:Medium Prompt:Set as:"RCM :"
+	Local : Field:Medium Prompt:Width	: 4
+	Local:Field:short prompt:Set as:"Date & Time of supply"
+	Local:Field:short prompt:Width:18
+	Border:thin top
+[Field:datetime]
+	Use:uni date field
+	Set as:$date
+	Width	: 11
+[Field	: invRCM]
+	Use		: Name Field
+	Set as	: $SaleRCM
+	Style	: Small
+	Width	: 9
+	
+[Part:Titlename]
+	Line:Titlename
+	Common Border	: Yes
+[Line:Titlename]
+	Field:descriptionofgoods,ItemDescription
+	Right Field	: HSNSac,InvQty,INvUnit,INVRate,INVTAx
+	Local:Field:descriptionofgoods:Set as:"Name of Item (Set of 2 Pcs.)"
+	Local:Field:ItemDescription:Set as:"Description"
+	Local:Field:HSNSac:Set as:"HSN/SAC"
+	Local:Field:INVQty:Set as:"Qty"
+	Local:Field:INvUnit:Set as:"Unit"
+	Local:Field:INvRate:Set as:"Rate"
+	Local:Field:InvTax:Set as:"Taxable Amount"
+	Local:Field:default:Type:String
+	Local:Field:default:Style:small bold
+	Border:THICK TOP BOTTOM
+	
+;	Space Bottom:0.5
+;    Space Top:0.5
+    ;Border:thin left
+[Part:mohdetails]
+	Scroll:Vertical
+	Line:mohdetails
+	Bottom Line	: MohTotals
+	Repeat:mohdetails:Inventoryentries
+	Total	: invqty,invtax
+	Common Border	: Yes
+[Line:mohdetails]
+	Field:descriptionofgoods,ItemDescription
+	Right Field:HSNSac,InvQty,INvUnit,INVRate,INVTAx
+[Field:Descriptionofgoods]
+	Use:name field
+	;Set as      : If @@InvWithPartNo And (@@UseNamePartNo OR @@UsePartNoName) Then $StockItemName Else If NOT $$IsSysName:$StockItemName then @@InvItemName + " " + $INVStkCat  else ""
+    Set as:$StockItemName
+	Full Width:Yes
+	Border:thin left right
+	
+[Field	: ItemDescription]
+	Use:name field
+	Set as:$$FullList:BasicUserdescription:$BasicUserDescription
+    Style:small
+	Border:thin left
+	Full Width:Yes
+	Lines:0
+[Field:HsnSac]
+	Use:name field
+	Set as:$HSNCode               
+    Style:small
+	Border:thin left
+	Width:8
+	Align:Center
+[Field:Invqty]
+	Use:qty primary field
+	Set as:$billedQty
+	Style:small
+	Border:thin left
+	Width:7
+	Align:Right
+	Format	: "NoSymbol"
+[Field:InvUnit]
+	Use:name field
+	Set as:$Baseunits:StockITem:$StockItemName
+	Style:small
+	Border:thin left
+	Width:5
+	Align:Center
+[Field:InvRate]
+	Use: rate price field
+	Set as:$rate
+	Border:thin left
+	Width:8
+	Align:right
+[Field:InvTax]
+	Use:amount field
+	Set as:$amount
+	Border:thin left right
+	Width:15
+	Align:Right
+
+[Line:Mohtotals]
+	Field:descriptionofgoods,ItemDescription
+	Right Field	: HSNSac,InvQty,INvUnit,INVRate,INVTAx
+	Local:Field:descriptionofgoods:Set as:"Total"
+	Local:Field:ItemDescription:Set as:""
+	Local:Field:HSNSac:Set as:""
+	Local:Field:INVQty:Set as:$$Total:INVQty
+	Local:Field:INvUnit:Set as:""
+	Local:Field:INvRate:Set as:""
+	Local:Field:InvTax:Set as:$$Total:InvTax
+	Local:Field:default:Style:small bold
+	Border	: Totals
+	
+[Collection:InvDetails]
+	Type  : ledger 
+	Fetch:*.*,inventryentries,ledgerentries.*
+	;By:partyledgername:$partyledgername
+	Compute:amount:$amount
+[Part:invbankdetails]
+	Part:invBdetails,invtaxation
+	Border:thin Box
+[Part:invBdetails]
+	Line		: EXPINV BankTitle, EXPINV BankName, EXPINV BankAccNo, EXPINV BankBranchInfo
+	Line: InwdsTitle,amtinwords
+	Border:thin right
+	Width	: 75% Screen
+[Line	: InwdsTitle]
+	Field:Name Field
+	Local	: Field:Name Field:Set as	:"In words :"
+	Local	: Field	: Name Field : Style	: small
+	
+[Part:invtaxation]
+	Line:invdelv,INVSUBTOTal,InvLedgers
+	Bottom Line	: InvGtotal
+	Repeat	: InvLedgers 	: Ledger Entries
+
+	
+[Line:invdelv]
+	Right Field:invdelv,InvTax
+	Local	: Field	: InvTax : Delete	: Border
+	Local	: Field	: InvTax : Set as	: @@CDamtpo
+;;	Invisible: Yes
+[Field:invdelv]
+	Use:name field
+	Set as:@@CDledpo ;;"DELV.SAC(996812)"
+	Width	: 15
+	Align	: Left
+[Line:INVSUBTOTAL]
+	RightField:INVSUBTOTAL,InvTax
+	Local	: Field	: InvTax : Delete	: Border
+	Local	: Field	: InvTax : Set as	: $$CollAmtTotal:InventoryEntries:$Amount + $$AsAmount:@@CDamtpo
+	
+[Field:INVSUBTOTAL]
+	Use:name field
+	Set as:"SUB-TOTAL"
+	Width	: 15
+	Align	: Left
+[Field:INVSUBTOTAL1]
+	Use:name field
+	Set as:$subtotal
+[Line	: InvLedgers]
+	Right Field: invledname,InvTax
+	Local	: Field	: InvTax : Delete	: Border
+	Empty	: $LedgerNAme = $PartyLEdgerName or @@IsCSAVDLed
+[Field	: 	invledname]
+	Use	: Name Field
+	Set as	: $LedgerName 
+	Width	: 15
+	Align	: Left
+
+[Line	: InvGtotal]
+	Right Field: invledname, InvTax
+	Local	: Field	: invledname : Set as:"Grand Total"
+	Local	: Field	: InvTax : Delete	: Border
+	Border	: Thin Top
+
+[Part:amtinwords]
+	Line:termscon,line1
+	Bottom Line:eoeline
+	Border	: Thin Box
+[Line:amtinwords]
+	Field:amtinwords
+	Border:thin top 
+[Field:amtinwords]
+	Use:name field
+	Set as:"RS. " + $$InWords:$AMount + " Only."
+	Full Width	: Yes
+[Line:termscon]
+	Field:termscon
+	Right Field:comname
+[Field:termscon]
+	Use:name field
+	Set as:"TERMS & CONDITIONS:-"
+	Style:small bold
+[Field:comname]
+	Use:name field
+	Set as:"For " + @@CmpMailName ;;MOHINDRA PRECISION TOOLS PVT. LIMITED"
+	Style:normal bold
+	Full Width:Yes
+	Align:Right
+[Line:line1]
+	Field:line1
+	Right Field	: Name Field
+	Local	: Field:Name Field: Set as:""
+[Field:line1]
+	Use:name field
+	Set as: $VchprintDecl:VoucherType:$VoucherTypeName
+	Full Width	: Yes
+	Style	: Small
+	Lines	: 4
+	
+[Line:eoeline]
+	Field:eoeline
+	Right Field:authsign
+[Field:eoeline]
+	Use:name field
+	Set as:"E & O.E"
+[Field:authsign]
+	Use:name field
+	Set as:"Auth Signatory"
+	Align:Right
+		
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+[#Part  :  Company MailingDtlsContact]
+	Add  : Line  :at end	: RSCMpMsme
+	
+[Line  : RSCMpMsme]
+	Field  : Medium prompt,RSCMpMsme
+	Local  : Field  : Medium prompt  : Set as  : "MSME EM No. :"
+[Field  : RSCMpMsme]
+	Use  : name field
+	Storage   : MSMENo
+	Style  : small bold
+	Width   :15
+;;;;;;;;;;;;;;;
+;[#Form: EiSupplementary]
+;	Add: Option: Eisupplysale : @@issales
+;[!Form	: Eisupplysale]
+;	Add	: Part: EiSupplySale
+
+[#Part: EI DelNoteInfo]
+	Add	: Line	:	At End	: Freightline,packageline,rcmline
+[Line	: Freightline]
+	Field	: Medium Prompt ,Freightline
+	Local	: Field	: Medium Prompt : Set as: "Freight :"
+	[Field	: Freightline]
+		Use		: Name Field
+		Storage	: salefreight
+		
+[Line	: packageline]
+	Field	: Medium Prompt ,packageline
+	Local	: Field	: Medium Prompt : Set as: "Packages :"
+	[Field	: packageline]
+		Use		: Name Field
+		Storage	: salepackage
+		
+[Line	: rcmline]
+	Field	: Medium Prompt ,rcmline
+	Local	: Field	: Medium Prompt : Set as: "RCM :"
+	[Field	: rcmline]
+		Use		: Name Field
+		Set as	: IF $$IsEmpty:$$VALUE then "No" else $$Value
+		Storage	: saleRCM
+		
+[System	: UDF]
+	salefreight		: String	: 1941
+	salepackage		: String	: 1942
+	saleRCM			: String	: 1943
+
+
+
+;;;;;;;;;;;;;;Truck Master Creation
+
+[#Menu : Gateway of Tally]
+	Add 	: Item 	: After : Ledgers : Transport Master : Alter : TransportMaster
+[Report : TransportMaster]
+	Family 	: $$localestring:""	
+	Form 	: TruckMaster
+	Object 	: Company
+	Title 	: "Transport Master" 
+[Form :TruckMaster]
+	Part		: TruckMastertitle,TruckMaster
+	Background	: Very Light Sea Green
+	Height 		: 100 % screen
+	Width 		: 50% screen
+	Keys    	: Delete Line Object 
+[Part :TruckMasterTITLE]
+	Line 	: TruckMastertitle
+	Border 	: column titles
+[Line :TruckMastertitle]
+	use   : TruckMaster
+	local : field : default : style  : small bold
+	local : field : default : skip   : yes
+	local : field : default : type   : string
+	local : field : default : delete : storage
+	local : field : default : lines  : 2
+	local : field : PSno 	: set as : $$localestring:"S No."
+	local : field : TruckNo	: set as : $$localestring:"Transport Name"
+	local : field : TruckRem: set as : $$localestring:"Remarks"
+		local : field : default : delete : inactive
+[Part : TruckMaster]
+	Line 			: TruckMaster
+	Repeat 			: TruckMaster : TruckMasterUDF
+	Scroll 			: vertical
+	Common Border 	: yes
+	Break On 		: $$isEmpty:$TruckMasterName
+[Line : TruckMaster]
+	Field : PSno,TruckNo,TruckRem
+	local:field : default : style : small bold
+[Field : PSno]
+	Use    : Number Field
+	Set as : $$Line
+	Skip   : Yes
+	Width  : 9
+[Field:TruckNo]
+	Use : short name field
+ 	Storage : TruckMasterName
+	Border : thin left
+	Unique : Yes
+	Width	: 25
+[Field:TruckRem]
+	Use : name field
+ 	Storage : TruckRem
+	Border : thin left
+	Width : 50
+	Inactive : $$isEmpty:$TruckMasterName
+[system : UDF]
+	TruckMasterUDF 	 : aggregate : 11
+	TruckMasterName  : string 	 : 1
+	TruckRem		 : String    : 2
+	
+[Collection : TruckMaster]
+	Type : TruckMasterUDF : Company
+	Title : "Select Truck No"
+	Collection: New Number ,Notapplicable
+	Compute:Name:$TruckmasterName
+	Format : $Name,25
+	;Format : $TruckRem,25
+	Childof : ##SVCurrentCompany
+[Key:  Create Truck]
+	Key     : Alt+C
+    Action  : Alter : TruckMaster
+
+[#Form	: EiSupplementary]
+	
+[#Field: EI PreCarriage]
+	Add: Option: EIVessel sales : @@IsSales or @@IsDelNote
+[!Field: EIVessel sales] 	
+
+	Add:Table		: TruckMaster
+    Add: Key         : Create New Number
+    Add: Trigger     : New Number : $$IsSysNameEqual:NewNumber:$$EditData
+	Show Table:Always
+	Dynamic	:	No
+   ;CommonTable : Yes
+
+
+;;;;;;;;;;;;;;Ledger Changes
+[#FOrm : Ledger]
+	
+[#Part: MST LED Parent]	
+	Add : Part : RSActiveLedger
+[Part: RSActiveLedger]
+    Line : RSCASHledgerforPO ;;,RSApprovedLedger
+
+[Line	: RSCASHledgerforPO]
+	Field : Medium Prompt,RSCASHledgerforPO
+	Local : Field : Medium Prompt : Set as : "Is Del. Chgs. Ledger ? "
+[Field : RSCASHledgerforPO]
+	Use : Logical Field
+	Set as : if $$IsEmpty:$$Value then "No" else $$Value
+	Storage : IsCASHAdvLedforPO
+	Set Always : Yes
+	;;Skip	: Not $$IsCmpOwner
+	
+[System: UDF]
+	IsCASHAdvLedforPO : Logical	: 939
+
+[System	: Formulae]
+	CDamtpo	: $$FilterAmtTotal:LedgerEntries:IsCSAVDLed:$AMount
+	CDLedpo	: $$FilterValue:$LedgerName:LedgerEntries:First:IsCSAVDLed
+	
+	IsCSAVDLed : $IsCASHAdvLedforPO:Ledger:$LedgerName 
+
+	

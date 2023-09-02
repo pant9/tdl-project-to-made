@@ -1,0 +1,726 @@
+[#Menu: Import Top Menu]
+	Add: Key Item: after	: @@loctransactions	: Data Import Menu : I	: Menu : Data Import Menu 
+	
+[#Menu: Inventory Books]
+	Add	: Item	: Data Import Menu	 : Menu	: Data Import Menu
+[Menu : Data Import Menu ]	
+	Add	: Item: Brand Import	: Call	: AllSVoucherImport
+	Add	: Item: Shade Import	: Call	: AllShadeImport
+;	Add	: Item: Shade Import	: Call	: AllShadeImport
+	Add	: Item	: Import Stock Item	: Call: SaveStockItemMaster
+	Add	: Item	: Import Stock Opening	: Call: ImportOpeningBalance
+	Add	: Item	: Import Stock Opening Batch	: Call: ImportOpeningBalancewith batch
+	Add	: Item	: Update Brand in Item	: Call	: UpdateBrandinItem
+	Add	: Item	: Update Shade in Item	: Call	: UpdateShadeinItem
+	Add	: Item	: Import Ledgers	: Call	: ImportLedgers
+	Add	: Item	: Update Depth	: Call	: AllShadeUpdate
+	Add	: Item	: Update Brand Rate	: Call	: AllBrandRateUpdate
+	
+;;Select $Modes1,$Location1,$Date1,$OrderSource1,$CreditValue,$TaxValue,$DROnline, $DROffline,$RoundOff1 from 
+;; Select $Brandname1,$isdepth1 ,$isCategory1,$IsShade1,$ISCount1,$catname1 from SaleOdbcColItems
+
+;;;;;;;;;;;;;;;Import General Ledgers
+[Function: ImportLedgers]
+	Variable	: Index	: Number
+	10: WALK COLLECTION: GLColl
+	20: 	New Object		: Ledger
+	180: 	SET VALUE 	: NAME 				: $LedgerName1
+	200: 	SET VALUE 	: PARENT			: $LedgerGroup1
+	300:		Insert Collection Object	: Name
+	310:		Set Value	: Name : $LedgerCode1
+	4004:		Set Target	: ..
+	4000:	Create TARGET
+	16: END WALK
+	17:	Msg Box	: "Import Complete" :"Admin"
+
+
+[Collection: GLColl]
+	Source Collection: GLSqlObjOdbcCol
+	Compute	:	LedgerCode1	: $LedgerCode
+	Compute	:	LedgerName1	: $LedgerName
+	Compute	:	LedgerGroup1	: $LedgerGroup
+	
+;; Select $LedgerCode1,$LedgerName1,$LedgerGroup1  from GLColl
+
+[Collection: GLSqlObjOdbcCol]
+	
+	ODBC			: "Driver={Microsoft Excel Driver (*.xls, *.xlsx, *.xlsm, *.xlsb)};DBQ=D:\ITEMS DETAIL\ledger import.xlsx" ;;+ ##SVExcelSourcePath
+	SQL				: "Select * From [sheet1$]"
+	Fetch			: *.*
+	SQL Object		: GLSqlObj
+
+[Object: GLSqlObj]
+	LedgerCode	: $$Number:$_1
+	LedgerName	: $_2
+	LedgerGroup	: $_3
+	
+;;;;;;Item Master Import
+
+[Function: UpdateBrandinItem]
+	Variable	: Index	: String
+	10: WALK COLLECTION: ItemBrandColItems
+	20: 	New Object		: Stockitem : $ItemName1
+	320:		Set Value	: STKBrand	: $Brandname1
+	260:	Accept Alter
+	16: END WALK
+	17:	Msg Box	: "Import Complete" :"Admin"
+
+		
+
+[Collection: ItemBrandColItems]
+	Source Collection: ItemBrandOdbcCol
+	Compute 	: Brandname1: $Brandname
+	Compute 	: ItemName1	: $ItemName
+	
+;; Select $Brandname1,$ItemName1  from ItemBrandColItems
+
+[Collection: ItemBrandOdbcCol]
+	
+	ODBC			: "Driver={Microsoft Excel Driver (*.xls, *.xlsx, *.xlsm, *.xlsb)};DBQ=E:\downloads\BrandList.xlsx" ;;+ ##SVExcelSourcePath
+	SQL				: "Select * From [Sheet7$]"
+	Fetch			: *.*
+	SQL Object		: ItemBrandSqlObj
+
+[Object: ItemBrandSqlObj]
+	ItemName	: $_2
+	Brandname	: $_3
+
+
+[Function: UpdateShadeinItem]
+	Variable	: Index	: String
+	01:	Set	: Index : 0
+	10: WALK COLLECTION: ItemShadeColItems
+	12:	Log	: $ItemName1
+	11:	If: $$IsObjectExists:StockItem:$ItemName1
+	20: 	New Object		: Stockitem : $ItemName1
+	320:		Set Value	: STKShadeCode	: $ShadeCode1
+	330:		Set Value	: STKShade	: $Shadename1
+	260:	Accept Alter
+	270:endif
+	280:Set	: Index : ##Index + 1
+	290:	Log	: ##Index
+	16: END WALK
+	17:	Msg Box	: "Import Complete" :"Admin"
+
+
+[Collection: ItemShadeColItems]
+	Source Collection: ItemShadeOdbcCol
+	Compute 	: Shadename1: $Shadename
+	Compute 	: ShadeCode1: $ShadeCode
+	Compute 	: ItemName1	: $ItemName
+	
+;; Select $ItemName1,$Shadename1,$ShadeCode1  from ItemShadeColItems
+
+[Collection: ItemShadeOdbcCol]
+	
+	ODBC			: "Driver={Microsoft Excel Driver (*.xls, *.xlsx, *.xlsm, *.xlsb)};DBQ=E:\downloads\AllYArnProduct.xlsx" ;;+ ##SVExcelSourcePath
+	SQL				: "Select * From [Sheet1$]"
+	Fetch			: *.*
+	SQL Object		: ItemShadeSqlObj
+
+[Object: ItemShadeSqlObj]
+	ItemName	: $_1
+	Shadename	: $_3
+	ShadeCode	: $$Number:$_4
+
+
+[Collection: ItemsCollectionOP]
+	Source Collection: ItemsOdbcColOP
+	Compute	: PartNo1	: $$Number:$PartNo
+	Compute	: ItemName1	: $ItemName
+	Compute	: uom1		: $uom
+	Compute	: stdpack1	: $stdpack
+	Compute	: packweight1: $packweight
+	Compute	: packs1	: $packs
+	Compute	: lotno1	: @@batchname1 ;;$lotno
+	Compute	: lotcode1	: $lotcode
+	Compute	: finalqty1	: $finalqty
+	Compute	: finalRate1: $finalRate
+	Compute	: finalValue1: $finalValue
+
+; Select $PartNo1,$ItemName1,$uom1,$stdpack1,$packweight1,$packs1,$lotno1,$lotcode1,$finalqty1 from ItemsCollectionOP
+
+
+
+[Collection: ItemsOdbcColOP]
+	
+	ODBC			: "Driver={Microsoft Excel Driver (*.xls, *.xlsx, *.xlsm, *.xlsb)};DBQ=d:\SHIVA SPECIALITY.xlsx" ;;+ ##SVExcelSourcePath
+	SQL				: "Select * From [Sheet1$]"
+	Fetch			: *.*
+	SQL Object		: ItemSqlObjOP
+
+[Object: ItemSqlObjOP]
+	
+	PartNo		: $_1
+	ItemName	: $_2
+	uom			: $_3
+	stdpack		: $$Number:$_4
+	packweight	: $$Number:$_5
+	packs		: $$Number:$_6
+	lotno		: $$String:$_7
+	lotcode		: $_8
+	finalqty	: $$Number:$_9
+	finalRate	: $$Number:$_10
+	finalValue	: $$Number:$_11
+
+[Collection	: OnlyNameCollection]
+	Source Collection	: ItemsCollectionop
+	By	: ItemName	: $ItemName1
+
+[Collection	: OnlyBalanceCollection]
+	Source Collection	: ItemsCollectionop
+	By	: BatchOP 			: $lotno1		
+	By	: ItemName2			: $ItemName1
+	Aggr Compute: QuantityOP : Sum	: $$Number:$finalqty1		
+	Aggr Compute: QuantityOPALT : Sum	: $$Number:$packs1		
+	Compute	: ItemNameOP		: $ItemName1
+	Compute	: UnitsOP 			: $uom1			
+	Filter	: SelectedItemforBalance
+
+
+[System	: Formula]
+	SelectedItemforBalance : $ItemNameOP = $$ReqObject:$ItemName
+	batchname1  : if $$StringPart:$lotno:($$StringLength:$lotno - 2):2 = ".0" then $$StringPart:$lotno:0:($$StringLength:$lotno - 2) else $lotno
+
+[Function: ImportOpeningBalance]
+	Variable	: Index	: String
+	Variable	: OpeningQty : String
+	Variable	: OpeninyQtyAlt : String
+	Variable	: TotalOpening: Number
+	Variable	: TotalOpeningAlt: Number
+	Variable	: TotalOpeningStr : String
+	Variable	: MfdDateStr: String
+	Variable	: MfdDate	: Date
+	Variable	: TAmount	: Number
+	Variable	: vDueDate	: DueDate
+	Variable	: FinalAmt	: Number
+	Variable	: FinalRAte	: Number
+	10: WALK COLLECTION: ItemsCollectionOP
+;	24	:  Msg Box: "Admin" : $ItemName1
+	11	:	If: $$IsObjectExists:StockItem:$ItemName1 and $$IsEmpty:$Openingbalance:Stockitem:$ItemName1 and $$Number:$finalqty1 > 0
+	20	: 	New Object		: Stockitem : $ItemName1
+	21	:		Set	: TotalOpening : 0
+	22	:		Set	: TAmount		: 0
+;	23	:	Log:$ItemName1
+	34a	:	If	: $$IsEmpty:$AdditionalUnits:Stockitem:$ItemName1
+	33	:	Set	: OpeningQty: $$String:$finalqty1 + " " + $BaseUnits:StockITem:$ItemName1  ;+ " = " + $$String:$QuantityOPALT + " BAG"
+	33F	:	Else
+	33G	:	Set	: OpeningQty: $$String:$finalqty1 + " " + $BaseUnits:StockITem:$ItemName1  ;+ " = " + $$String:$Packs1 +  " " +  $AdditionalUnits:Stockitem:$ItemName1
+	33H	: 	End If
+	23	:	Log:$ItemName1
+	33I	:	Log	: ##OpeningQty
+	33A	:	Set	: FinalRAte: $finalRate1 
+	33B	:	Set	: FinalAmt: $finalValue1 
+	33C	:	Log	: $ItemName1
+	34	:	Set	: TotalOpening: $$Number:$finalqty1
+	35	:	Set	: TotalOpeningAlt: $$Number:##TotalOpeningAlt + $$Number:$Packs1
+	300:		Insert Collection Object	: BatchAllocations
+	320:		Set Value	: GodownName	: "Main Location"
+	310:		Set Value	: BatchName : if $$IsEmpty:$lotno1 then $$SysName:PrimaryBatch else $lotno1
+	330	:		Set Value	: OpeningBalance: $$TgtObject:$$AsQty:##OpeningQty
+	330A	:		Set Value	: OpeningRate			: $$TgtObject:$$AsRate:##FinalRAte
+	330B	:		Set Value	: OpeningValue	: $$Aspositive:$$Negative:##FinalAmt
+	4004:		Set Target	: ..
+	49	:	If	: $$IsEmpty:$AdditionalUnits:Stockitem:$ItemName1
+	49A	:	Set	: TotalOpeningStr : $$String:##TotalOpening + " " + $BaseUnits:StockITem:$ItemName1 ;; + " = " + $$String:##TotalOpeningAlt + " BAG"
+	49B	:	Else
+	49c	:	Set	: TotalOpeningStr : $$String:##TotalOpening + " " + $BaseUnits:StockITem:$ItemName1 ;;+ " = " + $$String:##TotalOpeningAlt + " " +  $AdditionalUnits:Stockitem:$ItemName1
+	49D	:	End If
+	51:		Set Value	:OPENINGBALANCE	: $$TgtObject:$$AsQty:##TotalOpeningStr
+	51A	:		Set Value	: OpeningRate			: $$TgtObject:$$AsRate:##FinalRAte
+	51B	:		Set Value	: OpeningValue	: $$Aspositive:$$Negative:##FinalAmt
+	260:	Accept Alter
+	261:	End If
+	16: END WALK
+	17:	Msg Box	: "Import Complete" :"Admin"
+
+;[Collection: ItemsCollectionOP]
+;	Source Collection: ItemsOdbcColOP
+;	Compute	: PartNo1	: $$Number:$PartNo
+;	Compute	: ItemName1	: $ItemName
+;	Compute	: uom1		: $uom
+;	Compute	: stdpack1	: $stdpack
+;	Compute	: packweight1: $packweight
+;	Compute	: packs1	: $packs
+;	Compute	: lotno1	: @@batchname1 ;;$lotno
+;	Compute	: lotcode1	: $lotcode
+;	Compute	: finalqty1	: $finalqty
+;	Compute	: finalRate1: $finalRate
+;	Compute	: finalValue1: $finalValue
+
+;Select $ItemName1,$finalqty1,$finalRate1,$finalValue1 from ItemsCollectionOP
+
+[Function: ImportOpeningBalancewith batch]
+	Variable	: Index	: String
+	Variable	: OpeningQty : String
+	Variable	: OpeninyQtyAlt : String
+	Variable	: TotalOpening: Number
+	Variable	: TotalOpeningAlt: Number
+	Variable	: TotalOpeningStr : String
+	Variable	: MfdDateStr: String
+	Variable	: MfdDate	: Date
+	Variable	: TAmount	: Number
+	Variable	: vDueDate	: DueDate
+	Variable	: FinalAmt	: Number
+	Variable	: FinalRAte	: Number
+	10: WALK COLLECTION: OnlyNameCollection
+	20a: If	: $$IsObjectExists:Stockitem:$ItemName
+	20: 	New Object		: Stockitem : $ItemName
+	21:		Set	: TotalOpening : 0
+	21A:	Set	: TotalOpeningAlt : 0
+	22:		Set	: TAmount		: 0
+	33z	:	Log	: $ItemName
+
+	30:		Walk Collection	: OnlyBalanceCollection
+	33	:	Set	: OpeningQty: $$String:$QuantityOP + " " + $UnitsOP  + " = " + $$String:$QuantityOPALT + " BAG"
+	33A	:	Set	: FinalRAte: $finalRate1 
+	33B	:	Set	: FinalAmt: $finalValue1
+	33C	:	Log	: ##OpeningQty
+	33d	:	Log	: $BatchOP
+	34	:	Set	: TotalOpening		: $$Number:##TotalOpening + $$Number:$QuantityOP
+	35	:	Set	: TotalOpeningAlt	: $$Number:##TotalOpeningAlt + $$Number:$QuantityOPALT
+	300:		Insert Collection Object	: BatchAllocations
+	320:		Set Value	: GodownName	: "Main Location"
+	310:		Set Value	: BatchName : $BatchOP ;;if $$IsEmpty:$BatchOP then $$SysName:PrimaryBatch else $BatchOP
+	330	:		Set Value	: OpeningBalance	: $$TgtObject:$$AsQty:##OpeningQty
+	330A	:		Set Value	: OpeningRate	: $$TgtObject:$$AsRate:##FinalRAte
+	330B	:		Set Value	: OpeningValue	: $$AsAmount:##FinalAmt
+	4004:		Set Target	: ..
+	40:		End Walk
+	49	:	Set	: TotalOpeningStr : $$String:##TotalOpening + " " + $BaseUnits:StockITem:$StockItemName ;+ " = " + $$String:##TotalOpeningAlt + " BAG"
+	51:		Set Value	:OPENINGBALANCE	: $$TgtObject:$$AsQty:##TotalOpeningStr
+	260:	Accept Alter
+	270	: Endif
+	16: END WALK
+	17:	Msg Box	: "Import Complete" :"Admin"
+
+
+[Function: SaveStockItemMaster]
+	Variable	: Index	: Number
+	10: WALK COLLECTION: ItemsCollection
+	;11:		Set: Index	: $VatRate1
+	10A	:If	: not $$IsObjectExists:Stockitem:$ItemName1
+	20: 	New Object		: Stockitem
+	180: 	SET VALUE 	: NAME 				: $ItemName1
+	191:	Set Value	: PartNo			: $PartNo1
+	200: 	SET VALUE 	: PARENT			: "YARN"
+	250: 	SET VALUE 	: BASEUNITS			: $UOM1
+	260: 	Set Value	: ADDITIONALUNITS	: "BAG"
+	260A:	Set Value	: DENOMINATOR		: "60"
+    260B:	Set Value	: CONVERSION		: "1"
+      	
+	270:	Set Value	: GSTAPPLICABLE		: $$SysName:Applicable	
+	290: 	SET VALUE 	: ISBATCHWISEON		: Yes
+	
+	29A: 	SET VALUE 	: STKBrand		: $BrandName1
+	29X: 	SET VALUE 	: STKShadeCode	: $ShadeNo1
+	29B: 	SET VALUE 	: STKShade		: $ShadeName1
+	29C: 	SET VALUE 	: STKICount		: $NoCount1
+	29D: 	SET VALUE 	: STKIPly		: $Ply1
+	29E: 	SET VALUE 	: Stkifiberblend: $FibrBlnd1
+	29F: 	SET VALUE 	: StkiDubling	: $DoublingType1
+	29G: 	SET VALUE 	: StkiTechType	: $TechType1
+
+	300:	Insert Collection Object	: GSTDETAILS
+	310:	Set Value	: APPLICABLEFROM : ##SvfromDate
+	320:	Set Value	: CALCULATIONTYPE	: "On Value"
+	330	:	Set Value	: HSNCODE		: $$String:$HSNCD1
+	340:	Set Value	: TAXABILITY	:	"Taxable"
+	4004:	Set Target	: ..
+	4000:	Create TARGET
+	4001:end if
+;	40001:	Msg Box	: $ItemName1 : "Admin"
+	16: END WALK
+	17:	Msg Box	: "Import Complete" :"Admin"
+
+[Collection: ItemsCollection]
+	Source Collection: ItemsOdbcCol
+	Compute	: PartNo1	: $$Number:$PartNo
+	Compute	: ItemName1	: $ItemName
+	Compute	: FibrBlnd1	: $FibrBlnd
+	Compute	: ShadeNo1	: $$Number:$ShadeNo
+	Compute	: Ply1		: $$Number:$Ply
+	Compute	: DoublingType1: $DoublingType
+	Compute	: NoCount1	: $$Number:$NoCount
+	Compute	: TechType1	: $TechType
+	Compute	: UOM1		: $UOM
+	Compute	: brandcd1	: $$Number:$brandcd
+	Compute	: HSNCD1		: $$Number:$HSNCD
+	Compute	: BrandName1	: $BrandName
+	Compute	: ShadeName1 : $ShadeName
+;	Compute	: Depth1		: $Depth
+
+; Select $PartNo1,$ItemName1,$FibrBlnd1,$ShadeNo1,$Ply1,$DoublingType1,$NoCount1,$TechType1,$UOM1,$brandcd1,$HSNCD1,$BrandName1,$ShadeName1,$Depth1 from ItemsCollection
+
+
+
+[Collection: ItemsOdbcCol]
+	
+	ODBC			: "Driver={Microsoft Excel Driver (*.xls, *.xlsx, *.xlsm, *.xlsb)};DBQ=D:\ITEMS DETAIL\StockItemUpdate.xlsx" ;;+ ##SVExcelSourcePath
+	SQL				: "Select * From [Sheet1$]"
+	Fetch			: *.*
+	SQL Object		: ItemSqlObj
+
+[Object: ItemSqlObj]
+	
+	PartNo		: $_1
+	ItemName	: $_2
+	FibrBlnd	: $_3
+	ShadeNo		: $_4
+	Ply			: $_5
+	DoublingType: $_6
+	NoCount		: $_7
+	TechType	: $_8
+	UOM			: $_9
+	brandcd		: $_10
+	HSNCD		: $_11
+	BrandName	: $_12	
+	Shade Name	: $_13	
+	Depth		: $_14
+
+
+;;;
+
+
+[Function	: AllSVoucherImport]
+	Variable: MyBrandType : String
+	Variable: MyBrandName : String
+	Variable: MySaleType	: String
+
+	10  :   Walk Collection: SaleOdbcColItems
+	01	:	Set	:	MyBrandName	: $Brandname1
+	02	:	Set	:   MyBrandType	: $catname1
+	04	:	Set	: 	MySaleType	: if $isdepth1 = "Y" then "Depth Wise" else +
+									if $isCategory1 = "Y" then "Category" else +
+									if $IsShade1 = "Y" then "Shade Wise" else +
+									if $ISCount1 = "Y" then "Count Wise" else " "
+									
+	410	: 	Set Object	: (Company, ##SVCurrentCompany).
+	415 : 	Set Target
+	90	: 	Insert Collection Object : RSBrandMaster
+	100 :  	Set Value	: BrandMasterName	: ##MyBrandName
+	110 :  	Set Value	: BrandSaleType	: ##MySaleType
+	120 :  	Set Value	: BrandItemType	: ##MyBrandType
+	130	: 		SET TARGET 					: ..
+	190	: 	Accept Alter
+	211	:	End Walk
+	212	: Msg Box	: "OK" : "Admin"
+	220	: RETURN
+	
+
+
+[Collection: SaleOdbcColItems]
+	Source Collection: SaleOdbcCol
+	Compute 	: Brandname1: $Brandname
+	Compute 	: isdepth1	: $isdepth
+	Compute 	: isCategory1 : $isCategory
+	Compute 	: IsShade1	: $IsShade
+	Compute 	: ISCount1	: $ISCount
+	Compute 	: catname1	: $catname	
+	
+;; Select $Brandname1,$isdepth1 ,$isCategory1,$IsShade1,$ISCount1,$catname1 from SaleOdbcColItems
+
+[Collection: SaleOdbcCol]
+	
+	ODBC			: "Driver={Microsoft Excel Driver (*.xls, *.xlsx, *.xlsm, *.xlsb)};DBQ=E:\downloads\BrandList.xlsx" ;;+ ##SVExcelSourcePath
+	SQL				: "Select * From [Sheet1$]"
+	Fetch			: *.*
+	SQL Object		: SaleSqlObj
+
+[Object: SaleSqlObj]
+	Brandname	: $_2
+	isdepth		: $_3
+	isCategory	: $_4
+	IsShade		: $_5
+	ISCount		: $_6
+	catname		: $_7
+	
+
+;;;;;;;;;;;;;;;
+;[#Menu	: Display Menu]
+;	Add	: Item	: ShadeDelete : Call: AllShadeDelete
+[Function	: AllShadeDelete]
+	Variable	: vNumitems : Number
+	410	: 	Set Object	: (Company, ##SVCurrentCompany).
+	415 : 	Set Target
+;;	416	:	Walk Collection	: ShadeMasterColl
+;	417	:	Set	: Counter	: ##Counter + 1;
+;	90	: 	Delete Collection Object : RSShadeMaster : ##Counter: Yes
+;	190	: 	Accept Alter
+;	191	:	End Walk
+;	100	:	Msg Box	: "Admin" : "OK"
+	
+	417	:	Set	: vNumitems	: $$NumItems:ShadeMasterColl ;+ 1
+	
+	1021 :	Log	: 	##vNumitems 
+	1020 :	While	: ##vNumitems > 0	
+	1030 :		Delete Collection Object	: RSShadeMaster	: ##vNumitems	: YES	
+	1040 :		Decrement	: vNumitems	
+	1050 :	End While
+	1200 : Accept Alter
+	100	:	Msg Box	: "Admin" : "OK"
+
+[Function	: AllShadeImport]
+	Variable: MyshadeName : String
+	Variable	: ShadeDesc: String
+	Variable	: shade2 : String
+	Variable	: Brand	: String
+	Variable	: Datea : String
+	Variable	: Dated	: Date
+	Variable	: SRate	: Number
+	10  :   Walk Collection: ShadeOdbcColItems
+	01	:	Set	:	MyShadeName	: $Shadename1
+	02	:	Set	: 	ShadeDesc	: $shadedesc1							
+	410	: 	Set Object	: (Company, ##SVCurrentCompany).
+	415 : 	Set Target
+	90	: 	Insert Collection Object : RSShadeMaster
+	100 :  	Set Value	: ShadeMasterName: ##MyShadeName
+	101	:	Set Value	: ShadeMasterDesc	: ##ShadeDesc
+	110 :  	Set Value	: ShadeType		: "Light"
+	111	:	Walk Collection	:ShadeRateOdbcCol
+	111A:	Set	: shade2 : $Shadename
+	111B:	Set	: Brand	: $shadeBrand
+	111C:	Set	: Datea : $$StringPart:$shadeDate:8:2 + "-" + $$StringPart:$shadeDate:5:2 + "-" + $$StringPart:$shadeDate:0:4
+	111D:	Set	: SRate	: $shadeRate
+	111E:	Set	: Dated : ##Datea ;;$$StringPart:$shadeDate:8:2 + "-" + $$StringPart:$shadeDate:5:2 + "-" + $$StringPart:$shadeDate:0:4
+;	111F:	Log	: ##Dated
+	112	:	If: ##shade2 = ##ShadeDesc and ##SRate > 0
+ 	113	: 		Insert Collection Object : RSShadeRAteMaster
+	114 :  		Set Value	: ShadeRateDate	: ##Dated ;$shadeDate ;##MyShadeName
+	115 :  		Set Value	: ShadeBrandName: ##Brand ;;$shadeBrand
+	116 :  		Set Value	: ShadeRatePrice: ##SRate ;;$shadeRate
+	117	: 		SET TARGET 					: ..
+	118	:	End If
+	129	:	End Walk
+	130	: 		SET TARGET 					: ..
+	190	: 	Accept Alter
+	211	:	End Walk
+	212	:	Msg Box:"Admin":"Import Complete"
+	220	: RETURN
+
+[Collection: ShadeOdbcColItems]
+	Source Collection: ShadeOdbcCol
+	Compute 	: shadename1: $shadename
+	Compute 	: shadedesc1: $shadeDesc
+	
+;; Select $shadename1 from ShadeOdbcColItems
+
+
+[Collection: ShadeOdbcCol]
+	ODBC			: "Driver={Microsoft Excel Driver (*.xls, *.xlsx, *.xlsm, *.xlsb)};DBQ=E:\downloads\BrandList.xlsx" ;;+ ##SVExcelSourcePath
+	SQL				: "Select * From [Sheet2$]"
+	Fetch			: *.*
+	SQL Object		: ShadeSqlObj
+[Object: ShadeSqlObj]
+	shadename	: $$Number:$_1
+	shadedesc	: $_2
+	
+	
+[Collection: ShadeRateOdbcCol]
+	ODBC			: "Driver={Microsoft Excel Driver (*.xls, *.xlsx, *.xlsm, *.xlsb)};DBQ=E:\downloads\BrandList.xlsx" ;;+ ##SVExcelSourcePath
+	SQL				: "Select * From [Sheet4$]"
+	Fetch			: *.*
+	SQL Object		: ShadeRateSqlObj
+	Sort	: $shadename : @@DEfault
+	Filter	: SelectedShade
+
+[System	: Formula]
+	SelectedShade : $shadename = ##ShadeDesc
+
+[Object: ShadeRateSqlObj]
+	shadename	: $_3
+	shadeDate	: $$StringPart:$_5:0:10
+	shadeBrand	: $_2
+	shadeRate	: $_4
+	
+;Select $shadename,$shadeDate from ShadeRateOdbcCol	
+
+[Function	: AllShadeUpdate]
+	Variable: ShadeDesc : String
+	Variable	: ShadeDepth: String
+	
+	00  :   Walk Collection: ShadeupdateOdbcColItems
+	;01	:	Set	:	ShadeDepth	: $ShadeDepth1
+	01	:	Set	: ShadeDesc	: $shadedesc1
+	
+	02	:	if : $ShadeDepth1 = "MEDIUM"
+	03	:		Set	: ShadeDepth	: "Medium"
+	04	:	End If
+	
+	05	:	if 	: $ShadeDepth1 = "DARK"
+	06	:		Set	: ShadeDepth	: "Dark"
+	07	:	End If
+
+	08	:	if 	: $ShadeDepth1 = "MULTIMEDIUM"
+	09	:		Set	: ShadeDepth	: "MultiMedium"
+	10	:	End If
+
+	11	:	if 	: $ShadeDepth1 = "MULTILIGHT"
+	12	:		Set	: ShadeDepth	: "MultiLight"
+	13	:	End If
+
+	14	:	if 	: $ShadeDepth1 = "MULTIDARK"
+	15	:		Set	: ShadeDepth	: "MultiDark"
+	16	:	End If
+
+	17	:	Log	: $$CurrentSimpleCompany
+	18	: 	Log	: ##ShadeDesc
+	19	: 	Log	: @@SelectedShade1 ;;##ShadeDepth
+	050  : Modify Object : (Company,$$CurrentSimpleCompany).RSShadeMaster[1,@@SelectedShade1].ShadeType : ##ShadeDepth
+
+	211	:	End Walk
+	212	:	Msg Box:"Admin":"Import Complete"
+	220	: RETURN
+
+[System	: Formula]
+	SelectedShade1 : $ShadeMasterDesc = ##ShadeDesc
+
+[Collection: ShadeupdateOdbcColItems]
+	Source Collection: ShadeupdateOdbcCol
+	Compute 	: shadedepth1: $shadedepth
+	Compute 	: shadedesc1: $shadeDesc
+	Compute 	: Shadecd1	: $Shadecd
+	Compute		: ShadeDevelop1	: $ShadeDevelop
+	
+	
+;; Select $shadedesc1,$shadedepth1,$Shadecd1,$ShadeDevelop1 from ShadeupdateOdbcColItems
+
+
+[Collection: ShadeupdateOdbcCol]
+	ODBC			: "Driver={Microsoft Excel Driver (*.xls, *.xlsx, *.xlsm, *.xlsb)};DBQ=E:\downloads\Shade_Master.xlsx" ;;+ ##SVExcelSourcePath
+	SQL				: "Select * From [Sheet1$]"
+	Fetch			: *.*
+	SQL Object		: ShadeUpdateSqlObj
+[Object: ShadeUpdateSqlObj]
+	Shadecd		: $_1
+	shadedesc	: $_2
+	ShadeDevelop: $_3
+	shadedepth	: $_4
+	
+
+[Function	: AllBrandRateUpdate]
+	Variable: BrandName : String
+	Variable	: ShadeDepth: String
+	Variable	: BRanddate	: Date
+	Variable	: brandrate	: Number
+	Variable	: BrandDepth : String
+	Variable	: Counter	: Number
+	Variable	: PrevBrandName : String
+	1a	:	Set	: Counter : 0
+	1b	:	Set	: PrevBrandName : $$CollectionField:$BrandName1:1:BrandupdateOdbcColItems
+	00  :   Walk Collection: BrandupdateOdbcColItems
+	;01	:	Set	:	ShadeDepth	: $ShadeDepth1
+	;01	:	Set	: ShadeDesc	: $shadedesc1;	
+	01	: 	Set	: BrandName	: $BrandName1
+	01a:	Set	: BRanddate:$BRandDate1
+	01b:	Set	: brandrate:$BRandRate1
+
+	02	:	if : $BrandDepth1 = "M"
+	03	:		Set	: ShadeDepth	: "Medium"
+	04	:	End If
+	
+	05	:	if 	: $BrandDepth1 = "D"
+	06	:		Set	: ShadeDepth	: "Dark"
+	07	:	End If
+
+	08	:	if 	: $BrandDepth1 = "MM"
+	09	:		Set	: ShadeDepth	: "MultiMedium"
+	10	:	End If
+
+	11	:	if 	: $BrandDepth1 = "ML"
+	12	:		Set	: ShadeDepth	: "MultiLight"
+	13	:	End If
+
+	14	:	if 	: $BrandDepth1 = "MD" or $BrandDepth1 = "HD" or $BrandDepth1 = "SD"
+	15	:		Set	: ShadeDepth	: "MultiDark"
+	16	:	End If
+;	17	:	Set	:	ShadeDepth 	: "Dark"
+	413	:	Log	: ##BrandName
+	414 :	Log	: ##BRanddate
+	416	:	Log	: ##BRandRate
+	417	:	Log	: ##ShadeDepth
+
+;	45	: 	if : @@SelectedBrand1
+;	48	:	Log	: @@SelectedBrand1
+	45	:	If: ##PrevBrandName = ##BrandName
+	46	:	Set	: Counter : ##Counter + 1
+	050  : 		Modify Object : (Company,$$CurrentSimpleCompany).RSBrandMaster[1,@@SelectedBrand1].RSBrandRAteMaster[##Counter].BrandRateDate  : ##BRanddate
+	052  : 		Modify Object : (Company,$$CurrentSimpleCompany).RSBrandMaster[1,@@SelectedBrand1].RSBrandRAteMaster[##Counter].BrandBrandName[1].BrandBrandName : ##ShadeDepth
+	053A : 		Modify Object : (Company,$$CurrentSimpleCompany).RSBrandMaster[1,@@SelectedBrand1].RSBrandRAteMaster[##Counter].BrandRateDepthA1[1].BrandRateDepthA1 : "20" ;##ShadeDepth
+	054  : 		Modify Object : (Company,$$CurrentSimpleCompany).RSBrandMaster[1,@@SelectedBrand1].RSBrandRAteMaster[##Counter].BrandRatePrice : ##BRandRate
+	055	:	Else
+	056	:	Set	: Counter : 1
+	057	:	Set	: PrevBrandName : ##BrandName
+	058  : 		Modify Object : (Company,$$CurrentSimpleCompany).RSBrandMaster[1,@@SelectedBrand1].RSBrandRAteMaster[##Counter].BrandRateDate  : ##BRanddate
+	059  : 		Modify Object : (Company,$$CurrentSimpleCompany).RSBrandMaster[1,@@SelectedBrand1].RSBrandRAteMaster[##Counter].BrandBrandName[1].BrandBrandName : ##ShadeDepth
+	060  : 		Modify Object : (Company,$$CurrentSimpleCompany).RSBrandMaster[1,@@SelectedBrand1].RSBrandRAteMaster[##Counter].BrandRateDepthA1[1].BrandRateDepthA1 : "10" ;;##ShadeDepth
+	061  : 		Modify Object : (Company,$$CurrentSimpleCompany).RSBrandMaster[1,@@SelectedBrand1].RSBrandRAteMaster[##Counter].BrandRatePrice : ##BRandRate
+	53	:	End If
+;	90	:   Insert Collection Object : RSBrandRAteMaster
+;	100 :  	Set Value	: BrandRateDate		: ##BRanddate
+;	110 :  	Set Value	: BrandRatePrice	: ##BRandRate
+;	120 :  	Set Value	: BrandBrandName	: ##ShadeDepth
+;
+;	410	: 	Set Object	: (Company, ##SVCurrentCompany). ;RSBrandMaster[@@SelectedBrand1].
+;	415 : 	Set Target
+;	410A: 	Set Object	: RSBrandMaster[@@SelectedBrand1].
+;	411	:	Walk Collection	: RSBrandMaster
+;	412	:	If: $BrandMasterName = ##BrandName
+;	413	:	Log	: ##BrandName
+;	414 :	Log	: ##BRanddate
+;	416	:	Log	: ##BRandRate
+;	417	:	Log	: ##ShadeDepth
+;	90	:   Insert Collection Object : RSBrandRAteMaster
+;	100 :  	Set Value	: BrandRateDate		: ##BRanddate
+;	110 :  	Set Value	: BrandRatePrice	: ##BRandRate
+;	120 :  	Set Value	: BrandBrandName	: ##ShadeDepth
+;	130	: 		SET TARGET 					: ..
+;	190	: 	Accept Alter
+;	191	:	End If
+;	192	:	End Walk
+;	193	: 		SET TARGET 					: ..
+
+	211	:	End Walk
+	212	:	Msg Box:"Admin":"Import Complete"
+	220	: RETURN
+
+;	RSBrandMaster	: Aggregate	: 1515
+;	BrandMasterName	: String	: 1516
+;	BrandSaleType	: String	: 1517
+;	BrandColorType	: String	: 1518
+;	BrandRate		: Number	: 1519
+;;	BrandItemType	: String	: 1520
+
+;[System	: UDF]
+;	RSBrandRAteMaster	: Aggregate	: 15150
+;	BrandRateDate		: Date		: 15161
+;	BrandRatePrice		: Number	: 15172
+;	BrandBrandName		: String	: 15183
+
+[System	: Formula]
+	SelectedBrand1 : $BrandMasterName = ##BrandName
+
+[Collection: BrandupdateOdbcColItems]
+	Source Collection: BrandupdateOdbcCol
+	Compute		: Brandcd1		: $Brandcd
+	Compute		: BrandName1	: $BrandName
+	Compute		: BrandDepth1	: $BrandDepth
+	Compute		: BrandRAte1	: $BrandRAte
+	Compute		: BRandDate1	: $BRandDate
+	
+	
+;; Select $Brandcd1,$BrandName1,$BrandDepth1,$BrandRAte1,$BRandDate1 from BrandupdateOdbcColItems
+
+
+[Collection: BrandupdateOdbcCol]
+	ODBC			: "Driver={Microsoft Excel Driver (*.xls, *.xlsx, *.xlsm, *.xlsb)};DBQ=E:\downloads\Shade_Master.xlsx" ;;+ ##SVExcelSourcePath
+	SQL				: "Select * From [Sheet3$]"
+	Fetch			: *.*
+	SQL Object		: BrandUpdateSqlObj
+[Object: BrandUpdateSqlObj]
+	Brandcd		: $_1
+	BrandName	: $_2
+	BrandDepth	: $_3
+	BrandRAte	: $$Number:$_4
+	BRandDate	: $$StringPart:$_5:8:2 + "-" + $$StringPart:$_5:5:2 + "-" + $$StringPart:$_5:0:4
+	

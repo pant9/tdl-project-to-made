@@ -1,0 +1,27 @@
+[#Part	: VTYP BasicDetails]
+	Add	: Option	: VTYPBasicDetailsOptForSales	: $$IsSales:$Parent
+	
+	[!Part	: VTYPBasicDetailsOptForSales]
+		Add	: Line	: At End	: CCVchTypeInv
+		
+		[Line	: CCVchTypeInv]
+			Fields	: long Prompt, CCSaleVCHInvoice
+			Local   : Field : long Prompt 	: Set as 	: "Triveni Invoice"
+			
+			[Field		: CCSaleVCHInvoice]
+				Use		: Logical Field
+				Storage	: RSCCVchTypeInv
+							
+[System	: UDF]
+	RSCCVchTypeInv	: Logical	: 7410
+	
+[System	: Formula]
+	RSCCVchTypYesNo	: $RSCCVchTypeInv:VoucherType:##SVVoucherType
+	
+
+	
+[#Field: EI PriceLevel]
+	Skip	: NOT $$IsCmpOwner
+	
+ [#Line: ICFGEditAll]
+	 Local: Field    : Logical Field : Skip: NOT $$IsCmpOwner	

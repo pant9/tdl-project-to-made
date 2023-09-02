@@ -109,6 +109,7 @@
 				[Line	: SampleDtlRepList]
 					Explode	: SampleDtlRepListExpl
 					Field	: RSDCStockGrpName
+					Border	: Column Titles
 					
 					[Field	: RSDCStockGrpName]
 						Use		: Short Name Field
@@ -162,7 +163,7 @@
 								
 							[Field	: RSDCBalance]
 								Use		: Amount FIELD
-								Set as	: $ClosingBalance
+								Set as	: $DCplClosingValue
 ;								Align	: Center
 								Width	: 10% page
 								Border	: Thin LEFT RIGHT
@@ -174,7 +175,7 @@
 	By		: StkGrpItemName 	: $parent:StockItem:$StockItemName
 
 	Aggr Compute : Amount			: Sum : $Amount
-	Aggr Compute : ClosingBalance	: Sum : $ClosingBalance
+;	Aggr Compute : ClosingBalance	: Sum : $ClosingBalance
   
 [Collection	: RSDCSampleListExpl]
 	Source Collection : SRCSampleRepCollection
@@ -184,7 +185,7 @@
 	Compute	: Rate				: $Rate
 	Compute : BilledQty			: $BilledQty
 	Compute : Amount			: $Amount
-	Compute : ClosingBalance	: $ClosingBalance
+	Compute : DCplClosingValue	: $ClosingValue:StockItem:$StockItemName
 	Filter	: OnlyRelData
 
 	

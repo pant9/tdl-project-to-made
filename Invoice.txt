@@ -1,0 +1,446 @@
+[#Part: DSP EXPINV Company]
+	Add	: Option	: EXPINVCompanyName : @@IsSales AND @@RSCCVchTypYesNo
+	[!Part	: EXPINVCompanyName]
+		Add	: Bottom Line: EXPINVCMPPANRS1
+						
+[#Part: EXPINV Company]
+	Add	: Option	: EXPINVCMPName : @@IsSales AND @@RSCCVchTypYesNo
+	[!Part	: EXPINVCMPName]
+		Add	: Bottom Line: EXPINVCMPPANRS1
+;	Border: thin right
+;	Height		: If ((NOT $$InPrintMode) AND ($$InExportAction OR $$InMailAction)) Then 18% Else 14% Page
+[Line:EXPINVCMPPANRS1]
+	Fields		:  EXPINVCMPPANRS1
+   	Local       : Field : Short Prompt : Set as 	: $$LocaleString:"PAN No. :"
+;    Space Top   : 0.1
+    [Field	: EXPINVCMPPANRS1]
+		Use		: Name Field
+		Set as	: "PAN No. :" + $IncomeTaxNumber:Company:##SVCurrentCompany
+		Style	: Small
+		Width	: 30
+
+[#Line: DSP EXPINV Totals]
+;	Add	: Option	: EXPINVCMPTotal : @@IsSales AND @@RSCCVchTypYesNo
+;	[!Line	: EXPINVCMPTotal]
+;		Delete	: Right Field
+	Add	: Right Field:  Before	: EXPINV BilledQtyTotal :  ExpInvRSBatchTitle,ExpInvRSMfdTitle,ExpInvRSExpiryTitle,ExpInvRSPkgsTitle
+	Local : Field : ExpInvRSBatchTitle	: Set as	: "" 
+	Local : Field : ExpInvRSMfdTitle	: Set as	: ""
+	Local : Field : ExpInvRSExpiryTitle	: Set as	: ""
+	Local : Field : ExpInvRSPkgsTitle	: Set as	: ""
+	
+[#Line: EXPINV Totals]
+;	Add	: Option	: EXPINVCMPTotal1 : @@IsSales AND @@RSCCVchTypYesNo
+;	[!Line	: EXPINVCMPTotal1]
+;		Delete	: Right Field
+	Add	: Right Field:  Before	: EXPINV BilledQtyTotal :  ExpInvRSBatchTitle,ExpInvRSMfdTitle,ExpInvRSExpiryTitle,ExpInvRSPkgsTitle
+	Local : Field : ExpInvRSBatchTitle	: Set as	: "" 
+	Local : Field : ExpInvRSMfdTitle	: Set as	: ""
+	Local : Field : ExpInvRSExpiryTitle	: Set as	: ""
+	Local : Field : ExpInvRSPkgsTitle	: Set as	: $$CollNumTotal:InventoryEntries:$$Number:$BasicNumPackages
+
+[#Line: DSP EXPINV Column1]
+;	Add	: Option	: EXPINVColTital : @@IsSales AND @@RSCCVchTypYesNo
+;	[!Line	: EXPINVColTital]
+;		Delete	: Right Field
+	Add	: Right Field:  Before	: EXPINV QtyTitle : ExpInvRSBatchTitle,ExpInvRSMfdTitle,ExpInvRSExpiryTitle,ExpInvRSPkgsTitle
+
+[#Line: EXPINV Column1]
+;	Add	: Option	: EXPINVColTital1 : @@IsSales AND @@RSCCVchTypYesNo
+;	[!Line	: EXPINVColTital1]
+;		Delete	: Right Field
+	Add	: Right Field:  Before	: EXPINV QtyTitle : ExpInvRSBatchTitle,ExpInvRSMfdTitle,ExpInvRSExpiryTitle,ExpInvRSPkgsTitle
+
+[#Line: EXPINV Column2]
+;	Add	: Option	: EXPINVColTita2 : @@IsSales AND @@RSCCVchTypYesNo
+;	[!Line	: EXPINVColTita2]
+;		Delete	: Right Field
+	Add	: Right Field:  Before	: EXPINV ActualQtyTitle :  ExpInvRSBatchTitle,ExpInvRSMfdTitle,ExpInvRSExpiryTitle,ExpInvRSPkgsTitle
+	Local : Field : ExpInvRSBatchTitle	: Set as	: "" 
+	Local : Field : ExpInvRSMfdTitle	: Set as	: ""
+	Local : Field : ExpInvRSExpiryTitle	: Set as	: ""
+	Local : Field : ExpInvRSPkgsTitle	: Set as	: ""
+[#Line: DSP EXPINV AccDetails]
+;	Add	: Option	: EXPINVColDtl : @@IsSales AND @@RSCCVchTypYesNo
+;	[!Line	: EXPINVColDtl]
+;		Delete	: Right Field
+	Add	: Right Field:  Before	: EXPINV AccQty :  ExpInvRSBatchTitle,ExpInvRSMfdTitle,ExpInvRSExpiryTitle,ExpInvRSPkgsTitle
+	Local : Field : ExpInvRSBatchTitle	: Set as	: "" 
+	Local : Field : ExpInvRSMfdTitle	: Set as	: ""
+	Local : Field : ExpInvRSExpiryTitle	: Set as	: ""
+	Local : Field : ExpInvRSPkgsTitle	: Set as	: ""
+	
+[#Line: EXPINV AccDetails]
+;	Add	: Option	: EXPINVColDtl1 : @@IsSales AND @@RSCCVchTypYesNo
+;	[!Line	: EXPINVColDtl1]
+;		Delete	: Right Field
+	Add	: Right Field:  Before	: EXPINV AccQty :  ExpInvRSBatchTitle,ExpInvRSMfdTitle,ExpInvRSExpiryTitle,ExpInvRSPkgsTitle
+	Local : Field : ExpInvRSBatchTitle	: Set as	: "" 
+	Local : Field : ExpInvRSMfdTitle	: Set as	: ""
+	Local : Field : ExpInvRSExpiryTitle	: Set as	: ""
+	Local : Field : ExpInvRSPkgsTitle	: Set as	: ""
+
+
+[Field: ExpInvRSBatchTitle]
+	Use		: Name Field
+	Set as	: "Batch Name"
+	Width	: 6
+	Style	: Small ; Bold
+	Border	: Thin Left
+	Invisible: NOt @@IsSales OR NOT @@InvWithBatches
+[Field: ExpInvRSMfdTitle]
+	Use		: Name Field
+	Set as	: "Mfd On"
+	Width	: 5
+	Style	: Small ; Bold
+	Border	: Thin Left
+	Invisible: NOt @@IsSales OR NOT @@InvWithBatches
+[Field: ExpInvRSExpiryTitle]
+	Use		: Name Field
+	Set as	: "Expiry On"
+	Width	: 5
+	Style	: Small ; Bold
+	Border	: Thin Left
+	Invisible: NOt @@IsSales OR NOT @@InvWithBatches
+	
+[Field: ExpInvRSPkgsTitle]
+	Use		: Name Field
+	Set as	: "Packages"
+	Width	: 4
+	Style	: Small ; Bold
+	Border	: Thin Left
+;	Invisible: NOt @@IsSales
+	
+
+
+[#Part: DSP EXPINV InvInfo]
+	Add	: Option	: EXPINVINFOSALESDISP : @@IsSales AND @@RSCCVchTypYesNo
+	
+[!Part: EXPINVINFOSALESDISP]
+	
+	add : Repeat      : DSP EXPINV InvDetails    : SaleInvBatches
+	
+[#Line: DSP EXPINV InvDetails]
+	Add	: Option	: EXPINVDtl : @@IsSales AND @@RSCCVchTypYesNo
+	[!Line	: EXPINVDtl]
+		
+	Add	: Right Field	: Before	: EXPINV Qty 	: ExpInvRSBatch,ExpInvRSMfd ,ExpInvRSExpiry,ExpInvRSPkgs
+;	Delete	: Left Field	: EXPINV Packages
+	Local: Field	: EXPINV HSNSACDetails : Set as	: $MyHSNCode:StockITem:$StockITemNAme
+	Delete	: Explode     : DSP EXPINV BatchDetails  	;: (@@DSPHasBatch OR @@IsDSPOrderVch) AND @@DSPInvWithBatches AND (NOT @@IsDSPOrderVch OR @@OrdExplBatch) AND NOT @@DSPInvWithGodowns
+				
+;            Left Fields : EXPINV SLNo, EXPINV Marks, EXPINV Packages, EXPINV Desc
+ ;           Right Fields: EXPINV PartNo, EXPINV MRPValue, EXPINV VATPerc, EXPINV DueOn, EXPINV ActualQty, EXPINV Qty, EXPINV Rate, EXPINV RatePer, EXPINV Discount, EXPINV Amount
+;	            Left Fields : EXPINV SLNo, EXPINV Marks, EXPINV Packages, EXPINV Desc
+;	            Right Fields: EXPINV PartNo, EXPINV MRPValue, EXPINV VATPerc, EXPINV DueOn, EXPINV ActualQty, EXPINV Qty, EXPINV Rate, +
+;	            			 EXPINV RatePer, EXPINV Discount, EXPINV Amount
+	
+[#Part: EXPINV InvInfo]
+;	Add	: Option	: EXPINVINFOSALES : @@IsSales AND @@RSCCVchTypYesNo
+;[!Part	: EXPINVINFOSALES]	
+;	Delete	: Repeat
+    Add : Repeat      : EXPINV InvDetails    : SaleInvBatches ;Batch Allocations
+
+[#Line: EXPINV InvDetails]
+;	Add	: Option	: EXPINVDtls : @@IsSales ;AND @@RSCCVchTypYesNo
+;	[!Line	: EXPINVDtls]
+;		Delete	: Right Field
+	Add	: Right Field	: Before	: EXPINV Qty 	: ExpInvRSBatch,ExpInvRSMfd ,ExpInvRSExpiry,ExpInvRSPkgs
+;	Delete	: Left Field	: EXPINV Packages
+	Local: Field	: EXPINV HSNSACDetails : Set as	: $MyHSNCode:StockITem:$StockITemNAme
+	;Local: Field	: EXPINV HSNSACDetails : Width	: 6
+	;Local	: Field	: EXPINV HSNSACDetails	: Delete: Border 
+	Delete	: Explode	: EXPINV BatchDetails
+[#Field: EXPINV Packages]
+	Invisible	: Yes
+[#Field	: EXPINV AccPackages]
+	Invisible	: Yes
+[Field : ExpInvRSBatch]
+	Use		: Name Field
+	Set as	: $BatchName
+	Width	: 6
+	Style	: Small ; Bold
+	Border	: Thin Left
+	Invisible: NOt @@IsSales OR NOT @@InvWithBatches
+[Field : ExpInvRSMfd]
+	Use		: Short Date Field
+	Set as	: $Mfdon
+	Width	: 5
+	Style	: Small ;Bold
+	Border	: Thin Left
+	Invisible: NOt @@IsSales OR NOT @@InvWithBatches
+[Field : ExpInvRSExpiry]
+	Use		: Short Date Field
+	Set as	: $ExpiryPeriod
+	Width	: 5
+	Style	: Small ;Bold
+	Border	: Thin Left
+	Invisible: NOt @@IsSales OR NOT @@InvWithBatches
+[Field : ExpInvRSPkgs]
+	Use		: Name Field
+	Set as	: $BasicNumPackages
+	Width	: 4
+	Style	: Small Bold
+	Border	: Thin Left
+	
+[Collection	: SaleInvBatches]
+	Source Collection	: ..
+	Walk	: Inventory Entries,Batch Allocations
+	Compute	: StockItemName	: $..StockItemname
+	Compute	: BatchName		: $BatchName
+	Compute	: BilledQty		: $BilledQty
+	Compute	: RAte			: $RAte
+	Compute	: Amount		: $Amount
+	Compute	: Discount		: $Discount
+	Compute	: BasicNumPackages : $..BasicNumpackages
+	Compute	: MfdON			: $MfdOn
+	Compute	: ExpiryPeriod	: $ExpiryPeriod
+	
+[#Object: StockITem]
+	MyHSNCode : $$CollectionField:$HSNCODE:(-1):GSTDETAILS
+
+[#Field :EXPINV PackagesTitle1]
+	Invisible	: Yes
+[#Field	: EXPINV PackagesTitle2]
+	Invisible	: Yes
+	
+[#Field:EXPINV BilledQtyTotal]
+	Use:Number Field
+	Set as:$$CollNumTotal:InventoryEntries:$$Number:$billedQty
+
+
+[System	: UDF]
+	EITPTNAME	: String	: 1000
+	EiVehNO		: String	: 1001
+	EIDelFrom	: String	: 1002
+	EIContactName: String	: 1003
+	EIMobileNo	: String	: 1004
+	
+;[#Form: EiSupplementary] 
+;	Add	: Part: EiInvCols
+;[#Field	: EI Consignee]
+	
+[#Form: VchSuppl DespatchOrderDetails]
+	Add	: Option	: VchSupplDespatchOdrDtl : @@IsSales AND @@RSCCVchTypYesNo
+[!Form	: VchSupplDespatchOdrDtl]	
+	
+	Add	: Part: EiSaleInvCols
+[Part: EiSaleInvCols]
+	Line	: EISaleWTLine,EISalePvtLine,EISaleDelFrom,EISaleVchContName,EiSaleVchContNo
+	Border	: Thin Top
+[Line	: EISaleWTLine]
+	Field	: Short Prompt,EISaleWTLine
+	Local: Field	: Short Prompt : Set as: "Transport Name : "
+	Border	: thin top
+	
+	[Field	: EISaleWTLine]
+		Use	: Name Field
+		Storage	: EITPTNAME
+		Style	: Small Bold
+		
+[Line	: EISalePvtLine]
+	Field	: Short Prompt,EISalePvtLine
+	Local: Field	: Short Prompt : Set as: "Vehicle No. : "
+	[Field	: EISalePvtLine]
+		Use	: Name Field
+		Storage	: EiVehNO
+		Style	: Small Bold
+	
+[Line	: EISaleDelFrom]
+	Field	: Short Prompt,EISaleDelFrom
+	Local: Field	: Short Prompt : Set as: "Delivery From : "
+	Invisible	: Not @@IsPurcOrder
+	[Field	: EISaleDelFrom]
+		Use	: Name Field
+		Storage	: EIDelFrom
+		Style	: Small Bold
+ [Line : EISaleVchContName]
+	Field	: Short Prompt,EISaleVchContName
+	Local: Field	: Short Prompt : Set as: "Contact Person : "
+	[Field	: EISaleVchContName]
+		Use	: Name Field
+		Storage	: EIContactName
+		Style	: Small Bold
+[Line :  EiSaleVchContNo]
+	Field	: Short Prompt,EiSaleVchContNo
+	Local: Field	: Short Prompt : Set as: "Mobile No. : "
+	[Field	: EiSaleVchContNo]
+		Use	: Name Field
+		Storage	: EIMobileNo
+		Style	: Small Bold
+	
+ 
+[#Part: EXPINV Terms]
+	Add	: Option	: CCEXPINVTerms : @@IsSales AND @@RSCCVchTypYesNo
+[!Part	: CCEXPINVTerms]	
+	
+	Add	: Bottom Line	: EISaleWTLine1,EISalePvtLine1,ExpSaleDelFrom,ExpSaleContName,ExpSaleMobileNo ;;,EiCaseLine1
+
+[Line	: EISaleWTLine1]
+	Field	: Short Prompt,EISaleWTLine1
+	Local: Field	: Short Prompt : Set as: "Transport Name : "
+	Border	: thin top
+	
+	[Field	: EISaleWTLine1]
+		Use		: Name Field
+		Set as	: $EITPTNAME
+		Style	: Small
+[Line	: EISalePvtLine1]
+	Field	: Short Prompt,EISalePvtLine1
+	Local: Field	: Short Prompt : Set as: "Vehicle No. : "
+	[Field	: EISalePvtLine1]
+		Use	: Name Field
+		Set as	: $EIVEHNo
+		Style	: Small 
+[Line	: ExpSaleDelFrom]
+	Field	: Short Prompt,ExpSaleDelFrom
+	Local: Field	: Short Prompt : Set as: "Delivery From : "
+	Invisible	: Not @@IsPurcOrder
+	[Field	: ExpSaleDelFrom]
+		Use	: Name Field
+		Set as	: $EIDelFrom
+		Style	: Small 
+[Line	: ExpSaleContName]
+	Field	: Short Prompt,ExpSaleContName
+	Local: Field	: Short Prompt : Set as: "Contact Person : "
+	[Field	: ExpSaleContName]
+		Use	: Name Field
+		Set as	: $EIContactName
+		Style	: Small 
+[Line	: ExpSaleMobileNo]
+	Field	: Short Prompt,ExpSaleMobileNo
+	Local: Field	: Short Prompt : Set as: "Mobile No : "
+	[Field	: ExpSaleMobileNo]
+		Use	: Name Field
+		Set as	: $EIMobileNo
+		Style	: Small 
+
+[#Part: EXPINV AccInfo]
+	Add	: Option	: EXPINVInfo : @@IsSales AND @@RSCCVchTypYesNo
+[!Part	: EXPINVInfo]	
+	Delete: Option
+
+;;;;;;;;;;;;;;;;;;pURCHASE ORDER CHANGES
+;[#Part: EXPINV Consignee]
+;	Local       : Field : EXPINV SubTitle : Set as      : If ##TallyCountry = @@International Then $$LocaleString:"Customer" Else +
+;																	  If (@@IsPurcOrder)Then $$LocaleString:"Consignee" Else +
+;																	  If (@@IsPurcOrder OR @@IsJobOrderOut) OR ((@@IsSalesOrder OR @@IsJobOrderIn OR @@IsJobMaterialIssue) AND @@ICFGBuyerDetails) Then $$LocaleString:"Despatch To" Else +
+;																	  If @@IsJobMaterialRcpt Then $$LocaleString:"Received At" Else +
+;                                                                      If (@@IsCreditNote OR @@IsDebitNote) Then $$LocaleString:"Party :" Else +
+;                                                                      If (@@IsSalesOrder OR @@IsJobOrderIn) Then $$LocaleString:"Invoice to" Else +
+;                                                                      If ##ICFGBuyerDetails Then $$LocaleString:"Consignee" Else $$LocaleString:"Buyer"
+;[#Part: EXPINV Company]
+;	Local       : Field : EXPINV SubTitle : Info        : if @@isPurcOrder then $$LocaleString:"Buyer" else $$LocaleString:"Invoice To"
+;
+;
+;[#Form: Comprehensive Invoice]
+;	
+
+[#Part: EXPINV Company]
+	Add	: Option	: EXPINVCmp : @@IsSales AND @@RSCCVchTypYesNo
+[!Part	: EXPINVCmp]	
+	
+	Add	: Bottom Line: ExpInvPCNo,ExpInvFENo	
+;	Height		: If ((NOT $$InPrintMode) AND ($$InExportAction OR $$InMailAction)) Then 18% Else 14% Page
+	;Border	: Thin Right
+;;;	Height		: If (NOT $$InPrintMode AND ($$InExportAction OR $$InMailAction)) Then 15% Else 15% Page
+ ;   Width	: 40%  Page            
+;	Local	: Part	: Default : Local	: Line	: Default : Local	: Field	: Default : Full Width	: Yes
+;[#Part: EXPINV Company EcoPrinting]
+ ;   Width	: 50%  Page            
+	
+;[#Part: EXPINV Logo]
+ ;   Width	: 10%  Page            
+
+[#Field: EXPINV Address]
+	Full Width	: Yes
+[Line: ExpInvPCNo]
+	Fields		:  ExpInvPCNo
+   	Local       : Field : Short Prompt : Set as 	: $$LocaleString:"Pesticides Lic. No. :"
+;    Space Top   : 0.1
+    [Field	: ExpInvPCNo]
+		Use		: Name Field
+		Set as	: "Pesticides Lic. No. : " + $CMPPesticideLicNo:Company:##SVCurrentCompany
+		Full Width	: Yes
+		Style	: Small
+;;		Width	: 30
+[Line: ExpInvFENo]
+	Fields		:  ExpInvFENo
+   	Local       : Field : Short Prompt : Set as 	: $$LocaleString:"Fertilizers Lic. No. :"
+;	Local       : Field : Short Prompt 	: Width	: 12
+;    Space Top   : 0.1
+    [Field	: ExpInvFENo]
+		Use		: Name Field
+		Set as	: "Fertilizers Lic. No. : " + $CMPFertilizersLicNo:Company:##SvCurrentCompany
+		Style	: Small
+		Full Width	: Yes
+	;;	Width	: 30
+
+[#Part	: ExpinvBuyer]
+	Add	: Option	: EXPINVCmpBuyer : @@IsSales AND @@RSCCVchTypYesNo
+[!Part	: EXPINVCmpBuyer]	
+	Delete	: Bottom Line
+	Add	: Bottom Line: ExpInvPCNo1,ExpInvFENo1
+
+[Line: ExpInvPCNo1]
+	Field	:  ExpInvPCNo1
+;   	Local       : Field : Short Prompt : Set as 	: $$LocaleString:"Pesticides Lic. No. :"
+;    Space Top   : 0.1
+    [Field	: ExpInvPCNo1]
+		Use		: Name Field
+		Set as	: "Pesticides Lic. No. : " + $CMPPesticideLicNo:Ledger:$PartyLedgerName
+		Style	: Small
+;;		Width	: 30
+[Line: ExpInvFENo1]
+	Field		:  ExpInvFENo1
+;   	Local       : Field : Short Prompt : Set as 	: $$LocaleString:"Fertilizers Lic. No. :"
+;	Local       : Field : Short Prompt 	: Width	: 12
+;    Space Top   : 0.1
+    [Field	: ExpInvFENo1]
+		Use		: Name Field
+		Set as	: "Fertilizers Lic. No. : " + $CMPFertilizersLicNo:Ledger:$PartyLedgerName
+		Style	: Small
+	;;	Width	: 30
+
+	
+[#Part: Company MailingDtlsAddress]
+	Add	: Option	: EXPINVCmpmailAdd : @@IsSales AND @@RSCCVchTypYesNo
+[!Part	: EXPINVCmpmailAdd]	
+	
+	Add	: Bottom Line:  CCMPPesticideLic,CCmpFertilizersLic
+	Height	: 12
+[Line	: CCMPPesticideLic]
+	Fields		: Medium Prompt, CCMP PesticideLic
+   	Local       : Field : Medium Prompt : Set as 	: $$LocaleString:"Pesticides Lic. No. :"
+    Space Top   : 0.1
+    [Field	: CCMP PesticideLic]
+		Use		: Name Field
+		Storage	: CMPPesticideLicNo
+		Style	: Small
+[Line	: CCmpFertilizersLic]
+	Fields		: Medium Prompt, CCMP FertilizersLic
+   	Local       : Field : Medium Prompt : Set as 	: $$LocaleString:"Fertilizers Lic. No. :"
+    Space Top   : 0.1
+    [Field	: CCMP FertilizersLic]
+		Use		: Name Field
+		Storage	: CMPFertilizersLicNo
+		Style	: Small
+
+[#Part: MST LED Parent]
+	Add	: Option	: EXPMSTLEDParent : @@IsSales AND @@RSCCVchTypYesNo
+[!Part	: EXPMSTLEDParent]	
+	Add	: Part	: MSTLedPest
+[Part	: MSTLedPest]
+	Add	: Line:  CMPPesticideLic,CmpFertilizersLic
+	
+[System	: UDF]
+	CMPPesticideLicNo	: String	: 3511
+	CMPFertilizersLicNo	: String	: 3512
+
+
+[#Part: EXPINV SaleTopLeft]
+	Add	: Option	: EXPSaleTopLeft : @@IsSales AND @@RSCCVchTypYesNo
+[!Part	: EXPSaleTopLeft]	
+	Add	: 	Parts 		: EXPINV Company,  EXPINV Buyer,EXPINV Consignee ;;, EXPINV ConsigneeContact, EXPINV Contact
+            Bottom Parts: EXPINV Country
+	

@@ -1,0 +1,47 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;Add udf in  group summary report;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+[#Field: DSP AccName]
+;	Add	: Option	: DSPAccNameGSTIN	: (##GroupName = $$GroupSundryDebtors)
+;	
+;	[!Field	: DSPAccNameGSTIN]
+		Add	: Field	: After	: DSP DispName	: DSPDispGSTIN
+		Local: Field	: DSP DispName	: Width	: 40% PAGE
+
+		[Field	: DSPDispGSTIN]
+			Use	: NAME FIELD
+			Set as	: $PartyGSTIN
+			Width	: 10% PAGE
+			Style	: NORMAL
+			Invisible	: ##GroupName Not = $$GroupSundryDebtors
+		
+;.....................................Add list in Narration..................................................
+
+[#Field	: VCH Narration]
+	Add	: Show Table	: Always
+	Add	: Table			: ListOfStudentsColl
+
+;[Table	: ListOfStudentsColl]
+;	Title	: "List Of Students"
+;	List Name	: "Gurleen","Pooja","Jasmeen","Loveleen","Manpreet"
+	
+[Collection	: ListOfStudentsColl]
+	Title	: "List Of Students"
+	Fetch	: StudentsClass
+	Object	: VCHStdOne
+	Object	: VCHStdTwo
+	Object	: VCHStdTri
+	Object	: VCHStdFour
+	Format	: $StudentsClass
+	
+[Object	: VCHStdOne]
+	StudentsClass	: "Gurleen"
+	
+[Object	: VCHStdTwo]
+	StudentsClass	: "Pooja"
+	
+[Object	: VCHStdTri]
+	StudentsClass	: "Jasmeen"
+	
+[Object	: VCHStdFour]
+	StudentsClass	: "Loveleen"
+	

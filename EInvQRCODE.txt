@@ -1,0 +1,92 @@
+;;;746066628 TomLand
+[#Form	: Comprehensive Invoice]
+	
+;;;;;;;Deleteing from Default Space
+
+[#Part: Expinv Title Info]
+	Delete	: Bottom Part
+	
+[#Part: Expinv QRInfo Title]
+	Delete	: Part	: eInvoice PrintExp QRC
+
+
+;;;;;;;;;;;;Addition of QR Code below Terms of Delivery
+[#Part: EXPINV TopRight]
+	Add	: Part	: RSQRCodeInfo
+[Part	: RSQRCodeInfo]
+	Part	: RSQRCodeInfoRight,RSQRCodeInfoLeft
+	Border	: thin top
+[Part: RSQRCodeInfoLeft]	
+	Use	: eInvoice QRC Details
+	Width	: 18% page
+	Border	: Thin Left
+[#Part: eInvoice QRC Details]
+	Width		: 1.25 Inch
+	Height		: 1.25 Inch
+[Part	: 	RSQRCodeInfoRight]
+	Width	: 22% page
+	Border	: Thin Left
+	
+	Line		: Expinv IRN1,Expinv IRN2,Expinv AckNo1, Expinv AckDate1
+	Local		: Line		: Expinv AckNo1		: Space top		: 0.10
+	Local		: Line		: Expinv AckDate1	: Space top		: 0.10
+	Invisible	: NOT ##SAGSTWithQRInfo OR NOT @@IsVchGSTeInvAppl
+
+	[Line: Expinv IRN1]
+		
+		Field	: Medium Prompt
+		Local		: Field		: Medium Prompt	: Set as	: $$LocaleString:"IRN Number :"
+		Local		: Field		: Medium Prompt	: Width	: 15
+
+	[Line: Expinv IRN2]
+		
+		Field	: Name Field
+		Local		: Field		: Name Field	: Set as	: @@GSTeInvIRN
+		Local		: Field		: Name Field	: FullWidth		: Yes
+		Local		: Field		: Name Field	: Line		: 3
+	[Line: Expinv AckNo1]
+		
+		Use			: eInv IRN Details Template
+		Local		: Field		: Medium Prompt	: Set as	: $$LocaleString:"Ack No."
+		Local		: Field		: Name Field	: Set as	: If ##IseInvPSPrintAfterSave Then ##eInvPSAckNo Else $IRNAckNo
+		Local		: Field		: Name Field	: Width		: 21 % Page
+	
+		Border	: Thin Top
+	[Line: Expinv AckDate1]
+		
+		Use			: eInv IRN Details Template
+		Space Bottom: 0.25
+		Local		: Field		: Medium Prompt	: Set as	: $$LocaleString:"Ack Date"
+		Local		: Field		: Name Field	: Set as	: If ##IseInvPSPrintAfterSave Then $$String:##eInvPSAckDate Else $$String:$IRNAckDate
+		Local		: Field		: Name Field	: Width		: 21% page 
+	
+
+[#Form: Daybook]
+	
+[#Line: DSP VchDetail]
+	Add	: Explode	: IRNDISP : Not $$IsEmpty:$IRN1
+[Part	: IRNDISP]
+	Line	: IRNDISP
+[Line	: IRNDISP]
+	Field	: IRNDISP
+	Indent	: 5
+[Field	: IRNDISP]
+	Use	: Name Field
+	Style	: Tiny
+	Set as	: "IRN Number : " + $IRN1
+	Full Width	: Yes
+	Color	: Blue
+	
+[#Collection: Specific Vouchers of Company]
+	Fetch	: IRN
+	Compute	: IRN1 : $IRN
+[#Collection: Filtered Vouchers of Company]
+	Fetch	: IRN
+	Compute	: IRN1 : $IRN
+[#Collection: Vouchers of Company]
+	Fetch	: IRN
+	Compute	: IRN1 : $IRN
+[#Collection: Daybook Vouchers of Company]
+	Fetch	: IRN
+	Compute	: IRN1 : $IRN
+	

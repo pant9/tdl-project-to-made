@@ -1,0 +1,61 @@
+[#Menu	: Default]
+	Add	: Button	: RefreshTdlButton
+
+[#Form	: Default]
+	Add	: Button	: RefreshTdlButton
+
+	[Button	: RefreshTdlButton]
+		Title	: "Refresh"
+		Key		: CTRL + 8
+		Action	: Refresh TDL
+		
+
+;[#Field: EXPINV AccDesc]
+;Add	: Field	: At End	: EXPINVTAXInfo
+;[Field	: EXPINVTAXInfo]
+;	Use	: Name Field
+;	Set as	: "Tax Free Goods"
+;	Style	: Normal  Bold Italic
+;	Invisible	: If $$IsEmpty:$LedgerName Then "Tax Free Goods" Else $LedgerName
+;		
+;				 
+;
+;[Collection: RSLedgerEntryDetails]
+;	
+;	Source Collection	: Default
+;	Walk		: LedgerEntries
+
+
+[#Form: Comprehensive Invoice]
+	Add	: Part	: After	: EXPINV Details	: EXPINVTAXInfo
+	[Part	: EXPINVTAXInfo]
+		Border	: Thin Left Right
+		Vertical	: Yes
+		Common Border	: Yes
+		Float	: Yes
+		Line	: EXPINVTAXInfo
+		[Line	: EXPINVTAXInfo]
+			Space Bottom	: 1.5
+			Left Fields : EXPINV SLNoTitle, EXPINV MarksTitle1, EXPINV PackagesTitle1, EXPINV DescTitle
+			Right Fields : EXPINV PartNoTitle, EXPINV MRPTitle, EXPINV VATPercTitle, EXPINV DueTitle, EXPINV QtyTitle, EXPINV RateInclTitle, EXPINV RateTitle, EXPINV RatePerTitle, EXPINV DiscTitle, EXPINV AmountTitle
+;			Border : Double Top
+;			Local	: Field	: EXPINV DescTitle		: Set as	: $$LocaleString:"Tax Free Goods"
+			Local	: Field	: Default				: Style		: Normal Bold Italic
+			Local	: Field	: EXPINV SLNoTitle		: Info		: ""
+			Local	: Field : EXPINV MarksTitle1    : Info      : ""
+			Local 	: Field : EXPINV PackagesTitle1 : Info      : ""
+			Local 	: Field : EXPINV DescTitle      : Set as	: $$LocaleString:"Tax Free Goods"
+			Local	: Field	: EXPINV DescTitle		: Align		: Center
+			Local 	: Field : EXPINV PartNoTitle    : Info      : ""
+			Local 	: Field : EXPINV MRPTotal		: Info		: ""
+			Local 	: Field : EXPINV VATPercTitle	: Info		: ""
+			Local 	: Field : EXPINV DueTitle		: Info		: ""
+			Local 	: Field : EXPINV QtyTitle		: Info		: ""
+			Local 	: Field : EXPINV BilledQtyTotal	: Info		: ""
+			Local 	: Field : EXPINV RateInclTitle	: Info		: ""
+			Local 	: Field : EXPINV RateTotal		: Info		: ""
+			Local 	: Field : EXPINV RatePerTotal	: Info		: ""
+			Local 	: Field : EXPINV DiscTotal		: Info		: ""
+			Local 	: Field : EXPINV Total			: Info		: ""
+			
+		

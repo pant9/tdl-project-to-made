@@ -1,0 +1,112 @@
+[Variable : JindalItemName]
+Type : String
+[Variable : Var20Feet]
+Type : Logical
+;[#Menu: Inventory Info.]
+; Add : Item  : After : @@locStockItems  : BOM Print : Display Collection : JindalITemColl    
+[Collection: JindalITemColl]
+Use         : Alias Collection
+Trigger 	: JindalItemTrigger
+Variable 	: JindalItemName
+Report 		: JinalBOMPrint
+Format      : $Name, 25
+Type        : StockItem
+Title       : $$LocaleString:"List of Stock Items"
+Align       : Right
+Full Height : Yes
+Fetch       : Name,Alias,PartNO , Parent
+
+[Report: JindalItemTrigger]      ;;Auto Report
+    Auto    : Yes
+    Title : $$LocaleString:"Stockitem Selection"
+Form : JindalItemTrigger
+Local   : Collection: Default : Align : Right
+Variable: SVCurrentCompany
+
+[Form: JindalItemTrigger]
+    No Confirm      : Yes
+    Space Top       : 0.5
+    Space Left      : 1
+    Space Right     : 1
+    Full Width      : No
+    Full Height     : No
+    Vertical Align  : Top
+Part : JindalItemTriggerPart
+
+[Part : JindalItemTriggerPart]
+Line : JindalITemList
+    Local   : Field : Medium Prompt : Width : 25
+
+[Line: JindalITemList]
+
+Fields      : Medium Prompt, JindalITemList
+Local       : Field : Medium Prompt : Info : $$LocaleString:"Name of Stock Item"                                      
+Space Bottom: 0.5
+
+[Field: JindalITemList]
+
+Use         : Name Field
+Table       : JindalITemColl
+Show Table  : Always
+CommonTable : No
+Set as 		: $$SysName:AllItems
+Variable    : JindalItemName
+Modifies    : JindalItemName:Yes
+
+
+
+[Report :JinalBOMPrint]
+Title : $$LocaleString:"BOM Print Report"
+Use : DSPTemplate
+Form : JinalBOMPrint
+Variable : UDVar,PriceMothodVar,Var20Feet
+Set : PriceMothodvar : "Highest"
+Set : Var20Feet : Yes
+; Set     : SVFromDate   : $$MonthStart:##SVCurrentDate
+ ;   Set     : SVToDate     : $$MonthEnd:##SVCurrentDate
+PrintSet : ReportTitle  : $$LocaleString:"BOM Print Report"
+PrintSet : ReportSubTitle : "Item Name : " + ##JindalItemName + "---Party Code : " + $OnlyAlias:StockITem:##JindalItemName + "--- Part No : " + $PartNo:StockITem:##JindalItemName + " ---BOM : " + ##UDVar
+[Form : JinalBOMPrint]
+Use : DSPTemplate
+Part : DSP AccTitles,BOMNameQtyPart,JindalBOMReportTitle,JindalBOMReportDetails
+Height : 100% Screen
+Width : 100% Screen
+Space Bottom : if $$inPrintMode then 1 else 0 Inches
+Delete : PageBreak
+; Add : Page Break : MCDeductionReportClosing,MCSalDepReportOpen
+Button : BtnSelectCont,SelectPriceMethod,Select BOM
+Local : Part : DSP AccTitles : Local: Part: DSP ReportTitle : Delete : Lines
+Local : Part : DSP AccTitles : Local: Part: DSP ReportTitle :Add :  Lines : DSP ReportName, DSP ReportSubTitle
+ 
+[Button: Select BOM]
+Key : F7
+Title   : $$LocaleString:"Select BOM"
+; Action : Call : InserValueinUDFCosting:##JindalItemName
+Action   : Modify Variable : UDES
+[Button: SelectPriceMethod]
+Key : F6
+Title   : $$LocaleString:"Price Method"
+Action   : Modify Variable : PriceMothodRpt
+[Button : BtnSelectCont]
+Key : F5
+    Action      : Set : Var20Feet : NOT ##Var20Feet
+    Title       : if ##Var20Feet then $$LocaleString:"40 Feet" else $$LocaleString:"20 Feet"
+
+
+;[Part :MCSalDepReportOpen]
+; Parts : DSP AccTitles,MCReportHeading,MCReportNameTitle,MCSalDepReportTitle
+; Vertical : Yes
+[Part: BOMNameQtyPart]
+Line : BOMPriceMethod,BOMNameQtyPart
+[Line : BOMPriceMethod]
+Field : Medium Prompt,BomItemNamePrint, ShortPrompt,BOMPriceMethod
+Local : Field : Short Prompt : Set as : "Price Method : "
+Local : Field : Medium Prompt : Set as : "Item Name : "
+Local : Field : Medium Prompt : Width : 10
+[Field : BomItemNamePrint]
+Use : Name Field
+Set as : ##JindalItemName
+Full Width : Yes
+[Field : BOMPriceMethod]
+Use : Name Field
+Set as : ##PriceMothodVar

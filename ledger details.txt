@@ -1,0 +1,39 @@
+[#Menu	: Gateway of Tally]
+	Add	: Item: At End: ledger details : Alter: LedgerDt
+	
+[Report		: LedgerDt]
+	Form	: LedgerDt
+	
+[Form		: LedgerDt]
+	Height	: 50% screen
+	Width	: 50% screen
+	Part	: LedgerDt
+	
+[Part		: LedgerDt]
+	Line	: RSLedgerList
+	
+[Line		: RSLedgerList]
+	Field	: longprompt, ledgname, ledgparent, ledgstate, ledgaddress
+	Local	: Field	: longprompt	: Set as: "Ledger Details"
+	
+[Field: ledgname]
+	Use: name field
+	Table: RSLedgerList
+	
+[Field: ledgparent]
+	Use: Name field
+	Set as: $parent:ledger:#ledgname
+	
+[Field: ledgstate]
+	Use: Name field
+	Set as: $LedStateName:ledger:#ledgname
+	
+[Field: ledgaddress]
+	Use: Name field
+	Set as: $Address:ledger:#ledgname
+
+[Collection	: RSLedgerList]
+	Title	: "List of ledgers"
+	Type	: ledger
+	Child Of: "sundry creditors"
+	

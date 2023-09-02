@@ -1,0 +1,202 @@
+[#Menu: Gateway of Tally]
+	Add:Item: RS Sales Report: Display: RS Sales Report
+[Report:RS Sales Report]
+	Use	: DSPtemplate
+	Title: $$LocaleString:"RS Sales Report"
+	Family:$$LocaleString:"RS Sales Report"
+	
+	;Set	: SvFromDate : $$MonthStart:##SvCurrentDate
+	;Set	: SvToDate : $$MonthEnd:##SvCurrentDate
+
+		
+	Form: RS Sales Report Form
+
+[Form: RS Sales Report Form]
+	Use	: DSPtemplate
+	Part: RSSaleReportPart,RSSalesEntryPart
+	Delete	: Page Break
+	Add	: Page Break: DBRSClose,DBRSOpen
+	
+	
+[Part: DBRSClose]
+	Line	: DBRSClose
+[Line	: DBRSClose]
+	Field: Name Field
+	Local	: Field: Name field :Set as: "Continue"
+	Local	: Field: Name field :Align:Right
+	Local	: Field: Name field :Border: thin top
+	Local	: Field: Name field :Full Width:Yes
+	
+[Part: DBRSOpen]
+Part: RSSaleReportPart
+			
+[Part: RSSaleReportPart]
+	Line: RS Sales Report
+	
+[Line: RS Sales Report]
+	Border: thin top bottom
+	Field: RSSale Date,RSSale Name,RSSale GSTIN,RSSale Invoice,RSSale ITC,RSSale HSN
+	Right Field:RSSale Goods,RSSale Tax,RSSale Value,RSSale Amt
+	;Option: alter on enter
+	
+
+	
+[Field: RSSale Date]
+	Use: Name field
+	Set as: "Date"
+	Lines: 0
+	Width: 10
+					
+[Field: RSSale Name]
+	Use: Name field
+	Set as: "Name of the Customer"
+	Lines: 0
+	Width: 20
+	
+[Field: RSSale GSTIN]
+	Use: Name field
+	Set as: "GSTIN of the Customer"
+	Lines: 0
+	Width: 15
+					
+[Field: RSSale Invoice]
+	Use: Name field
+	Set as: "Invoice Number"
+	Lines: 0
+	Width: 10
+					
+
+[Field: RSSale ITC]
+	Use: Name field
+	Set as: "ITC availed"
+	Lines: 0
+	Width: 15
+							
+[Field: RSSale HSN]
+	Use: Name field
+	Set as: "HSN code of Goods/Services"
+	Lines: 0
+	Width: 15
+	
+[Field: RSSale Goods]
+	Use: Name field
+	Set as: "Name of the Goods/Services"
+	Lines: 0
+	Width: 20
+		
+[Field: RSSale Tax]
+	Use: Name field
+	Set as: "Rate of Tax"
+	Width: 15
+	Align: Center
+	
+[Field: RSSale Value]
+	Use: Name field
+	Set as: "Outward supply/Sale value"
+	Lines: 0
+	Width: 20
+	
+[Field: RSSale Amt]
+	Use: Name field
+	Set as: "Total Amount"
+	Width: 15
+	
+					
+
+			
+[Part: RSSalesEntryPart]
+	Line: RS Sales Report1
+	Repeat: RS Sales Report1:RSVoucherItems
+	Scroll: Vertical
+					
+[Line: RS Sales Report1]
+	Field: RsVchD,RsVchLN,RsVchNumber
+	Right Field:RsItems,RsRate,RsBillQty,RsVchAmount
+	;Option	: alter on enter
+
+[Field: RsVchD]
+	Use: Date field
+	Set as: $Date
+	Width: 10
+
+[Field: RsVchLN]
+	Use: Name field
+	Set as: $PartyLedgerName
+	Width: 17
+	
+[Field: RsVchNumber]
+	Use: Namefield
+	Set as: "Net Amount Includes "; + 
+	CSfssd	: If $$IsEmpty:@CGSTVal Then "CGST:0.00" Else "CGST:" + $$String:@CGSTVal
+	CGSTVal	: $$FilterAmtTotal:LedgerEntries:CGSTLedFltr:$Amount
+	;$BasicShippedBy
+	Width: 10
+	
+[System	: Formula]
+	CGSTLedFltr	: $$IsLedOfGrp:$LedgerName:$$GroupDuties
+	
+[Field: RsItems]
+	Use: Name Field
+	Set as: $StockItemName
+	Width: 20
+	
+[Field: RsRate]
+	Use: Name field
+	Set as: $Rate
+	Width: 17	
+						
+[Field: RsBillQty]
+	Use: Number field
+	Set as: $BilledQty
+	Width: 15
+	
+							
+[Field:RsVchAmount]
+	Use: Name field
+	Set as: $Amount
+	Width: 15					
+				
+[Collection	: RSVoucherItems]
+	Source Collection	: SRC RSVoucher
+	Walk	: InventoryEntries;, BatchAllocations
+	
+;	By	: PartyLedgerName	: $PartyLedgerName
+;	By	: VoucherNumber  	: $VoucherNumber
+;	By	: StockItemName		: $StockItemName
+;	
+;	Compute	: Rate          	: $Rate
+;	Compute	: Date           	: $Date
+;	Compute	: BasicShippedBy	: $..BasicShippedBy
+;	
+;	Aggr Compute	: BilledQty	  : Sum	: $BilledQty
+;	Aggr Compute	: Amount      : Sum	: $Amount
+;	
+	Compute	: StockItemName		: $StockItemName
+	Compute	: Rate          	: $Rate
+	Compute	: PartyLedgerName	: $PartyLedgerName
+	Compute	: VoucherNumber  	: $VoucherNumber
+	Compute	: Date           	: $Date
+	Compute	: BasicShippedBy	: $..BasicShippedBy	
+	Compute	: BilledQty	  		: $BilledQty
+	Compute	: Amount      		: $Amount
+	
+				
+		
+	[Collection	: SRC RSVoucher]
+		Type		: Vouchers	: VoucherType
+		Fetch		: *.*
+		Child Of	: $$VchTypeSales
+		Belongs To	: Yes
+			
+		
+;	[Collection	: RSVoucher]
+;		Type	: Voucher
+;		Fetch	: *.*
+;		Filter	: IsSalesVch
+
+							
+	
+
+
+
+					

@@ -1,0 +1,222 @@
+[#Menu	: Default]
+	Add	: Button	: At Beginning	: RefreshTdlBttn
+	
+[#Form	: Default]
+	Add	: Button	: At Beginning	: RefreshTdlBttn
+	
+	[Button	: RefreshTdlBttn]
+		Title	: $$LocaleString:"Refresh"
+		Key		: Alt + 7
+		Action	: Refresh TDL
+		
+[#Form	: Comprehensive Invoice]
+	Add	: Option	: FormetInvForm	: @@IsSales
+	
+	[!Form	: FormetInvForm]
+		Delete	: Parts
+		Delete	: Bottom Parts
+		Delete	: Page Break
+		Add		: Top Parts		: FormetInvTopPart, FormetInvBodyPart
+		Add		: Bottom Part	: FormetInvBottomPart
+		Add		: Width  		: 100% Page;@@InvWidth Inch
+		Add		: Height 		: 100% Page;@@InvHeight Inch
+        Add		: Space Top		: @@InvSpace Inch
+        Add		: Space Right	: 0.5 Inch
+        Add		: Space Left	: @@InvSpaceLeft Inch
+        Add		: Space Bottom	: 0.25 Inch
+		Local	: Style	: DEFAULT	: Font	: "CALIBRI"
+		
+		[Part	: FormetInvTopPart]
+			Vertical: Yes
+			Border	: thin box
+			Parts	: FormetInvComp, FormetInvGSTIN
+			
+			[Part	: FormetInvComp]
+				Border	: thin bottom
+				Parts	: FormetInvCompDtl, FormetInvPartyDtl
+				
+				[Part	: FormetInvCompDtl]
+					Height	: 20% PAGE
+					Line	: FormetInvCompName, FormetInvCompAdd
+					Repeat	: FormetInvCompAdd : FormetCompanyAddress
+					
+					[Line	:  FormetInvCompName]
+						Field	: FormetInvCompName
+						[Field	: FormetInvCompName]
+							Use	: name field
+							Set as	: @@CmpMailName
+							Width	: 50% page
+							Align	: Center
+							Style	: EXTRA  large bold
+							
+					[Line	: FormetInvCompAdd]
+						Field	: FormetInvCompAdd
+						[Field	: FormetInvCompAdd]
+							Use	: Name Field
+							Width	: 50% page
+							Set as	: $Address
+							Style	: NORMAL
+							Align	: Center
+							
+					[Collection	: FormetCompanyAddress]
+						Type        : Address   : Company
+						Child of    : ##SVCurrentCompany
+						Compute		: IsNumber	  	: No
+						Compute		: FixedDirection: No
+						Object  	: Company CINumber
+						Object      : Company Contacts
+						Object		: Company FaxNo
+						Object      : Company Email
+						Object		: Company Website
+						Filter      : IsNotBlankAddr	
+						
+				[Part	: FormetInvPartyDtl]
+;					Space Top		: 1
+;					Space Bottom	: 2
+					Border	: thin left
+					Line	: FormetInvPartyName, FormetInvPartyAdd
+					Repeat	: FormetInvPartyAdd : Address
+					
+					[Line	: FormetInvPartyName]
+						Field	: FormetInvPartyName
+						
+						[Field	: FormetInvPartyName]
+							Use		: Name Field
+							Width	: 50% Page
+							Set as	: $PartyMailingName
+							Style	: extra large bold
+							Align	: Center
+							
+					[Line	: FormetInvPartyAdd]
+						Field	: FormetInvPartyAdd
+						
+						[Field	: FormetInvPartyAdd]
+							Use		: Name Field
+							Width	: 50% Page
+							Style	: Normal
+							Set as	: $Address
+							Align	: Center
+							
+			[Part	: FormetInvGSTIN]
+				Border	: thin bottom
+				Line	: FormetInvGSTIN
+				[Line	: FormetInvGSTIN]
+					Field	: short Prompt, FormetInvCompGSTIN
+					Right Field	: medium Prompt, FormetInvPartyGSTIN
+					Local		: Field	: short Prompt	: Set as	: "GSTIN"
+					Local		: Field	: short Prompt	: Width		: 10% page
+					Local		: Field	: short Prompt	: Style		: Normal Bold
+					Local		: Field	: medium Prompt	: Set as	: "GSTIN"
+					Local		: Field	: medium Prompt	: Width		: 10% page
+					Local		: Field	: medium Prompt	: Style		: Normal Bold
+					Local		: Field	: medium Prompt	: Border	: thin left
+					Local		: Style	: Default		: Font		: "IMPACT"
+					
+					[Field	: FormetInvCompGSTIN]
+						Border	: thin right
+						Use		: name field
+						Set as	: @@VATCMPGSTNumber 
+						Style	: NORMAL
+						Width	: 15% page
+					
+					[Field	: FormetInvPartyGSTIN]
+						Use		: name field
+						Set as	: $PartyGSTIN
+						Style	: NORMAL
+						Width	: 15% page
+						
+		[Part	: FormetInvBodyPart]
+			Space Top	: 2
+			Border			: Double Sub Column Titles
+			Line			: FormetInvBodyPart
+			Scroll			: Vertical
+			Float			: No
+			Common Borders	: Yes
+			
+			[Line	: FormetInvBodyPart]
+				Field	: FormetInvBodyPart
+				Local	: Field	: Default			: Type		: String
+				Local	: Field	: Default			: Align		: Center
+				Local	: Field	: Default			: Style		: EXTRA LARGE Bold
+				Local	: Field	: Default			: Width		: 100% page
+				[Field	: FormetInvBodyPart]
+					Use	: name field
+					Set as	: "Body Part"
+					
+		[Part	: FormetInvBottomPart]
+			Vertical: Yes
+			Parts	: Empty, FormetInvTerms, FormetInvSign
+			
+			[Part	: FormetInvTerms]
+				Border	: Thin Box
+				Parts	: FormetInvTerms1, FormetInvTerms2, FormetInvTerms3
+				
+				[Part	: FormetInvTerms1]
+					Space Top		: 2
+					Space Bottom	: 2
+					Line	: FormetInvTerms1
+					[Line	: FormetInvTerms1]
+						Field	: FormetInvTerms1
+						[Field	: FormetInvTerms1]
+							Use	: name field
+							Set as	: ""
+							Width	: 25% page
+							
+				[Part	: FormetInvTerms2]
+					Space Top		: 2
+					Space Bottom	: 2
+					Border	: thin Left Right
+					Line	: FormetInvTerms2
+					[Line	: FormetInvTerms2]
+						Field	: FormetInvTerms2
+						[Field	: FormetInvTerms2]
+							Use	: name field
+							Set as	: "Terms and Conditions"
+							Width	: 50% page
+							Align	: Center
+							Style	: large bold
+							
+				[Part	: FormetInvTerms3]
+					Space Top		: 2
+					Space Bottom	: 2
+					Line	: FormetInvTerms3
+					[Line	: FormetInvTerms3]
+						Field	: FormetInvTerms3
+						[Field	: FormetInvTerms3]
+							Use	: name field
+							Set as	: ""
+							Width	: 25% page
+							
+			[Part	: FormetInvSign]
+				Border	: Double Sub Column Titles
+				Parts	: FormetInvAuthSign, FormetInvManSign
+				
+				[Part	: FormetInvAuthSign]
+					Space Top		: 1
+					Space Bottom	: 3
+					Border	: thin Right
+					Line	: FormetInvAuthSign
+					[Line	: FormetInvAuthSign]
+						Field	: FormetInvAuthSign
+						[Field	: FormetInvAuthSign]
+							Use	: name field
+							Set as	: "Auth. Signatory"
+							Width	: 50% page
+							Align	: Center
+							Style	: normal bold
+							
+				[Part	: FormetInvManSign]
+					Space Top		: 1
+					Space Bottom	: 3
+					Line	: FormetInvManSign
+					[Line	: FormetInvManSign]
+						Field	: FormetInvManSign
+						[Field	: FormetInvManSign]
+							Use	: name field
+							Set as	: "For " + @@CmpMailName
+							Width	: 50% page
+							Align	: Center
+							Style	: normal bold
+							
+							
+			

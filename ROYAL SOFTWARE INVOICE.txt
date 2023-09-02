@@ -1,0 +1,550 @@
+[#Menu	: Default]
+	Add	: Button	: At Beginning	: RefreshTdlBttn
+	
+[#Form	: Default]
+	Add	: Button	: At Beginning	: RefreshTdlBttn
+	
+	[Button	: RefreshTdlBttn]
+		Title	: $$LocaleString:"Refresh"
+		Key		: Alt + 7
+		Action	: Refresh TDL
+		
+[#Form	: Comprehensive Invoice]
+	Add	: Option	: RajanInvForm	: @@IsSales
+	
+	[!Form	: RajanInvForm]
+		Delete	: Parts
+		Delete	: Bottom Parts
+		Delete	: Page Break
+		Add		: Top Parts		: RajanInvTopPart, RajanInvBodyPart
+		Add		: Bottom Part	: RajanInvBottomPart
+		Add		: Width  		: 100% Page;@@InvWidth Inch
+		Add		: Height 		: 100% Page;@@InvHeight Inch
+        Add		: Space Top		: @@InvSpace Inch
+        Add		: Space Right	: 0.5 Inch
+        Add		: Space Left	: @@InvSpaceLeft Inch
+        Add		: Space Bottom	: 0.25 Inch
+		Local	: Style	: Default	: Font	: "Calibri"
+								
+		[Part	: RajanInvTopPart]
+			Vertical: Yes
+			Border	: thin box
+			Parts	: RajanInvCompDet, RajanInvLedDtl, RajanInvColTit
+			
+				
+			[Part	: RajanInvCompDet]
+				Line	: RajanInvWish, RajanInvCompGST, RajanInvCompName, RajanInvCompMat, RajanInvCompAdd, RajanInvNo
+				Repeat	: RajanInvCompAdd : RajanCompanyAddress
+			
+				[Line	: RajanInvWish]
+					Field	: RajanInvWish
+					[Field	: RajanInvWish]
+						Use	: name field
+						Set as	: "Radha Swami" 
+						Style	: Large bold
+						Align	: Center
+						Width	: 100% page
+						
+				[Line	: RajanInvCompGST]
+					Field	: short prompt, RajanInvCompGST, RajanInvTitle
+					Right Field	: medium Prompt, RajanInvMOB
+					Local		: Field	: short Prompt	: Set as	: "GSTIN"
+					Local		: Field	: short Prompt	: Width		: 10% page
+					Local		: Field	: medium Prompt	: Set as	: "Mobile"
+					Local		: Field	: medium Prompt	: Width		: 10% page
+					
+					[Field	: RajanInvCompGST]
+						Use	: name field
+						Set as	: @@VATCMPGSTNumber
+						Style	: NORMAL
+						
+							
+					[Field	: RajanInvTitle]
+						Use	: name field
+						Set as	: ##ReportTitle
+						Style	: large bold
+						Full Width	: Yes
+						Align	: Center
+							
+					[Field	: RajanInvMOB]
+						Use	: name field
+						Set as	: "9876405700 , 8146805700 , 9878505700 "
+						Style	: NORMAL
+						Align	: Right
+			
+	
+				[Collection	: RajanCompanyAddress]
+						Type        : Address   : Company
+						Child of    : ##SVCurrentCompany
+						Compute		: IsNumber	  	: No
+						Compute		: FixedDirection: No
+						Object  	: Company CINumber
+						Object      : Company Contacts
+						Object		: Company FaxNo
+						Object      : Company Email
+						Object		: Company Website
+						Filter      : IsNotBlankAddr
+				
+				[Line	: RajanInvCompName]
+					Field	: RajanInvCompName
+					[Field	: RajanInvCompName]
+						Use	: Name Field
+						Full Width	: Yes
+						Set as	: @@CmpMailName
+						Style	:EXTRA  large bold
+						Align	: Center
+						
+				[Line	: RajanInvCompMat]
+					Field	: RajanInvCompMat
+					[Field	: RajanInvCompMat]
+						Use	: Name Field
+						Full Width	: Yes
+						Set as	: "ALL KIND OF LADIES DRESS MATERIAL"
+						Style	: normal
+						Align	: Center
+						
+				[Line	: RajanInvCompAdd]
+					Field	: RajanInvCompAdd
+					[Field	: RajanInvCompAdd]
+						Use	: Name Field
+						Full Width	: Yes
+						Set as	: $Address
+						Style	: NORMAL
+						Align	: Center
+						
+				[Line	: RajanInvNo]
+					Border	: thin top
+					Left Field	: Short Prompt, RajanInvNo
+					Right Field	: Medium Prompt, RajanInvDate
+					Local	: Field	:  Short Prompt : Set as: "Invoice No."
+					Local	: Field	:  Short Prompt	: Width	: 10% page
+					Local	: Field	:  Medium Prompt : Set as: "Dated"
+					Local	: Field	:  Medium Prompt : Width	: 10% page
+					
+					[Field	: RajanInvNo]
+						Use		: Name Field
+						Set as	:   $VoucherNumber
+						Style	: NORMAL
+						
+					[Field	: RajanInvDate]
+						Use		: Uni Date Field
+						Set as	:  $Date
+						Style	: NORMAL
+						
+		[Part	: RajanInvLedDtl]
+			Border	: thin top
+			Parts	: RajanInvLeftLedDtl1, RajanInvRightLedOthDtl
+			
+			[Part	: RajanInvLeftLedDtl1]
+				Width	: 50% Page
+				Lines	: RajanInvledComp, RajanInvLedCompAdd, RajanInvLedState, RajanInvLedGSTIN, RajanInvLedPhone
+				Repeat	: RajanInvLedCompAdd	: Address
+				
+				[Line	: RajanInvledComp]
+					Field	: RajanInvledComp
+					
+					[Field	: RajanInvledComp]
+						Use		: Name Field
+						Width	: 50% Page
+						Set as	: $PartyMailingName
+						
+				[Line	: RajanInvLedCompAdd]
+					Field	: RajanInvLedCompAdd
+					
+					[Field	: RajanInvLedCompAdd]
+						Use		: Name Field
+						Width	: 50% Page
+						Style	: Normal
+						Set as	: $Address
+						
+				[Line	: RajanInvLedState]
+					Field	: RajanInvLedState
+					
+					[Field	: RajanInvLedState]
+						Use		: Name Field
+						Width	: 50% Page
+						Style	: Normal
+						Set as	: @@StCode
+						
+				[Line	: RajanInvLedGSTIN]
+					Field	: RajanInvLedGSTIN
+					
+					[Field	: RajanInvLedGSTIN]
+						Use		: Name Field
+						Width	: 50% Page
+						Style	: Normal
+						Set as	: "GSTIN : " +  $PartyGSTIN
+
+				[Line	: RajanInvLedPhone]
+					Field	: RajanInvLedPhone
+					
+					[Field	: RajanInvLedPhone]
+						Use		: Name Field
+						Width	: 50% Page
+						Style	: Normal
+						Set as	: "Phone" + $LedgerPhone:Ledger:$PartyLedgerName
+					
+				
+			[Part	: RajanInvRightLedOthDtl]
+				Border		: thin left
+				Width		: 50% Page
+				Lines		: RajanInvLedTrans, RajanInvLedOrder, RajanInvLedGR, RajanInvLedDest, +
+							  RajanInvLedVeh, RajanInvLedPvt
+				
+				[Line	: RajanInvLedTrans]
+					Fields	: Short Prompt, Name Field
+					Local	: Field	: Short Prompt	: Set as	: "Transport"
+					Local	: Field	: Short Prompt	: Width		: 20% Page
+					Local	: Field	: Short Prompt	: Style		: Normal Bold
+					Local	: Field	: Name Field	: Set as	: $BasicShippedBy
+					Local	: Field	: Name Field	: Width		: 30% Page
+					Local	: Field	: Name Field	: Style		: Normal
+					
+				[Line	: RajanInvLedOrder]
+					Fields	: Short Prompt, Name Field
+					Local	: Field	: Short Prompt	: Set as	: "Order No."
+					Local	: Field	: Short Prompt	: Width		: 20% Page
+					Local	: Field	: Short Prompt	: Style		: Normal Bold
+					Local	: Field	: Name Field	: Set as	: $BasicPurchaseOrderNo
+					Local	: Field	: Name Field	: Width		: 30% Page
+					Local	: Field	: Name Field	: Style		: Normal
+					
+				[Line	: RajanInvLedGR]
+					Fields	: Short Prompt, Name Field
+					Local	: Field	: Short Prompt	: Set as	: "G.R. No."
+					Local	: Field	: Short Prompt	: Width		: 20% Page
+					Local	: Field	: Short Prompt	: Style		: Normal Bold
+					Local	: Field	: Name Field	: Set as	: $BillofLadingNo
+					Local	: Field	: Name Field	: Width		: 30% Page
+					Local	: Field	: Name Field	: Style		: Normal
+					
+				[Line	: RajanInvLedDest]
+					Fields	: Short Prompt, Name Field
+					Local	: Field	: Short Prompt	: Set as	: "Destination"
+					Local	: Field	: Short Prompt	: Width		: 20% Page
+					Local	: Field	: Short Prompt	: Style		: Normal Bold
+					Local	: Field	: Name Field	: Set as	: $BasicFinalDestination
+					Local	: Field	: Name Field	: Width		: 30% Page
+					Local	: Field	: Name Field	: Style		: Normal
+				
+				[Line	: RajanInvLedVeh]
+					Fields	: Short Prompt, Name Field
+					Local	: Field	: Short Prompt	: Set as	: "Vehicle No."
+					Local	: Field	: Short Prompt	: Width		: 20% Page
+					Local	: Field	: Short Prompt	: Style		: Normal Bold
+					Local	: Field	: Name Field	: Set as	: $BasicShipVesselNo
+					Local	: Field	: Name Field	: Width		: 30% Page
+					Local	: Field	: Name Field	: Style		: Normal
+					
+				[Line	: RajanInvLedPvt]
+					Fields	: Short Prompt, Name Field
+					Local	: Field	: Short Prompt	: Set as	: "Pvt Mark"
+					Local	: Field	: Short Prompt	: Width		: 20% Page
+					Local	: Field	: Short Prompt	: Style		: Normal Bold
+					Local	: Field	: Name Field	: Set as	: $EIPvtMark
+					Local	: Field	: Name Field	: Width		: 30% Page
+					Local	: Field	: Name Field	: Style		: Normal
+								
+				[Part	: RajanInvColTit]
+					Border	: Thin Box
+					Line	: RajanInvColTit
+				
+					[Line	: RajanInvColTit]
+						Use		: RajanInvBodyPart
+						Local	: Field	: RajanInvSrNo		: Set as	: "S.No. "
+						Local	: Field	: RajanInvDes		: Set as	: "Description of Goods"
+						Local	: Field	: RajanInvHSN		: Set as	: "HSN/SAC"
+						Local	: Field	: RajanInvQty		: Set as	: "Quantity"
+						Local	: Field	: RajanInvRate		: Set as	: "Rate"
+						Local	: Field	: RajanInvAmt		: Set as	: "Amount"
+						Local	: Field	: Default			: Type		: String
+						Local	: Field	: Default			: Align		: Center
+						Local	: Field	: Default			: Style		: Normal Bold
+						Local	: Field	: Default			: Lines		: 0
+						
+			[Part	: RajanInvBodyPart]
+				Border			: Thin Left Right
+				Line			: RajanInvBodyPart
+				Repeat			: RajanInvBodyPart	: InventoryEntries
+				Bottom Line		: RajanInvBodyPartTot
+				Scroll			: Vertical
+				Float			: No
+				Common Borders	: Yes
+				Total			: RajanInvQty, RajanInvRate, RajanInvAmt
+
+				[Line	: RajanInvBodyPart]
+					Left Fields	: RajanInvSrNo, RajanInvDes
+					Right Fields: RajanInvHSN, RajanInvQty, RajanInvRate, RajanInvAmt
+					Local		: Field	: Default	: Style	: Normal
+					Explode		: RajanInvBodyPartDES	: NOT @@IsSysNameStkItem AND ##PRNWithItemDesc AND NOT $$IsEmpty:$BasicUserDescription
+								
+				[Part	: RajanInvBodyPartDES]
+					Line	: RajanInvBodyPartDES
+					Repeat	: RajanInvBodyPartDES	: BasicUserDescription
+					Break On: $$IsEmpty:$BasicUserDescription
+					Scroll  : Vertical	
+					[Line	: RajanInvBodyPartDES]
+						Left Fields	: RajanInvSrNo, RajanInvDes
+						Right Fields: RajanInvHSN, RajanInvQty, RajanInvRate, RajanInvAmt
+						Local	: Field	: RajanInvSrNo		: Set as	: ""
+						Local	: Field	: RajanInvDes		: Set as	: $BasicUserDescription
+						Local	: Field	: RajanInvHSN		: Set as	: ""
+						Local	: Field	: RajanInvQty		: Set as	: ""
+						Local	: Field	: RajanInvRate		: Set as	: ""
+						Local	: Field	: RajanInvAmt		: Set as	: ""
+						Local	: Field	: Default			: Style		: SMALL ITALIC
+						Local	: Field	: Default			: Lines		: 0
+						
+					[Field	: RajanInvSrNo]
+						Use		: Name Field
+						Width	: 10% Page
+						Set as	: $$Line
+						
+					[Field	: RajanInvDes]
+						Full Width	: Yes
+						Border		: Thin Left
+						Lines		: 0
+						Set as		: $StockItemName
+						
+						
+					[Field	: RajanInvHSN]
+						Use		: Name Field
+						Width	: 15% Page
+						Border	: Thin Left
+						Set as	: $GSTItemHSNCodeEx
+						
+					[Field	: RajanInvQty]
+						Use		    : Qty Primary Field
+						Width	    : 15% Page
+						Border	    : Thin Left
+						Set as	    : $BilledQty
+						
+					[Field	: RajanInvRate]
+						Use		: Rate Price Field
+						Width	: 10% Page
+						Border	: Thin Left
+						Set as	: $Rate
+						
+					[Field	: RajanInvAmt]
+						Use		: Amount Field
+						Width	: 15% Page
+						Border	: Thin Left
+						Set as	: $Amount
+						
+				[Line	: RajanInvBodyPartTot]
+					Border	: Totals
+					Use		: RajanInvBodyPart
+					Local	: Field	: RajanInvSrNo		: Set as	: ""
+					Local	: Field	: RajanInvDes		: Set as	: ""
+					Local	: Field	: RajanInvHSN		: Set as	: ""
+					Local	: Field	: RajanInvQty		: Set as	: $$Total:RajanInvQty
+					Local	: Field	: RajanInvRate		: Set as	: $$Total:RajanInvRate
+					Local	: Field	: RajanInvAmt		: Set as	: $$Total:RajanInvAmt
+					Local	: Field	: Default			: Style		: Normal Bold
+					
+		[Part	: RajanInvBottomPart]
+			Vertical: Yes
+			Part	: RajanInvBankDtl, RajanInvTaxSumm, RajanInvBankDtls, RajanInvTerms
+
+			[Part	: RajanInvBankDtl]
+				Border	: thin box
+				Parts	: RajanInvAmtDtl, RajanInvTotalAmt
+				
+				[Part	: RajanInvAmtDtl]
+					Line	: RajanInvAmtDtl
+					[Line	: RajanInvAmtDtl]
+						Border	: thin bottom
+						Space Top		: 0.2
+						Space Bottom	: 0.5
+						Fields	: Short Prompt, RajanInvAmtDtl
+						Local	: Field	: Short Prompt	: Set as	: "Amount (in words)"
+						Local	: Field	: Short Prompt	: Width		: 20% Page
+						Local	: Field	: Short Prompt	: Style		: Normal Bold
+						
+						[Field	: RajanInvAmtDtl]
+							Use		: Name Field
+							Width	: 50% Page
+							Lines	: 0
+							Style	: Normal
+							Set as	: $$InWords:$Amount + " Only"
+							
+				[Part	: RajanInvTotalAmt]
+					Border	: thin left
+					Line	: RajanInvTotalAmt, RajanInvTotalTax, RajanInvGrandTot
+					Repeat	: RajanInvTotalTax : Ledger Entries
+					[Line	: RajanInvTotalAmt]
+						Field	: medium Prompt, RajanInvTotalAmt
+						Local	: Field	: medium Prompt	: Set as	: "Total Amount "
+						Local	: Field	: medium Prompt	: Width		: 15% Page
+						Local	: Field	: medium Prompt	: Style		: Normal Bold
+							
+						[Field			: RajanInvTotalAmt]
+							Use			: Amount field
+							Set as		: $$CollAmtTotal:InventoryEntries:$Amount
+							Width		: 15% page
+							Style		: normal
+							
+					[Line	: RajanInvTotalTax]
+						Empty	: $ledgerName = $PartyledgerName
+						Field	: medium Prompt, RajanInvTotalTax
+						Local	: Field	: medium Prompt	: Set as	: $LedgerNAme
+						Local	: Field	: medium Prompt	: Width		: 15% Page
+						Local	: Field	: medium Prompt	: Style		: Normal Bold
+						
+							
+						[Field			: RajanInvTotalTax]
+							Use			: Amount field
+							Set as		: $Amount
+							Align		: Right	
+							Width		: 15% page
+							Style		: normal
+							
+					[Line		: RajanInvGrandTot]
+						Field	: medium Prompt, RajanInvGrandTot
+						Local	: Field	: medium Prompt	: Set as	: "Grand Total  "
+						Local	: Field	: medium Prompt	: Width		: 15% Page
+						Local	: Field	: medium Prompt	: Style		: Normal Bold
+							
+						[Field			: RajanInvGrandTot]
+							Use			: Amount field
+							Set as		: $Amount
+							Width		: 15% page
+							Style		: normal
+							
+			[Part	: RajanInvTaxSumm]
+				Border			: Thin Box
+				Width			: 100% Page
+				Lines			: VCHGSTInvPrintTitle1, VCHGSTInvPrintTitle2, GST VCHGSTInvPrintBody, GST VCHGSTInvPrintTotal	
+				Repeat			: GST VCHGSTInvPrintBody	: GSTAnalysisPrintSummary
+				Horizontal Align: Right
+				Common Border   : Yes
+				Total			: VCHGSTInvPrint TaxValue, VCHGSTInvPrint IGSTAmt, VCHGSTInvPrint CGSTAmt,VCHGSTInvPrint SGSTAmt, +
+								  VCHGSTInvPrint CessAmt, VCHGSTInvPrint CessQtyAmt, VCHGSTInvPrint TotalTaxAmt
+				Invisible       : @@IsGSTInvoiceEmptyCollection OR NOT @@InvGSTAnalysis
+				Option          : VCH GST AnalysisDetailsSmallSizePart : NOT @@IsGSTTaxAnalysisWithItems
+		
+			[Part	: RajanInvBankDtls]
+				Border	: THIN BOX
+				Line	: RajanInvBankDtls, RajanInvBankAcct
+				[Line	: RajanInvBankDtls]
+					Fields	: Short Prompt, RajanInvBankDtls
+					Right Field	: Medium Prompt, RajanInvBankBranch
+					Local	: Field	: Short Prompt	: Set as	: "Bank Details"
+					Local	: Field	: Short Prompt	: Width		: 20% Page
+					Local	: Field	: Short Prompt	: Style		: Normal Bold
+					Local	: Field	: Medium Prompt	: Set as	: "BRANCH"
+					Local	: Field	: Medium Prompt	: Width		: 20% Page
+					Local	: Field	: Medium Prompt	: Style		: Normal Bold
+					
+					[Field	: RajanInvBankDtls]
+						Use		: Name Field
+						Width	: 30% Page
+						Style	: Normal
+						Set as	: If NOT $$IsEmpty:@@VchBankMailingName Then @@VchBankMailingName Else ##SABankName
+						
+					
+					[Field	: RajanInvBankBranch]
+						Use		: Name Field
+						Width	: 30% Page
+						Style	: Normal
+						Set as	: $BankBranchName:Ledger:@@VchBankName
+
+				[Line	: RajanInvBankAcct]
+					Field	: Short Prompt, RajanInvBankAcct
+					Right Field	: Medium Prompt, RajanInvBankIFSC
+					Local	: Field	: Short Prompt	: Set as	: "Account No."
+					Local	: Field	: Short Prompt	: Width		: 20% Page
+					Local	: Field	: Short Prompt	: Style		: Normal Bold
+					Local	: Field	: Medium Prompt	: Set as	: "IFSC Code"
+					Local	: Field	: Medium Prompt	: Width		: 20% Page
+					Local	: Field	: Medium Prompt	: Style		: Normal Bold
+					
+					[Field	: RajanInvBankAcct]
+						Use		: Name Field
+						Width	: 30% Page
+						Style	: Normal
+						Set as	: $BankDetails:Ledger:@@VchBankName
+					
+					[Field	: RajanInvBankIFSC]
+						Use		: Name Field
+						Width	: 30% Page
+						Style	: Normal
+						Set as	: $IFSCode:Ledger:@@VchBankName
+
+			[Part	: RajanInvTerms]
+				Border	: THIN BOX
+				Space Top		: 0.2
+				Space Bottom	: 0.5
+				Line	: RajanInvTerms, RajanInvTerms1
+				Bottom Line	: RajanInvSign
+				
+				[Line	: RajanInvTerms]
+					Field	: RajanInvTerms
+					Right Field	: RajanInvCompTerms
+					
+					[Field	: RajanInvTerms]
+						Use	: name field
+						Set as	: "NO GUARANTEE OF ANY MATERIAL."
+						Style	: normal
+						Width	: 70% page
+						
+					[Field	: RajanInvCompTerms]
+						Use	: name field
+						Set as	: "FOR  " + @@CmpMailName
+						Style	: normal bold
+						Width	: 30% page
+						
+				[Line	: RajanInvTerms1]
+					Field	: RajanInvTerms1
+					
+					[Field	: RajanInvTerms1]
+						Use	: name field
+						Set as	: "All disputess are subjects to "+ @@Jurisdiction + "  Jurisdiction only."
+						Style	: normal
+						Width	: 70% page
+						
+				[Line	: RajanInvSign]
+					Space Top	: 2
+					Field	: RajanInvSignOE, RajanInvRecSign
+					Right Field	: RajanInvManSign
+					
+					[Field	: RajanInvSignOE]
+						Use	: name field
+						Set as	: "E. & O.E."
+						Style	: normal
+						Width	: 30% page
+						Align	: Left
+								
+					[Field	: RajanInvRecSign]
+						Use	: name field
+						Set as	: "Receiver's Signature"
+						Style	: normal
+						Width	: 40% page
+						Align	: Center
+						
+					[Field	: RajanInvManSign]
+						Use	: name field
+						Set as	: "Manager/Partner"
+						Style	: normal
+						Width	: 30% page
+						Align	: Right
+								
+[#Part           : EI DelNoteInfo]
+	Add          : Line  : After  : EI PreCarriage  : EIPvtMark
+	[Line        : EIPvtMark]
+		Field    : mediumprompt, EIPvtMark
+		Local    : field  :mediumprompt  :Set as  :"Pvt Mark"
+		[Field   : EIPvtMark]
+			Use  : name field
+			Storage   : EIPvtMark
+			
+
+[System	: Formula]						
+	StCode	: $$GetGSTStateCode:$StateName + "-" + $StateName
+	
+[System        		:  UDF]
+	EIPvtMark		: String	: 503
+	
+[#Field	: VCH Narration]
+	Add	: Show Table	: Always
+	Add	: Table			: List of Stock Items

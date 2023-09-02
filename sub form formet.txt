@@ -1,0 +1,128 @@
+[#Field: EICommonLED]
+
+	Sub Form	: BillDetails	
+;	Invisible	: Not @@IsSales
+
+[Report: BillDetails] ;; Sub Form
+
+	Form 	: BillDetails
+	Title 	: $$LocaleString:"Bill Details"
+
+[Form: BillDetails]
+
+	Parts 		: Bill Titles1, BillDetails1
+	Background 	: White;, Lily White
+	Height 		: 50% Screen
+	Width 		: 50% Screen
+
+[Part: BillTitles1]
+
+	Lines	: Bill Details1
+
+	[Line: Bill Details1]
+
+		Fields	: BHeaders
+
+		[Field: BHeaders]
+
+			Set as 		: "Bill Detail For " + $LedgerName
+			Skip 		: Yes
+			FullWidth 	: Yes
+			Align 		: Centre
+			Border 		: Thin Bottom
+			Style 		: "Large Bold"
+
+[Part: BillDetails1]
+
+	Line 		: BillDetailsHed, BillDetailsDtl
+	Scroll 		: Vertical
+	Repeat 		: BillDetailsDtl		: BAggre
+;	Break After : $$Line = 2
+
+	[Line: BillDetailsHed]
+		Border	: Thin Bottom
+		Fields 	: SNoTit, CustNameTit, BillNoTit, BillAmtTit, BillTypeTit, FPrintTit
+		Local 	: Field : Default : Skip 	: Yes
+		Local 	: Field : Default : Width 	: 15
+		Local 	: Field : Default : Align 	: Centre
+	
+	[Line: BillDetailsDtl]
+
+		Fields 	: SNo, CustName, BillNo, BillAmt, BillType, FPrint
+		Local 	: Field : Default : Width 	: 15
+		Local 	: Field : Default : Align 	: Centre
+		Local 	: Field : Default : Style	: normal
+		
+		[Field: SNoTit]
+
+			Set as 	: "S.No"
+
+		[Field: SNo]
+
+			Set as 	: $$Line
+			Skip 	: Yes
+
+		[Field: CustNameTit]
+
+			Set as 	: "Customer Name"
+
+		[Field: CustName]
+
+			Use 	: Name Field
+;			Storage : CustName
+			Set as	: $PartyLedgerName
+
+		[Field: BillNoTit]
+
+			Set as 	: "Bill Number"
+
+		[Field: BillNo]
+
+			Use 	: Name Field
+;			Storage : BillNo
+			Set as	: $VoucherNumber
+
+		[Field: BillAmtTit]
+
+			Set as 	: "Bill Amount"
+
+		[Field: BillAmt]
+
+			Use 	: Amount Field
+;			Storage : BillAmnt
+			Set as	: $Amount
+			
+		[Field: BillTypeTit]
+
+			Set as 	: "Bill Type"
+
+		[Field: BillType]
+
+			Use 	: Name Field
+;			Storage : BillAmnt
+			Set as	: $VoucherTypeName
+
+		[Field: FPrintTit]
+
+			Set as 	: "Print"
+
+		[Field: FPrint]
+
+			Use 	: Name Field
+;			Storage : FPrint1
+			Set as	: "Yes"
+
+[System: UDF]
+
+;	CustName 	: String 	: 1000
+;	BillNo 		: String 	: 1001
+;	BillAmnt 	: String 	: 1002
+;	FPrint1 	: String 	: 1003
+;	BAggre 		: Aggregate : 1000
+
+[Collection	: BAggre]
+	Type		: Voucher;s	: VoucherType
+	Fetch		: *.*
+;	Child Of	: $$VchTypeSales
+	Belongs To	: Yes
+	Compute		: Amount	: $Amount

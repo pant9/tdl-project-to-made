@@ -1,0 +1,228 @@
+[#Menu	: Import Top Menu]
+	Add	: Key Item	: after	: @@loctransactions	: Data Import Menu : I	: Menu : Data Import Menu 
+	
+[#Menu	: Inventory Books]
+	Add	: Item	: Data Import Menu	 : Menu	: Data Import Menu
+[Menu : Data Import Menu ]	
+	Add	: Item	: Item Size Import	: Call	: AllSItemsImport
+	Add	: Item	: Customers Import	: Call	: AllCusLEDImport
+	Add	: Item	: Vendors Import	: Call	: AllVenLEDImport
+	
+
+;.............................IMPORT CUSTOMERS LEDGER................................
+	
+[Function: AllCusLEDImport]
+	Variable	: Index	: Number
+	10	: WALK COLLECTION	: CusLColl
+	20	: 	New Object	: Ledger
+	180	: 	SET VALUE 	: NAME 			: $CUSTOMER1
+	200	: 	SET VALUE 	: PARENT		: $LedgerGroup1
+	311	:	Set Value	: Adress_1 		: $Address_11
+	312	:	Set Value	: Address_2 	: $Address_21
+	313	:	Set Value	: Address_3 	: $Address_31
+	314	:	Set Value	: Partygstin	: $GST_NUMB1
+	315	:	Set Value	: PartyCity 	: $CITY1
+	316	:   Set Value	: State Name 	: $ST1
+	317	:   Set Value	: Country Name 	: $COUNTRY1
+	318	:   Set Value	: Email 		: $PERSON_11
+	319	:   Set Value	: LedgerPhone_1 : $PHONE_11
+	320	:   Set Value	: LedgerPhone_2 : $PHONE_21
+	321	: 	Set Value	: Pin Code	 	: $PIN
+	
+	4004:	Set Target	: ..
+	410	:	Create TARGET
+	16	:   END WALK
+	17	:	Msg Box	: "Import Complete" :"Admin"
+
+
+[Collection: CusLColl]
+	Source Collection		: CusLSqlObjOdbcCol
+	Compute	:	CUSTOMER1	: $CUSTOMER
+	Compute	:	LedgerGroup1: $LedgerGroup
+	Compute	:	Address_11	: $Address_1
+	Compute	:	Address_21	: $Address_2
+	Compute	:	Address_31	: $Address_3
+	Compute	:   GST_NUMB1	: $GST_NUMB
+	Compute	:	CITY1		: $CITY
+	Compute	:   ST1			: $ST
+	Compute	:   COUNTRY1	: $COUNTRY
+	Compute	:   PERSON_11	: $PERSON_1
+	Compute	:   PHONE_11	: $PHONE_1
+	Compute	:   PHONE_21	: $PHONE_2
+	Compute	:   PIN1		: $PIN
+	
+
+
+[Collection: CusLSqlObjOdbcCol]
+	
+	ODBC			: "Driver={Microsoft Excel Driver (*.xls, *.xlsx, *.xlsm, *.xlsb)};DBQ=D:\GURLEEN DATA\ITEMS DETAIL\IMPORT UPDATE.xlsx" ;;+ ##SVExcelSourcePath
+	SQL				: "Select * From [customers$]"
+	Fetch			: *.*
+	SQL Object		: CusLSqlObj
+
+[Object: CusLSqlObj]
+	LedgerName	: $_2
+	LedgerGroup	: $_3
+	Address_1	: $_4
+	Address_2	: $_5
+	Address_3	: $_6
+	GST_NUMB	: $_7
+	CITY		: $_8
+	ST			: $_9
+	COUNTRY		: $_10
+	PERSON_1	: $_11
+	PHONE_1		: $_12
+	PHONE_2		: $_13
+	PIN			: $_14
+	
+[#Part: LED Mailing Address]
+	Add	: Bottom Line	: At End	: LEDCity
+	[Line	: LEDCity]
+		Field	: Medium Prompt, LEDCity
+		Local	: Field	: Medium Prompt	: Set as	: "City"
+		[Field	: LEDCity]
+			Use	: NAme Field
+			Storage	: PartyCity
+			
+[System	: UDF]
+	PartyCity	: String	: 5100
+	
+	
+;....................................IMPORT VENDORS LEDGER.....................................
+
+[Function: AllVenLEDImport]
+	Variable	: Index	: Number
+	12	: WALK COLLECTION	: VenLColl
+	25	: 	New Object	: Ledger
+	165	: 	SET VALUE 	: NAME 			: $VENDOR1
+	220	: 	SET VALUE 	: PARENT		: $LedgerGroup1
+	105	:	Set Value	: Partygstin	: $GST_NUMB1
+	115	:	Set Value	: Adress_1 		: $ADD11
+	125	:	Set Value	: Address_2 	: $ADD21
+	135	:	Set Value	: Address_3 	: $ADDRESS_31
+	145	:	Set Value	: PartyCity 	: $CITY1
+	155	:   Set Value	: State Name 	: $ST1
+	175	:   Set Value	: Country Name 	: $COUNTRY1
+	185	:   Set Value	: LedgerPhone1 	: $PHONE11
+	195	:   Set Value	: LedgerPhone2 	: $PHONE21
+	355	:   Set Value	: Email 		: $EMAIL1
+	365	: 	Set Value	: Pin Code	 	: $PIN
+	4201:   Set Value	: Income Tax Number	: $PAN_GIR_NO1
+
+	1004:	Set Target	: ..
+	4000:	Create TARGET
+	1600	:   END WALK
+	1701	:	Msg Box	: "Import Complete" :"Admin"
+
+
+[Collection: VenLColl]
+	Source Collection		: VenLSqlObjOdbcCol
+	Compute	:	VENDOR1		: $VENDOR
+	Compute	:	LedgerGroup1: $LedgerGroup
+	Compute	:   GST_NUMB1	: $GST_NUMB
+	Compute	:	ADD11		: $ADD1
+	Compute	:	ADD21		: $ADD2
+	Compute	:	ADDRESS_31	: $ADDRESS_3
+	Compute	:	CITY1		: $CITY
+	Compute	:   ST1			: $ST
+	Compute	:   COUNTRY1	: $COUNTRY
+	Compute	:   PHONE11		: $PHONE1
+	Compute	:   PHONE21		: $PHONE2
+	Compute	:   EMAIL1		: $EMAIL
+	Compute	:   PIN1		: $PIN
+	Compute	:	PAN_GIR_NO1	: $PAN_GIR_NO
+
+
+
+[Collection: VenLSqlObjOdbcCol]
+	
+	ODBC			: "Driver={Microsoft Excel Driver (*.xls, *.xlsx, *.xlsm, *.xlsb)};DBQ=D:\GURLEEN DATA\ITEMS DETAIL\IMPORT UPDATE.xlsx" ;;+ ##SVExcelSourcePath
+	SQL				: "Select * From [vendors$]"
+	Fetch			: *.*
+	SQL Object		: VenLSqlObj
+
+[Object: VenLSqlObj]
+	LedgerName	: $_2
+	LedgerGroup	: $_3
+	GST_NUMB	: $_7
+	ADD1		: $_4
+	ADD2		: $_5
+	Address_3	: $_6
+	CITY		: $_8
+	ST			: $_9
+	COUNTRY		: $_10
+	PHONE1		: $_12
+	PHONE2		: $_13
+	EMAIL		: $_11
+	PIN			: $_14
+	PAN_GIR_NO	: $_15
+	
+;.....................................IMPORT STOCK ITEM MASTER.......................................
+
+[Function	: AllSItemsImport]
+	Variable	: Index	: Number
+	10	: WALK COLLECTION: ItemsCollection
+	10A	:If	: not $$IsObjectExists:Stockitem:$ItemName1
+	20	: 	New Object		: Stockitem
+
+	191	:	Set Value	: PartNo			: $PartNo1
+	180	: 	SET VALUE 	: NAME 				: $ItemName1
+	200	:    Set Value	: Stock Group		: $STOCKGROUP1
+	210	:    Set Value	: Stock Category	: $STOCKCATEGORY1
+	250	: 	SET VALUE 	: BASEUNITS			: $UOM1
+	260	: 	Set Value	: SETQTY			: $SETQT1
+	265	:	Set Value	: Rate Of Mrp		: $RATESTD1
+	315	: 	Set Value	: Opening Value		: $OPN_QTY1
+	270	:	Set Value	: GSTAPPLICABLE		: $$SysName:Applicable	
+	300	:		Insert Collection Object	: GSTDETAILS
+	310	:	Set Value	: APPLICABLEFROM 	: ##SvfromDate
+	320	:	Set Value	: CALCULATIONTYPE	: "On Value"
+	330	:	Set Value	: HSNCODE			: $$String:$HSNCD1
+	340	:	Set Value	: TAXABILITY		:	"Taxable"
+	29A	: 	SET VALUE 	: Description		: $DESCRIPTION1
+	29X	: 	SET VALUE 	: Closing Value		: $CLO_QTY1
+	307	: 	Set Value	: Stock Qty			: $STK_QTY
+
+	4004:	Set Target	: ..
+	4003:	Create TARGET
+	4001:	End If
+	16	:	END WALK
+	17	:	Msg Box	: "Import Complete" :"Admin"
+
+[Collection	: ItemsCollection]
+	Source Collection	: ItemsOdbcCol
+	Compute	: PartNo1			: $ITEMM
+	Compute	: ItemName1			: $DESCRIPTO
+	Compute	: STOCKGROUP1		: $STOCKGROUP
+	Compute	: STOCKCATEGORY1	: $CATEGORY
+	Compute	: UOM1				: $PKGQTY
+	Compute	: SETQT1			: $SETQT
+	Compute	: RATESTD1			: $RATESTD
+	Compute	: OPN_QTY1			: $OPN_QTY
+	Compute	: HSNCD1			: $$Number:$HSN_CODE
+	Compute	: DESCRIPTION1		: $DESCRIPTN
+	Compute	: CLO_QTY1			: $CLO_QTY
+	Compute	: STK_QTY			: $STK_QTY
+	
+[Collection: ItemsOdbcCol]
+	
+	ODBC			: "Driver={Microsoft Excel Driver (*.xls, *.xlsx, *.xlsm, *.xlsb)};DBQ=D:\GURLEEN DATA\ITEMS DETAIL\IMPORT UPDATE.xlsx" ;;+ ##SVExcelSourcePath
+	SQL				: "Select * From [itemsizemaster$]"
+	Fetch			: *.*
+	SQL Object		: ItemSqlObj
+
+[Object: ItemSqlObj]
+	
+	ITEMM			: $_1
+	DESCRIPTO		: $_2
+	STOCKGROUP		: $_3
+	CATEGORY		: $_4
+	PKGQTY			: $_5
+	SETQT			: $_6
+	RATESTD			: $_7
+	OPN_QTY			: $_8
+	HSN_CODE		: $_9
+	DESCRIPTN		: $_10
+	CLO_QTY			: $_11
+	STK_QTY			: $_12	
+	

@@ -1,0 +1,558 @@
+[#Menu	: Default]
+	Add	: Button	: At Beginning	: RefreshTdlBttn
+	
+[#Form	: Default]
+	Add	: Button	: At Beginning	: RefreshTdlBttn
+	
+	[Button	: RefreshTdlBttn]
+		Title	: $$LocaleString:"Refresh"
+		Key		: Alt + 7
+		Action	: Refresh TDL
+
+
+[#Form         		: Comprehensive Invoice]
+	Add       		: Option     : RSRE Invoice	: @@IsSales
+	[!Form			: RSRE Invoice]
+		Delete		: Top Part
+		Delete		: Part
+		Delete		: Bottom Part
+		Delete		: Page Break
+		Add			: Part	: RSRE WISH, RSRE PARTY , RSRE TITLE, RSRE DETAIL , RSRE TOTAL, RSRE NOTE
+		
+[Part				:  RSRE WISH]
+	SpaceTop    	: If $$InPixelMode then 1 Else 0.5
+;	Border			: THICK bottom
+	Line			: RSRE WISH , RSRE B2,  RSRE BILL , RSRE MOB 1, RSRE CMP , RSRE WHOLE, RSRE SPL
+	Line			: RSRE ADD, RSRE INV
+	[Line			: RSRE WISH]
+		Left Field	: RSRE MB,  RSRE MBB 
+		Field		: RSRE WISH
+		Right Field	: RSRE GSTIN, RSRE GSTIN NO
+		
+		[Field		: RSRE MB]
+			Use		: short PROMPT
+			Set as	: "Mobile No.   "
+			Width	: 12
+
+		[Field		: RSRE MBB]
+			Use		: Name field
+			Set as	: ""
+			
+			
+		[Field		: RSRE WISH]
+			Use		: Name field
+			Set as	: "Radha Swami"
+			Full Width	: Yes
+			Align	:	Center
+			Style	: LARGE BOLD
+			
+		[Field		: RSRE GSTIN ]
+			Use		: short prompt
+			Set as	: "GSTIN "
+			Width	: 12
+
+
+		[Field		: RSRE GSTIN NO ]
+			Use		: NAME FIELD
+			Set as	: @@VATCMPGSTNumber
+		
+			
+	[Line			: RSRE B2]
+		Left Field	: RSRE B2
+;		Right Field	:  RSRE GSTIN NO
+		[Field		: RSRE B2]
+			Use		: NAME field
+			Set as	: "98764-05700"
+			Align	: Left
+			
+		
+			
+	[Line			: RSRE BILL]
+		Field		: RSRE B3, RSRE BILL
+		Right Field	: RSRE MOB
+		
+		[Field		: RSRE B3]
+			Use		: NAME FIELD
+			Set as	: "81468-05700"
+			Align	: Left
+;			Width	: 10
+			
+		[Field		: RSRE BILL]
+			Use		: Name field
+			Set as	: If NOT $$IsEmpty:$VCHPrintTitle:VoucherType:##SVVoucherType then $VCHPrintTitle:VoucherType:##SVVoucherType +
+                                                            Else  $$LocaleString:##ReportTitle
+
+			Full Width	: Yes
+			Align	:	Center
+			Style	: NORMAL BOLD
+			
+
+		[Field		: RSRE MOB ]
+			Use		: NAME FIELD
+			Set as	: " " 
+			Align	: Right
+;			Width	: 10
+			
+	[Line			: RSRE MOB 1]
+		SpaceBottom : If $$InPixelMode then 1 Else 0
+		Left Field 	: RSRE MOBILE
+		
+		[Field		: RSRE MOBILE ]
+			Use		: NAME FIELD
+			Set as	: "98785-05700"
+			Align	: Left
+;			Width	: 10
+
+		
+	[Line			: RSRE CMP]
+		Field		: RSRE CMP
+		[Field		: RSRE CMP]
+			Use		: name field
+			Set as	: @@CmpMailName
+			Full Width: Yes
+			Align	: Center
+			Style	: EXTRA LARGE BOLD
+	
+	[Line			: RSRE WHOLE]
+		Field		: RSRE WHOLE
+		[Field		: RSRE WHOLE]
+			Use		: name field
+			Set as	: "WHOLESALE- CLOTH MERCHANT"
+			Full Width: Yes
+			Align	: Center
+	
+	[Line			: RSRE SPL]
+		Field		: RSRE SPL
+		[Field		: RSRE SPL]
+			Use		: name field
+			Set as	: "SPECIALISTS IN: HIGH CLASS EMBROIDERY SUITS"
+			Full Width: Yes
+			Align	: Center
+			
+	[Line			: RSRE ADD]
+		Field		: RSRE ADD
+		[Field		: RSRE ADD]
+			Use		: name field
+			Set as	: $$FullList:CompanyAddress1:$address
+			Full Width: Yes
+			Align	: Center
+			
+[Collection		: Company Address1]
+	
+    Type        : Address   : Company
+    Child of    : ##SVCurrentCompany
+
+	
+	Object      : Company State
+	Object 		: Company Telephone
+	
+
+			
+	[Line			: RSRE INV]
+		Border		: Edit Field Border
+		Left Field	: RSRE INV, RSRE INVB
+		Right Field	: RSRE DATE, RSRE DATEB
+		[Field		: RSRE INV ]
+			Use		: medium prompt
+			Set as	: "INVOICE NO. "
+			Width	: 20
+			
+			
+		[Field		: RSRE INVB ]
+			Use		: NAME FIELD
+			Set as	: $VoucherNumber
+			
+		[Field		: RSRE DATE ]
+			Use		: medium prompt
+			Set as	: "DATE "
+			Width	: 20
+			
+		[Field		: RSRE DATEB ]
+			Use		: DATE FIELD
+			Set as	: $Date
+			
+[Part				: RSRE PARTY]
+	Border			: THIN left right
+	Part			: RSRELeftPartyName, RSRERightPartyDT
+		[Part		: RSRELeftPartyName]
+			Line	: RSRE PARTY NAME, RSRE PARTY ADD, RSRE PARTY GSTIN, RSREStateCode
+			[Line			: RSRE PARTY NAME]
+				Left Field	: RSRE PARTY NAME
+				
+				[Field		: RSRE PARTY NAME]
+
+					Use		: name FIELD
+					Set as	: $MailIngName:Ledger:$PartyLedgerName
+					Full Width	: Yes
+			
+			[Line			: RSRE PARTY ADD]
+				Left Field	: RSRE PARTY ADD
+				[Field		: RSRE PARTY ADD]
+					Use		: name FIELD
+					Set as	: $Address
+					Full Width	: Yes
+			
+			[Line			: RSRE PARTY GSTIN]
+				Field		: RSRE PARTY GSTIN, RSRE  PARTY GSTINB
+				[Field		: RSRE PARTY GSTIN]
+					Use		: Medium Prompt
+					Set as	: "GSTIN         "
+					
+					Width	: 15
+					Style	: normal
+			
+				[Field		: RSRE  PARTY GSTINB]
+					Use		: name FIELD
+					Set as	: $PartyGSTIN
+					
+			[Line			: RSREStateCode]
+				Field		: RSRE STATE
+				[Field		: RSRE STATE]
+					Use		: Medium Prompt
+					Set as	: "State Code  "
+					
+					Width	: 15
+					Style	: normal
+			
+				[Field		: RSRE STATEB]
+					Use		: name FIELD
+					Set as	: $$GetGSTStateCode:$Statename
+					
+		[Part				: RSRERightPartyDT]
+			Border			: thick left
+			Line			: RSRETransport, RSREOrderNo, RSREPartyGR, RSREDest, RSREVeh, RSREPvt
+		 
+			[Line			: RSRETransport]
+				  Field		: RSRETransport, RSRE  TRANSPORTB
+				[Field		: RSRETransport]
+					Use		: MEDIUM PROMPT
+					Set as	: "Transport Co. " 
+					Width	: 20
+					
+				[Field		: RSRE  TRANSPORTB]
+					Use		: name FIELD
+					Set as	: $EITRANSCO
+					
+			[Line			: RSREOrderNo]
+				  Field		: RSREOrderNo, RSREOrderNum
+				[Field		: RSREOrderNo]
+					Use		: MEDIUM PROMPT
+					Set as	: "Order No." 
+					Width	: 20
+			
+				[Field		: RSREOrderNum]
+					Use		: name FIELD
+					Set as	: $BasicPurchaseOrderNo
+					
+			[Line			: RSREPartyGR]
+				Field		: RSREPartyGR, RSREPartyGRNo
+				[Field		: RSREPartyGR]
+					Use		: MEDIUM PROMPT
+					Set as	: "GR No. "
+					Width	: 20
+			
+			
+				[Field		: RSREPartyGRNo]
+					Use		: name FIELD
+					Set as	: $EIGRNUM
+					
+			[Line			: RSREDest]
+				Field		: RSREDest, RSREDestination
+				[Field		: RSREDest]
+					Use		: MEDIUM PROMPT
+					Set as	: "Destination"
+					Width	: 20
+			
+			
+				[Field		: RSREDestination ]
+					Use		: name FIELD
+					Set as	: $BasicFinalDestination
+					
+					
+			[Line			: RSREVeh]
+				Field		: RSREVeh, RSREVehno 
+				[Field		: RSREVeh]
+					Use		: MEDIUM PROMPT
+					Set as	: "Vehicle No. "
+					Width	: 20
+			
+				[Field		: RSREVehno]
+					Use		: name FIELD
+					Set as	: $BasicShipVesselNo
+					
+			[Line			: RSREPvt]
+				Field		: RSREPvt, RSREPvtMark
+				[Field		: RSREPvt]
+					Use		: MEDIUM PROMPT
+					Set as	: "Pvt Mark"
+					Width	: 20
+			
+			
+				[Field		:  RSREPvtMark]
+					Use		: name FIELD
+					Set as	: $EIPvtMark
+			
+	
+	
+	
+[Part				: RSRE TITLE]
+	Border			: thin top bottom
+	Line			: RSRE TITLE
+	[Line			: RSRE TITLE]
+		Field		: RSRE SR, RSRE DES
+		Right Field	: RSRE HSN, RSRE QTY, RSRE RATE, RSRE AMT
+		Local	: Field	: Default	: Style : Normal Bold
+		Local	: Field	: Default	: Type	: String
+		Local	: Field	: RSRE SR	: Set as	: "S.No." 
+		Local	: Field	: RSRE DES	: Set as	: "DESCRIPTION"
+		Local	: Field	: RSRE HSN	: Set as	: "HSN CODE"
+		Local	: Field	: RSRE QTY	: Set as	: "MTR/QTY"
+		Local	: Field	: RSRE RATE	: Set as	: "RATE"
+		Local	: Field	: RSRE AMT	: Set as	: "AMOUNT"
+		
+[Part				: RSRE DETAIL]
+	Border			: thick bottom
+	Common Border	: Yes
+	Scroll			: Vertical
+	Line			: RSRE DETAILS
+	Repeat			: RSRE DETAILS : INVENTORY ENTRIES
+	[Line			: RSRE DETAILS]
+		Field		: RSRE SR, RSRE DES
+		Right Field	: RSRE HSN, RSRE QTY, RSRE RATE, RSRE AMT
+		[Field		: RSRE SR]
+			Use		: Name Field
+			Set as	: $$Line	
+			Width	: 10
+			Style	: Small
+			Border	: Thin Left
+			
+		[Field		: RSRE DES]
+			Use		: Name Field
+			Set as	: $Stockitemname	
+			Full Width	: Yes
+			Style	: Small
+			Border	: Thin Left
+			Align	: Left
+			
+		[Field		: RSRE HSN]
+			Use		: Name Field
+			Set as	: $GSTItemHSNCodeEx	
+;			Width	: 5
+			Style	: Small
+			Border	: Thin Left
+			
+		[Field		: RSRE QTY]
+			Use		: name field
+			Set as	: $BilledQty
+;			Width	: 5
+			Style	: Small
+			Border	: Thin Left
+			
+		[Field		: RSRE RATE]
+			Use		: RAte Price Field
+			Set as	: $Rate	
+;			Width	: 5
+			Style	: Small
+			Border	: Thin Left
+			
+		[Field		: RSRE AMT]
+			Use		: Amount Field
+			Set as	: $Amount	
+;			Width	: 5
+			Style	: Small
+			Border	: Thin Left right
+			
+[Collection			: VOUCHER]
+	Type			: VOUCHER
+	Fetch			: *.*
+
+[Collection			: VOUCHER INVENTORY SUMMARY]
+	Source Collection	: ..
+	Walk			: INVENTORY ENTRIES
+	
+
+			
+[Part				: RSRE TOTAL ]
+	Border			: thin left right
+	Part			: RSRE LEFT AMOUNT, RSRE RIGHT AMOUNT
+	[Part			: RSRE LEFT AMOUNT]
+		Border		: thin right
+		Line		: RSRE AMOUNT,RSRE BLANK, RSRE BANK, RSRE BANK NAME
+;		, RSRE ACC, RSRE IFSC
+		[Line		: RSRE AMOUNT]
+			Field	: RSRE AMOUNT, RSRE INW
+			[Field	: RSRE AMOUNT]
+				Use			: Name field
+				Set as		: "Amount in Words :"
+				Style		: NORMAL
+				
+			[Field			: RSRE INW]
+				Use			: Name field
+				Set as		: $$InWords:$Amount + " Only."
+				Style		: NORMAL ITALIC
+				Full Width	: Yes
+				
+		[Line		: RSRE BLANK]
+			Field	: RSRE BLANK
+			[Field	: RSRE BLANK]
+				Use			: Name field
+				Set as		: ""
+				Style		: NORMAL
+				
+		[Line		: RSRE BANK]
+			Field	: RSRE BANK
+			Right Field	: RSRE ACC
+			[Field	: RSRE BANK]
+				Use			: Name field
+				Set as		: "OUR BANK DETAILS :"
+				Style		: NORMAL
+				
+			[Field			: RSRE ACC]
+				Use			: Name field
+				Set as		: "Account No. : " + $BankDetails:Ledger:@@VchBankName	
+			
+				
+		[Line		: RSRE BANK NAME]
+			Field	: RSRE BANK NAME
+			Right Field	: RSRE IFSC
+			[Field	: RSRE BANK NAME]
+				Use			: Name field
+				Set as		: If NOT $$IsEmpty:@@VchBankMailingName Then @@VchBankMailingName Else ##SABankName
+				Style		: NORMAL
+			
+			[Field			: RSRE IFSC]
+				Use			: Name field
+				Set as		: "IFSC Code : " + $IFSCode:Ledger:@@VchBankName
+				
+;		[Line		: RSRE ACC]
+;			 Field	: RSRE ACC
+;			[Field			: RSRE ACC]
+;				Use			: Name field
+;				Set as		: "Account No. : " + $BankDetails:Ledger:@@VchBankName
+;				
+;				
+;		[Line		: RSRE IFSC]
+;			 Field	: RSRE IFSC
+;			[Field			: RSRE IFSC]
+;				Use			: Name field
+;				Set as		: "IFSC Code : " + $IFSCode:Ledger:@@VchBankName
+;				
+				
+	[Part			: RSRE RIGHT AMOUNT]
+		Line		: RSRE TOTAL, RSRE CGST, RSRE GTOTAL
+		Repeat		: RSRE CGST : Ledger Entries
+	    [Line		: RSRE TOTAL]
+			Field	: RSRE TOTAL, RSRE TOTAL AMT
+			[Field	: RSRE TOTAL]
+				Use	: name field
+				Set as	: "Total Amount"
+				Width	: 20
+				Style	: normal
+				Align		: Right	
+				
+			[Field			: RSRE TOTAL AMT]
+				Use			: Amount field
+				Set as		: $$CollAmtTotal:InventoryEntries:$Amount
+				Align		: Right	
+				
+		[Line		: RSRE CGST]
+			Field	: RSRE CGST, RSRE CGST AMT
+			Empty	: $ledgerName = $PartyledgerName
+			[Field	: RSRE CGST]
+				Use	: name field
+				Set as	: $LedgerNAme
+				Width	: 20
+				Style	: normal
+				Align		: Right	
+				
+			[Field			: RSRE CGST AMT]
+				Use			: Amount field
+				Set as		: $Amount
+				Align		: Right	
+				
+		[Line		: RSRE GTOTAL]
+			Field	: RSRE GTOTAL, RSRE GTOTAL AMT
+			[Field	: RSRE GTOTAL]
+				Use	: name field
+				Set as	: "Grand Amount"
+				Width	: 20
+				Style	: normal
+				Align		: Right	
+				
+			[Field			: RSRE GTOTAL AMT]
+				Use			: Amount field
+				Set as		: $Amount
+				Align		: Right	
+				
+[Part				: RSRE NOTE]
+	Border			: thin top
+	Line			: RSRE NOTE, RSRE SPL NOTE, RSRE SIGN
+	[Line			: RSRE NOTE]
+		Field		: RSRE NOTE
+		Right Field	: RSRE FOR CMP
+		[Field		: RSRE NOTE]
+			Use		: NAME FIELD
+			Set as	: "NO GUARANTEE OF ANY MATERIAL."
+			Full Width	: Yes
+			
+		[Field		: RSRE FOR CMP]
+			Use		: NAME FIELD
+			Set as	: "FOR " + @@CmpMailName
+			
+	[Line			: RSRE SPL NOTE]
+		Field		: RSRE SPL NOTE
+		[Field		: RSRE SPL NOTE]
+			Use		: NAME FIELD
+			Set as	: "All disputess are subjects to "+ @@Jurisdiction + "  Jurisdiction only."
+			Full Width	: Yes
+			
+	[Line			: RSRE SIGN]
+		SpaceTop    : If $$InPixelMode then 3 Else 0.5
+		SpaceBottom : If $$InPixelMode then 1 Else 0
+		Field		: RSRE SIGN, RSRE AUTH SIGN
+		Right Field	: RSRE MAN SIGN
+		[Field		: RSRE SIGN]
+			Use		: NAME FIELD
+			Set as	: "E. & O.E."
+			Align	: Left
+			
+			
+		[Field		: RSRE AUTH SIGN]
+			Use		: NAME FIELD
+			Set as	: "Receiver's Signature" 
+			Align	: Center
+			Width	: 80
+			
+		[Field		: RSRE MAN SIGN]
+			Use		: NAME FIELD
+			Set as	: "Manager/Partner" 
+			Align	: Right	
+			
+[#Part           : EI DelNoteInfo]
+	Add          : Line  : After  : EI PreCarriage  : EI TRANS, EI GR NO, EIPvtMark
+	[Line        : EI TRANS]
+		Field    : mediumprompt, EI TRANS CO
+		Local    : field  :mediumprompt  :Set as  :"Transport Co."
+		[Field   : EI TRANS CO]
+			Use  : name field
+			Storage   : EI TRANS CO 
+			
+	[Line        : EI GR NO]
+		Field    : mediumprompt, EI GR NUM
+		Local    : field  :mediumprompt  :Set as  :"Gr. No"
+		[Field   : EI GR NUM]
+			Use  : name field
+			Storage   : EI GR NUM
+			
+	[Line        : EIPvtMark]
+		Field    : mediumprompt, EIPvtMark
+		Local    : field  :mediumprompt  :Set as  :"Pvt Mark"
+		[Field   : EIPvtMark]
+			Use  : name field
+			Storage   : EIPvtMark
+			
+			
+[System        		:  UDF]
+	EI TRANS CO     : String	: 501 			
+	EI GR NUM 		: String	: 502
+	EIPvtMark		: String	: 503

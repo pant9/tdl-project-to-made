@@ -1,0 +1,30 @@
+[#Menu	: Gateway of Tally]
+	Add	: Item: At End: Fixed List : Alter: RSfxlist
+	
+[Report		: RSfxlist]
+	Form	: RSfxlist
+	
+[Form		: RSfxlist]
+	Height	: 10% screen
+	Width	: 20% screen
+	Part	: RSfxlist
+	
+[Part		: RSfxlist]
+	Line	: RSfxlist
+	
+[Line		: RSfxlist]
+	Field	: RSfxlist
+	[Field	: RSfxlist]
+		Use	: name field
+		Show Table	: Always
+		Table		: RSfxlist
+		
+
+
+[Collection	: RSfxlist]
+	Title		: $$LocaleString:"List of Electronic Items"
+	List Name	: "Airconditioner"
+	List Name	: "Kooler"
+	List Name	: "Refrigerator"
+	List Name	: "Fan"
+	

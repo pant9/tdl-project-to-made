@@ -1,0 +1,26 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;Dummy
+[#Field : RSEIpType]
+	Storage	: BatchName : BatchAllocations : 2
+[#Field	: RSEIPQty]
+	Storage	: Billedqty : BatchAllocations : 2 ;econd ;@@SecondEntry
+[#Field	: RSEIPQtyA]
+	Storage	: Actualqty : BatchAllocations : 2
+[#Field	: RSEIPRAte]
+	Storage	: Rate : BatchAllocations : 2
+[#Field	: RSEIPAmt]
+	Storage	: Amount : BatchAllocations : 2
+[#Field	: RSEINType]
+	Storage	: BatchName : BatchAllocations : 3
+[#Field	: RSEINQty]
+	Storage	: Billedqty : BatchAllocations : 3
+[#Field	: RSEINQtyA]
+	Storage	: Actualqty : BatchAllocations : 3
+[#Field	: RSEINRAte]
+	Storage	: Rate : BatchAllocations : 3
+[#Field	: RSEINAmt]
+	Storage	: Amount : BatchAllocations : 3
+
+[#Field	: RSMyGodownp]
+	Storage	: GodownName : BatchAllocations : 2
+[#Field	: RSMyGodownN]
+	Storage	: GodownName : BatchAllocations : 3

@@ -1,0 +1,17 @@
+[#Menu: Inventory Info.]
+ Add : Item  : After : @@locStockItems  : BhatiaSales Print : Display Collection : BhatiaSalesColl  
+ 
+[Collection : BhatiaSalesColl]
+Trigger 	: BhatiaSalesTrigger
+;Report 		: BhatiaSalesPrint
+Format      : $Name, 25
+Type        : vouchers	: VoucherType
+Title       : $$LocaleString:"List of Salesman"
+;Align       : Right
+;Full Height : Yes
+Fetch       : *.*
+Child Of	: $$VchTypeSales
+Belongs To	: Yes
+
+[Report	: BhatiaSalesTrigger]
+	

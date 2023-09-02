@@ -1,0 +1,181 @@
+[#Menu	: Default]
+	Add	: Button	: At Beginning	: RefreshTdlBttn
+	
+[#Form	: Default]
+	Add	: Button	: At Beginning	: RefreshTdlBttn
+	
+	[Button	: RefreshTdlBttn]
+		Title	: $$LocaleString:"Refresh"
+		Key		: Alt + 7
+		Action	: Refresh TDL
+		
+[System	: Formula]
+	SalesmanRepTit	: $$LocaleString:"Salesman Entry Report"
+
+[#Menu	: Display Menu]
+	Add	: Key Item	: After	: @@locStatementsofAccounts	: @@SalesmanRepTit	: R : Display Collection	: SalesmanDtlRepCOLL
+	
+	[Collection	: SalesmanDtlRepCOLL]
+		
+		Use         : Alias Collection
+		Title		: $$LocaleString:"List Of Salesman"
+		Type		: Ledger
+		Child Of	: $$GroupSundryCreditors
+		Belongs To	: Yes
+		Variable    : SLedger
+		Trigger     : SLedger
+		IsODBCTable : Yes
+		Fetch		: Name, Language Name, IsSalesmanLED
+		Format		: $NAME,40
+		Report		: SalesmanDtlRep
+		Filter		: IsOnlySalesmanLED
+;	
+;		Use         : Alias Collection
+;		Type        : Ledger
+;		Title       : $$LocaleString:"List of Ledgers"
+;		Report      : Ledger
+;	
+;[Collection	: ListOfSalesman]
+;	Title	: $$LocaleString:"List Of Salesman"
+;	Type	: Ledger
+;	Child Of: $$GroupSundryCreditors
+;	Belongs To	: Yes
+;	Format	: $NAME,40
+;	Filter	: IsOnlySalesmanLED
+
+
+	[Report		: SalesmanDtlRep]
+		Use		: DSP Template
+		Set		: SvFromDate : $$MonthStart:##SvCurrentDate
+		Set		: SvToDate : $$MonthEnd:##SvCurrentDate
+		Form	: SalesmanDtlRep
+		
+		[Form		: SalesmanDtlRep]
+			Use		: DSP Template
+			Height	: 100% screen
+			Width	: 100% screen
+			Parts	: DSP ReportTime, DSP CompanyName, DSP CompanyAddress, DSP ReportTitle, DSP PageNo, SalesmanDtlRepTOp, SalesmanDtlRep
+			Option	: Small Size Form
+			Delete	: Page Break
+			Add		: Page Break: DB1Close,DB1Open
+			
+			[Part	:DB1Close]
+				Line	: DB1Close
+				[Line	: DB1Close]
+					Field	: Name Field
+					Local	: Field: NAMe field :Set as: "Continue"
+					Local	: Field: NAMe field :Align:Right
+					Local	: Field: NAMe field :Border: thin top
+					Local	: Field: NAMe field :Full Width:Yes
+					
+			[Part	:DB1Open]
+				Part	: SalesmanDtlRepTOp
+
+	
+			[Part	: SalesmanDtlRepTOp]
+				Line	: SalesmanDtlRepTOp
+				
+				[Line	: SalesmanDtlRepTOp]
+					Field	: DSP Period
+					
+			[Part		: SalesmanDtlRep]
+				Line	: SalesmanDtlReptitle, SalesmanDtlRepList
+				Repeat	: SalesmanDtlRepList: SRCRSVoucher
+				Scroll	: Vertical
+				
+				[Line		: SalesmanDtlReptitle]
+					Border	: Column Titles
+					Field	: SVCHDate, SVCHParty, SVCHNumber, SVCHType ,SVCHSalesman, SVCHGoodsAmt, SVCHBillAmt
+					[Field	: SVCHDate]
+						Use	: Namefield
+						Set as	: "Date"
+						Skip	: Yes
+						
+					[Field	: SVCHParty]
+						Use	: Namefield
+						Set as	: "Party Name"
+						Skip	: Yes
+						
+					[Field	: SVCHNumber]
+						Use	: Namefield
+						Set as	: "Voucher Number"
+						Skip	: Yes
+						
+					[Field	: SVCHType]
+						Use	: Namefield
+						Set as	: "Voucher Type"
+						Skip	: Yes
+						
+					[Field	: SVCHSalesman]
+						Use	: Namefield
+						Set as	: "Salesman Name"
+						Skip	: Yes
+						
+					[Field	: SVCHGoodsAmt]
+						Use	: Namefield
+						Set as	: "Goods Amount"
+						Skip	: Yes
+						
+					[Field	: SVCHBillAmt]
+						Use	: Namefield
+						Set as	: "Bill Amount"
+						Skip	: Yes
+						
+				
+				[Line		: SalesmanDtlRepList]
+					Field	: RSVCHEDate, RSVCHParty, RSVCHNumber, RSVCHType , RSVCHSalesman, RSVCHGoodsAmt, RSVCHBillAmt
+				;	Local	: Field	: longprompt	: Set as: "Ledger Details"
+					Local	: Field	: Default	: Style	: Normal
+					Option	: alter on enter
+					
+					[Field	: RSVCHEDate]
+						Use	: name field
+						Set as	: $Date
+						
+					[Field	: RSVCHParty]
+						Use	: Name field
+						Set as	: $PartyLedgerName 
+						
+					[Field	: RSVCHNumber]
+						Use	: Name field
+						Set as	: $VoucherNumber
+						
+					[Field	: RSVCHType]
+						Use	: Name field
+						Set as	: $VoucherTypeName
+						
+					[Field	: RSVCHSalesman]
+						Use	: Name field
+						Set as	: $EISalesmanLED
+						
+					[Field: RSVCHGoodsAmt]
+						Use: Amount Forex Field
+						Set as: if $$IsDr:$$Total:VCHValue then $$Total:VCHValue else 0
+						
+						
+					[Field	: RSVCHBillAmt]
+						Use	: Amount field
+						Set as	: if $$IsDr:$amount then $Amount else 0
+						
+
+					[Collection	: SRCRSVoucher]
+						Type		: Vouchers	: VoucherType
+						Fetch		: *.*
+						Fetch		:date,partyledgername
+						Fetch		: masterid
+						Compute		: Amount : $Amount
+						Compute		: Total	 : $Total
+						Child Of	: $$VchTypeSales
+						Belongs To	: Yes
+						
+;					[Collection	: SalesmanDtlReport]
+;						Source Collection	: SRCRSVoucher
+;						Walk	: InventoryEntries
+;						
+;						Compute	: Date      		: $Date
+;						Compute	: PartyLedgerName   : $PartyLedgerName
+;						Compute	: VoucherNumber     : $VoucherNumber
+;						Compute	: VoucherTypeName   : $VoucherTypeName
+;						Compute	: EISalesmanLED     : $EISalesmanLED
+;						Compute	: VchTotalValue     : @VchTotalValue
+;						Compute	: Amount      		: $Amount

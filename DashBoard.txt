@@ -1,0 +1,356 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Jai Shree Ganesh ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+[#Menu	: Display Menu]
+	Add	: Key Item	: After	: @@locStatementsofAccounts	: DAILY MATERIAL ISSUE REPORT	: M : Display	: CFBK Rep
+	
+[Report	: CFBK Rep]
+	Use			: DSP Template
+	Title		: "Itemwise/Partywise Sales Report"
+	Form		: CFBK Rep
+	Variable	: DoSetAutoColumn, IName
+	Repeat		: IName
+	Set 		: DoSetAutoColumn 		: Yes
+	Set			: DSPRepeatCollection	: "CFBK Party"
+	Variable	: Stockitemname
+	Set			: Stockitemname	:	"All"
+	Set         : SVFromDate          	: $$MonthStart:##SVCurrentDate
+	Set         : SVToDate             	: $$MonthEnd:##SVCurrentDate
+	Set			: ReportTitle			: "Itemwise/Partywise Sales Report"
+	Print Set	: ReportTitle			: "Itemwise/Partywise Sales Report"
+	Goto Title	: $$LocaleString:"Itemwise/Partywise Sales"
+
+[Form	: CFBK Rep]
+	Use			: DSP Template
+	Delete		: PageBreak
+	Add			: Page Break  : DSP ClPageBreak, CFBKRepTitle
+	Add			: Button	:	ShowStockQuery
+	Parts		: CFBKRepTitle, CFBK Rep
+	Background 	: White, Light Orange
+	Option		: Set Auto Vch Option 	: ##DoSetAutoColumn AND $$SetAutoColumns:IName
+	
+	[!Form: Set Auto Vch Option]
+
+[Part: CFBKRepTitle]
+	Lines	: DSP CompanyName, DSP ReportName, DSP ReportPeriod, CFBK Rep Title
+	Local	: Line	: Default			: Invisible	: Not $$InPrintMode
+	Local	: Line	: DSP ReportPeriod	: Invisible : No
+	Local	: Line	: CFBK Rep Title	: Invisible	: No
+
+[Part: CFBK Rep]
+
+	Lines		: CFBK Rep Details
+	BottomLines	: CFBK Rep Total
+	Repeat		: CFBK Rep Details		: Smp Stock Item
+	Scroll		: Vertical
+	CommonBorder: Yes
+	Total		: CFBK Rep Party, CFBK Rep PartyAmt,  CFBKRepColTotal1, CFBKRepColTotal2
+
+	[Line: CFBK Rep Title]
+
+		Fields	: CFBK Rep Name, CFBKRepitem, CFBK Rep Col Totaltit
+		Repeat	: CFBKRepitem
+		
+		Local	: Field	: Default			: Type		: String
+		Local	: Field	: Default			: Align		: Center
+
+		Local	: Field	: CFBK Rep Name		: Set as	: "Particulars"
+		Local	: Field	: CFBK Rep Name		: Widespaced: Yes
+		Local	: Field	: CFBK Rep ColTotal	: Set as	: "Total"
+		Border	: Flush Totals
+        
+
+    [Field  :   CFBK Rep Col Totaltit]
+        Set as	: "Total"
+        Align   :   Center
+        Width   :   50 mms
+        Style   :   Normal Bold
+		
+
+[Field	:	CFBKRepitem]
+	Set as	:	##IName
+	Align	:	Center
+	Width	:	30 mms
+	Border	:	Thin Left
+	Style	:	Normal Bold
+	
+    [Line: CFBK Rep Title1]
+
+		Fields	: CFBK Rep Name, CFBKRepitem, CFBK Rep Col Totaltit2
+		Repeat	: CFBKRepitem
+		
+		Local	: Field	: Default			: Type		: String
+		Local	: Field	: Default			: Align		: Center
+
+		Local	: Field	: CFBK Rep Name		: Set as	: "Particulars"
+		Local	: Field	: CFBK Rep Name		: Widespaced: Yes
+		
+		Border	: Flush Totals
+            
+        [Field  :   CFBK Rep Col Totaltit2]
+            Field   :   CFBK Rep Col Totaltit21, CFBK Rep Col Totaltit22
+            Cell    :   2
+
+                [Field  :   CFBK Rep Col Totaltit21]
+                    Set as	: "Qty"
+                    Align   :   Center
+                    Width   :   20 mms
+                    Style   :   Normal Bold
+                    
+                 [Field  :   CFBK Rep Col Totaltit22]
+                    Set as	: "Amount"
+                    Align   :   Center
+                    Width   :   30 mms
+                    Style   :   Normal Bold
+
+	[Line: CFBK Rep Details]
+
+		Fields	: CFBK Rep Name,CFBK Rep Partydet, CFBK Rep Col Total
+		Repeat	: CFBK Rep Partydet
+		Total	: CFBK Rep Party,CFBK Rep PartyAmt
+		
+
+		[Field: CFBK Rep Name]
+
+			Use			: Name Field
+			Set as		: $PName;$IName
+			
+    [Field  :   CFBK Rep Partydet]
+        Field   :   CFBK Rep Party, CFBK Rep PartyAmt
+        Cell    :   2
+		[Field: CFBK Rep Party]
+
+			Use			: Qty Primary Field
+			Set as		: $$ReportObject:$$CollectionFieldByKey:$BilledQty:@MyFormula:CFBKSummVoucher
+			MyFormula	: ##IName + #CFBKRepName
+			Format		: "NoZero"
+			Border		: Thin Left
+			Display		: Stock Query
+			
+           [Field: CFBK Rep PartyAmt]
+
+			Use			: Amount field
+			Set as		: $$ReportObject:$$CollectionFieldByKey:$Amount:@MyFormula:CFBKSummVoucher
+			MyFormula	: ##IName + #CFBKRepName
+			Format		: "NoZero"
+			Border		: Thin Left
+			Display		: Stock Query
+			
+			
+		[Field: CFBK Rep Col Total]
+            Field   :   CFBK Rep Col Total1, CFBK Rep Col Total2
+            Cell    :   2
+            
+            [Field  :   CFBK Rep Col Total1]
+                Use			: Qty Primary Field
+                Set as		: $$Total:CFBKRepParty
+                Border		: Thin Left
+
+
+            [Field  :   CFBK Rep Col Total2]
+                Use			: Amount field
+                Set as		: $$Total:CFBKRepPartyAmt
+                Border		: Thin Left
+	[Line: CFBK Rep Total]
+
+		Fields	: CFBK Rep Name, CFBK Rep PartyTot, CFBK Rep Col TotalCmb
+		Repeat	: CFBK Rep PartyTot
+
+		Local	: Field	: Default			: Type		: String
+		Local	: Field	: Default			: Align		: Center
+
+		Local	: Field	: CFBK Rep Name		: Set as	: "Total"
+		Local	: Field	: CFBK Rep Name		: Widespaced: Yes
+		Local	: Field	: CFBK Rep ColTotal	: Set as	: $$Total:CFBKRepColTotal
+		Border	: Thin Top
+		
+
+[Field  :   CFBK Rep PartyTot]
+    Field   :   CFBK Rep PartyTot1, CFBK Rep PartyTot2
+    Cell    :   2
+    
+    [Field  :   CFBK Rep PartyTot1]
+        Set as  :   $$Total:CFBKRepParty
+         Use	: Qty Primary Field
+         Align  :   Center
+         Width  :   20 mms
+         
+    [Field  :   CFBK Rep PartyTot2]
+        Set as  :   $$Total:CFBKRepPartyAmt
+         Use	: Amount field
+         Align  :   Center
+         Width  :   20 mms
+         
+
+[Field  :   CFBK Rep Col TotalCmb]
+    Field   :   CFBK Rep TotalCmb1, CFBK Rep TotalCmb2
+    Cell    :   2
+    
+    [Field  :   CFBK Rep TotalCmb1]
+        Set as  :   $$Total:CFBKRepColTotal1
+         Use	: Qty Primary Field
+         Align  :   Center
+         Width  :   20 mms
+         
+    [Field  :   CFBK Rep TotalCmb2]
+        Set as  :   $$Total:CFBKRepColTotal2
+         Use	: Amount field
+         Align  :   Center
+         Width  :   20 mms
+    
+;; Collection Definition
+
+[Collection: CFBK Voucher]
+
+	Type		: Voucher
+	Filter		: IsSalesVT
+
+[Collection: CFBK Summ Voucher]
+
+	Source Collection	: CFBK Voucher
+
+	Walk				: Inventory Entries
+	By					: PName			: $PartyLedgerName
+	By					: IName			: $StockItemName
+	Aggr Compute		: BilledQty		: SUM	: $BilledQty
+    Aggr Compute        : Amount        : Sum   : $amount
+	Search Key			: $IName + $PName
+
+[Collection: Smp Stock Item]
+
+	Source Collection	: CFBK Voucher
+
+	Walk				: Inventory Entries
+	By					: PName			: $PartyLedgerName
+	Aggr Compute		: BilledQty		: SUM	: $BilledQty
+
+	Filter				: NonEmptyQty
+	
+[Collection: CFBK Party]
+
+	Source Collection	: CFBK Voucher
+
+	Walk				: Inventory Entries
+	;By					: PName			: $PartyLedgerName
+	By					: IName			: $StockItemName
+	Aggr Compute		: BilledQty		: SUM	: $BilledQty
+	Option				: CFBKItemOption	:	Not ##Stockitemname = "All"
+	Filter				: NonEmptyQty
+
+[!Collection	:	CFBKItemOption]
+	Filter		:	CFBKItemOptionFltr
+	
+[System			:	Formulae]
+	CFBKItemOptionFltr	:	##StockitemName = $IName
+;; Variable Definition
+
+[Variable: IName]
+
+	Type		: String
+	Repeat		: ##DSPRepeatCollection
+
+;; System Formula
+
+[System: Formula]
+
+	IsSalesVT	: $$IsSales:$VoucherTypeName
+	NonEmptyQty	: NOT $$IsEmpty:$BilledQty
+
+;; End-of-File
+
+[Button		:	ShowStockQuery]	
+	Title	:	"Stock Query"
+	Key		:	Alt + S
+	Action	:	Alter	:	ShowStockQueryList
+	
+[Report		:	ShowStockQueryList]
+	Form	:	ShowStockQueryList
+	[Form	:	ShowStockQueryList]
+		Part:	ShowStockQueryList
+		[Part	:	ShowStockQueryList]
+			Line	:	ShowStockQueryList
+			[Line	:	ShowStockQueryList]
+				Field	:	ShowStockQueryList
+				[Field	:	ShowStockQueryList]
+					Use	:	Name field
+					Table	:	List of Extract Stockitems,All
+					Show Table	:	Always
+					Variable	:	Stockitemname
+					Modifies	:	Stockitemname
+
+[Table	:	All]
+	List Name	:	$$LocaleString:"All"
+	
+
+	
+[#Line				:   DSP ColVchTitle]
+	Add				:	Field	:	Before		: DBC VchType		:	DSPStockitema, DSPStockitemHSN
+	Local			:	Field		:	DSPStockitema	:	Info	:	"Stock Item"
+	Local			:	Field		:	DSPStockitemHSN	:	Info	:	"HSN"
+
+[#Line				: DSP ColVchDetail]
+	Add				: Field	:	Before:	DBC VchType	:	DSPStockitema, DSPStockitemHSN
+
+[Field				:	DSPStockitema]
+	Set as			:	$Stockitemname 
+	Align			:	Left
+	Width			:	50 mms
+	Style			:	Normal
+	Border			:	Thin Left
+	
+[Field				: 	DSPStockitemHSN]
+	Set as			:   ""
+	Align			:	Left
+	Width			:	20 mms
+	Style			:	Normal 
+	Border			:	Thin Left
+	
+[#Field	: DBC Party]
+	Delete			: Option	:	DBCItemName   : NOT $$IsVoucher AND NOT $IsForexLine
+
+	
+[#Collection	: Columnar Exploded Vouchers]
+	Fetch	: AllInventoryEntries.GSTItemHSNCode
+	
+[#Collection	: Columnar Vouchers of Company]	
+	Fetch	: AllInventoryEntries.GSTItemHSNCode
+	
+[#Collection	: Columnar Specific Vouchers of Company]
+	Fetch	: AllInventoryEntries.GSTItemHSNCode
+
+[#Collection	: Columnar Filtered Vouchers of Company]	
+	Fetch	: AllInventoryEntries.GSTItemHSNCode
+	
+[#Collection	: Columnar Vouchers of Ledgers]
+	Fetch	: AllInventoryEntries.GSTItemHSNCode
+	
+
+[#Line	: DSP ColVchTitle]
+	Local : Field : DBC VchRef	: Set as : If $$IsPurchase:##VoucherTypeName Then  $$LocaleString:"Supplier Invoice No." Else  If $$IsSalesOrder:##VoucherTypeName Or $-$IsPurcOrder:##VoucherTypeName OR $$IsJobOrderOut:##VoucherTypeName OR $$IsJobOrderIn:##VoucherTypeName Then $$LocaleString:"Order Reference No." Else $$LocaleString:"Voucher Ref."
+
+[#Part	: DBC QtyDetails]
+	Local	: Field	: DSPStockitemHSN	: Set as	: $GSTItemHSNCode
+
+[#Line	: DSP ColVchTotal]
+	Add		: Field	: After				: DbC VchRef	: DBcVchRefDatePower	
+	Add		: Field	: Before			: DBC VchType	: DSPStockitema, DSPStockitemHSN
+	Local	: Field	: DBcVchRefDatePower: Set as		: $$LocaleString:""	
+	Local	: Field	: DSPStockitema		: Set as		: $$LocaleString:""	
+	Local	: Field	: DSPStockitemHSN	: Set as		: $$LocaleString:""	
+	
+[#Line	: DSP ColVchTitle]
+	Add		: Field	: After			: DbC VchRef	: DBcVchRefDatePower
+	Local	: Field	: DBcVchRefDatePower	: Set as		: $$LocaleString:"Supplier Invoice Dt"
+	
+[#Line	: DSP ColVchDetail]
+	Add		: Field	: After		: DbC VchRef	: DBcVchRefDatePower	
+	Local	: Field	: DBC VchRef: Set as		: If $$ExplodeLevel > 0 Then "" Else If $$IsPurchase:$VoucherTypeName Then  $Reference  Else If $$IsEmpty:$Reference Then If @@IsOrderVch Then $ItemLevelOrder Else "" Else $Reference
+	
+	[Field	: DBcVchRefDatePower]
+		Use		: Short Date Field
+		Set as	: $$String:$VchReferenceDate:ShortDate
+		Align	: Left
+		Width	: 20 Mms
+		Border	: Thin Left
+		Style	: Normal
+		
+
+

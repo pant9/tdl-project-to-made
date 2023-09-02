@@ -1,0 +1,12 @@
+[#Part: EI Consignee]
+	Add	: Line	: At End	: EIPartyGstin
+	[Line	: EIPartyGstin]
+		Field	: Simple Prompt	, EIPartyGstin
+		Local	: Field	: Simple Prompt	: Set as	: "Party GSTIN : "
+		Local 	: Field : Simple Prompt	: Width		: @@VchLeftPromptWidth % Page
+		Local	: Field	: Simple Prompt	: Style		: normal
+		[Field	: EIPartyGstin]
+			Use	: Name Field
+			Set as	: $PartyGSTIN
+			Width	: 15% page
+ 

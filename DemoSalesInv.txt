@@ -114,7 +114,7 @@ o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
 										Set as	: @@CmpMailName
 										
 								[Line	: BhawaniInvCompAddr]
-									Indent	: 3% Page
+									Indent	: 3% PAge
 									Field	: BhawaniInvCompAddr
 									
 									[Field	: BhawaniInvCompAddr]
@@ -459,7 +459,37 @@ o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
 				Right Fields: BhawaniInvMrp, BhawaniInvCs, BhawaniInvPcs, BhawaniInvUpc, BhawaniInvRate, BhawaniInvSchDisc, BhawaniInvRsDisc, +
 							  BhawaniInvTaxable, BhawaniInvGst, BhawaniInvCgst, BhawaniInvSgst, BhawaniInvIgst, BhawaniInvNetAmt
 				Local		: Field	: Default	: Style	: Normal
-									
+				Explode		: BhawaniInvStockDetExpl	: NOT @@IsSysNameStkItem AND ##PRNWithItemDesc AND NOT $$IsEmpty:$BasicUserDescription
+								
+				[Part	: BhawaniInvStockDetExpl]
+					Line	: BhawaniInvStockDetExpl
+					Repeat	: BhawaniInvStockDetExpl	: BasicUserDescription
+					Break On: $$IsEmpty:$BasicUserDescription
+					Scroll  : Vertical
+					
+					[Line	: BhawaniInvStockDetExpl]
+						Left Fields	: BhawaniInvSrNo, BhawaniInvHsn, BhawaniInvProd
+						Right Fields: BhawaniInvMrp, BhawaniInvCs, BhawaniInvPcs, BhawaniInvUpc, BhawaniInvRate, BhawaniInvSchDisc, BhawaniInvRsDisc, +
+									  BhawaniInvTaxable, BhawaniInvGst, BhawaniInvCgst, BhawaniInvSgst, BhawaniInvIgst, BhawaniInvNetAmt				
+						Local		: Field	: BhawaniInvSrNo	: Set as	: ""
+						Local		: Field	: BhawaniInvHsn		: Set as	: ""
+						Local		: Field	: BhawaniInvProd	: Set as	: $BasicUserDescription
+						Local		: Field	: BhawaniInvMrp		: Set as	: ""
+						Local		: Field	: BhawaniInvCs		: Set as	: ""
+						Local		: Field	: BhawaniInvPcs		: Set as	: ""
+						Local		: Field	: BhawaniInvUpc		: Set as	: ""
+						Local		: Field	: BhawaniInvRate	: Set as	: ""
+						Local		: Field	: BhawaniInvSchDisc	: Set as	: ""
+						Local		: Field	: BhawaniInvRsDisc	: Set as	: ""
+						Local		: Field	: BhawaniInvTaxable	: Set as	: ""
+						Local		: Field	: BhawaniInvGst		: Set as	: ""
+						Local		: Field	: BhawaniInvCgst	: Set as	: ""
+						Local		: Field	: BhawaniInvSgst	: Set as	: ""
+						Local		: Field	: BhawaniInvIgst	: Set as	: ""
+						Local		: Field	: BhawaniInvNetAmt	: Set as	: ""
+						Local		: Field	: Default			: Style		: Small Italic
+						Local		: Field	: Default			: Lines		: 0
+					
 				[Field	: BhawaniInvSrNo]
 					Use		: Name Field
 					Width	: 5% Page
@@ -490,12 +520,14 @@ o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
 					Use		: Number Field
 					Align	: Right
 					Width	: 5% Page
+					Format	: "No Zero"
 					Border	: Thin Left
 					Set as	: ""
 					
 				[Field	: BhawaniInvPcs]
 					Use		: Number Field
 					Width	: 6% Page
+					Format	: "No Zero, Decimal:2"
 					Align	: Right
 					Border	: Thin Left
 					Set as	: $$Number:$BilledQty
@@ -504,6 +536,7 @@ o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
 					Use		: Number Field
 					Align	: Right
 					Width	: 5% Page
+					Format	: "No Zero"
 					Border	: Thin Left
 					Set as	: ""
 					
@@ -545,17 +578,17 @@ o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
 				[Field	: BhawaniInvCgst]
 					Use			: EXPINV CGSTAmt
 					Width		: 6% Page
-					Invisible	: ##GSTFirstTransNatureType != 1 OR  (NOT ##IsRevChargeAppl AND $$IsEmpty:##GSTActualCGSTAmount)
+;					Invisible	: ##GSTFirstTransNatureType != 1 OR  (NOT ##IsRevChargeAppl AND $$IsEmpty:##GSTActualCGSTAmount)
 				
 				[Field	: BhawaniInvSgst]
 					Use			: EXPINV SGSTAmt
 					Width		: 6% Page
-					Invisible	: ##GSTFirstTransNatureType != 1 OR  (NOT ##IsRevChargeAppl AND $$IsEmpty:##GSTActualSGSTAmount)
+;					Invisible	: ##GSTFirstTransNatureType != 1 OR  (NOT ##IsRevChargeAppl AND $$IsEmpty:##GSTActualSGSTAmount)
 										
 				[Field	: BhawaniInvIgst]
 					Use			: EXPINV IGSTAmt
 					Width		: 6% Page
-					Invisible	: ##GSTFirstTransNatureType NOT IN (2, 3) OR  (NOT ##IsRevChargeAppl AND $$IsEmpty:##GSTActualIGSTAmount)
+;					Invisible	: ##GSTFirstTransNatureType NOT IN (2, 3) OR  (NOT ##IsRevChargeAppl AND $$IsEmpty:##GSTActualIGSTAmount)
 					
 				[Field	: BhawaniInvNetAmt]
 					Use					: EXPINV GSTAmtTemp
@@ -595,7 +628,7 @@ o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
 					
 		[Part	: BhawaniInvBottomPart]
 			Vertical: Yes
-			Parts	: Empty, BhawaniInvTaxSumm, BhawaniInvDigSign, BhawaniInvTermsSign
+			Parts	: Empty, BhawaniInvTaxSumm, BhawaniInvAmtWords, BhawaniInvDigSign, BhawaniInvTermsSign
 
 			[Part	: BhawaniInvTaxSumm]
 				Border			: Thin Box
@@ -705,5 +738,13 @@ o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
 					Style	: Tiny Italic
 					Width	: 100% Page
 					Set as	: ".....Continue"
+					
+;[#Field	: VCH Narration]
+;	Add	: Show Table	: Always
+;	Add	: Table			: MyNewTableList
+;	
+;	[Table	: MyNewTableList]
+;		Title		: $$LocaleString:"List of Conversation"
+;		List Name	: $$LocaleString:"Hello", $$LocaleString:"Hi", $$LocaleString:"Bby"
 				
 ;=================================================					End Of File 				===================================================

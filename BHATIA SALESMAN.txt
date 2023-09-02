@@ -1,0 +1,267 @@
+[System	: Formula]
+	SalesmanRepTit	: $$LocaleString:"Salesman Entry Report"
+
+[#Menu	: Display Menu]
+	Add	: Key Item	: After	: @@locStatementsofAccounts	: @@SalesmanRepTit	: L : Display Collection	: SalesmanDtlRepCOLL
+	
+	[Collection	: SalesmanDtlRepCOLL]
+		Title		: $$LocaleString:"List Of Salesman"
+		Type		: Ledger
+		Variable    : SLedger
+		Trigger     : SLedgerSalesman
+		IsODBCTable : Yes
+		Full Height	: Yes
+		Fetch		: Name, Language Name, IsSalesmanLED
+		Format		: $NAME,35
+		Report		: SalesmanDtlRep
+		Filter		: IsOnlySalesmanLED
+		
+		[Report : SLedgerSalesman]
+			Use     : Collection Variable
+			Title   : $$LocaleString:"Select Salesman"
+			Local   : Line : Collection Variable : Field : SLedgerSalesman
+			Local   : Field: MV Title            : Info  : $$LocaleString:"Name of Salesman"
+			Help	: @@HlpSLedger
+			
+			[Field	: SLedgerSalesman]
+				Use         : Name Field
+				Use			: Create Ledger
+				Table       : SalesmanDtlRepCOLL, Create Master
+				Show Table  : Always
+				Key         : Create Ledger
+				Modifies    : SLedger
+	
+
+
+
+	[Report		: SalesmanDtlRep]
+		Use			: DSP Template
+		Family		: $$Translate:"Salesman Summary"
+		Title		: $$LocaleString:"Salesman Summary"
+		Variable	: ReportTitle, SVPrintOrientation
+		Variable	: SVFromDate, SVToDate, SLedger
+		Print Set	: Report Title	: $$LocaleString:"Salesman Summary"
+		Set			: Report Title	: $$LocaleString:"Salesman Summary"
+		Set			: SVFromDate	: $$MonthStart:##SVCurrentDate
+		Set     	: SVTodate		: $$MonthEnd:##SVCurrentDate
+		Form		: SalesmanDtlRep
+		
+		[Form		: SalesmanDtlRep]
+			Use		: DSP Template
+			Height	: 100% screen
+			Width	: 100% screen
+			Parts	: DSP ReportTime, DSP CompanyName, DSP CompanyAddress, DSP ReportTitle, DSP PageNo, SalesmanDtlRepTOp, SalesmanDtlRep
+			Option	: Small Size Form
+			Local	: Part	: DSP PageNo	: Space Bottom	: 0.25
+			Delete	: Page Break
+			Add		: Page Break	: DSP ClPageBreak, DB1Open
+;			Set Always	: SVPrintOrientation	: $$SysName:Landscape
+			
+			[Part	:DB1Close]
+				Line	: DB1Close
+				[Line	: DB1Close]
+					Field	: Name Field
+					Local	: Field: NAMe field :Set as: "Continue"
+					Local	: Field: NAMe field :Align:Right
+					Local	: Field: NAMe field :Border: thin top
+					Local	: Field: NAMe field :Full Width:Yes
+					
+			[Part	:DB1Open]
+				Part	: SalesmanDtlRepTOp
+
+	
+			[Part	: SalesmanDtlRepTOp]
+				Space Top	: 1 Mms
+				Space Bottom: 1 Mms
+				Width		: 100% Page
+				Invisible	: ($$InPrintMode OR ($$InExportMode AND @@IsExcelFormat)) OR NOT $$IsCommon:SVCurrentCompany OR NOT ##PrintWithCompanyName
+				Line		: SalesmanDtlRepTOp
+					
+				[Line	: SalesmanDtlRepTOp]
+					Space Bottom: 0.5
+					Left Field	: Short Prompt, Name Field
+					Right Field	: DSP MainDateTitle
+					Local		: Field	: Short Prompt	: Info		: $$LocaleString:"Salesman Name"
+					Local		: Field	: Short Prompt	: Width		: 10% Page
+					Local		: Field	: Name Field	: Set as	: ##SLedger
+					
+			[Part		: SalesmanDtlRep]
+				Lines		: SalesmanDtlReptitle, SalesmanDtlRepList
+				Repeat		: SalesmanDtlRepList: SRCRSVoucher
+				Float		: No
+				Scroll		: Vertical
+				Bottom Line	: SalesmanDtlRepListTot
+				Total		: SVCHGoodsAmt, SVCHBillAmt
+				
+				[Line		: SalesmanDtlReptitle]
+					Use		: SalesmanDtlRepList
+					Border	: Column Titles
+					Fields		: SVCHDate, SVCHParty
+					Right Fields: SVCHNumber, SVCHType ,SVCHSalesman, SVCHGoodsAmt, SVCHBillAmt
+					Local	: Field	: Default		: Type	: String
+					Local	: Field	: SVCHDate		: Info	: "Date"
+					Local	: Field	: SVCHParty		: Info	: "Party Name"
+					Local	: Field	: SVCHNumber	: Info	: "Voucher Number"
+					Local	: Field	: SVCHType		: Info	: "Voucher Type"
+					Local	: Field	: SVCHSalesman	: Info	: "Salesman Name"
+					Local	: Field	: SVCHGoodsAmt	: Info	: "Goods Amount"
+					Local	: Field	: SVCHBillAmt	: Info	: "Bill Amount"
+					Local	: Field	: Default		: Style	: Normal Bold
+
+				
+				[Line	: SalesmanDtlRepList]
+					Fields		: SVCHEMAsterId, SVCHDate, SVCHParty
+					Right Fields: SVCHNumber, SVCHType ,SVCHSalesman, SVCHGoodsAmt, SVCHBillAmt 
+				;	Local	: Field	: longprompt	: Set as: "Ledger Details"
+					Local	: Field	: Default	: Style	: Normal
+					Option	: ObjectAlterOnEnter
+				
+					[!Line	: ObjectAlterOnEnter]
+						Key	: ObjectAlterOnEnter
+
+						[Key   : ObjectAlterOnEnter]
+							Key     : Enter
+							Action  : Alter : ObjectAlterOnEnterRep
+							Mode    : Display
+
+							[Report	: ObjectAlterOnEnterRep]
+								Use 	: Voucher 
+								Object  : Voucher : #VchMasterID
+								Form 	: Voucher
+								
+					[Field	: SVCHEMAsterId]
+						Use			: Short Name Field
+						Set as		: $$SPrintF:@@VCHMasterID:$MasterID
+						Variable	: VchMasterID
+						Invisible	: Yes
+							
+					[Field	: SVCHDate]
+						Use		: name field
+						Set as	: $Date
+						
+					[Field	: SVCHParty]
+						Use		: Name field
+						Set as	: $PartyLedgerName 
+						
+					[Field	: SVCHNumber]
+						Use	: Name field
+						Set as	: $VoucherNumber
+						
+					[Field	: SVCHType]
+						Use	: Name field
+						Set as	: $VoucherTypeName
+						
+					[Field	: SVCHSalesman]
+						Use	: Name field
+						Set as	: $EISalesmanLED
+						
+					[Field: SVCHGoodsAmt]
+						Use: Amount Forex Field
+						Set as: $GoodsAmt
+						
+						
+					[Field	: SVCHBillAmt]
+						Use	: Amount field
+						Set as	: if $$IsDr:$amount then $Amount else 0
+						
+				[Line	: SalesmanDtlRepListTot]
+					Border	: Totals
+					Use		: SalesmanDtlRepList
+					Local	: Field	: SVCHDate		: Info	: ""
+					Local	: Field	: SVCHParty		: Info	: "Total : "
+					Local	: Field	: SVCHNumber	: Info	: ""
+					Local	: Field	: SVCHType		: Info	: ""
+					Local	: Field	: SVCHSalesman	: Info	: ""
+					Local	: Field	: SVCHGoodsAmt	: Set as: $$Total:SVCHGoodsAmt
+					Local	: Field	: SVCHBillAmt	: Set as: $$Total:SVCHBillAmt
+					Local	: Field	: Default		: Style	: Normal Bold	
+					
+					[Collection	: SRCRSVoucher]
+						Type		: Vouchers	: VoucherType
+						Fetch		: *.*
+						Fetch		: date,partyledgername
+						Fetch		: masterid, EISalesmanLED
+						Compute		: Amount : $Amount
+						Compute		: GoodsAmt	: $$CollAmtTotal:InventoryEntries:$Amount 
+						Child Of	: $$VchTypeSales
+						Belongs To	: Yes
+						Filter		: ISsalesman
+						
+[System	: Formula]
+	ISsalesman	: $EISalesmanLED = ##SLedger
+	
+
+[#Part: LED Credit Sundry]
+	Add	: Line	: After	: LED CreditVchEntry	: LEDCreditSalesman
+	[Line	: LEDCreditSalesman]
+		Fields	: long prompt, LEDCreditSalesman, CreditSalesmanEntry
+		Local   	: Field : Long Prompt	: Set as   	: $$LocaleString:"Use as Salesman :"
+		
+		[Field		: LEDCreditSalesman]
+			Use		: Logical Field
+			Set as	: If $$IsEmpty:$IsSalesmanLED Then NO Else $IsSalesmanLED
+			Width		: 6
+			
+		[Field		: CreditSalesmanEntry]
+
+			Use			: Logical Field
+			Storage		: IsSalesmanLED
+			Set as		: #LEDCreditSalesman
+			Set Always	: Yes
+			Invisible	: Yes   
+			
+
+
+	
+[#Part: EI Consignee]
+	Add	: Line	: At End	: EISalesman
+	[Line	: EISalesman]
+		Field	: Simple Prompt, EISalesman
+		Local   : Field : Simple Prompt: Info       : $$LocaleString:"Salesman Name :"
+		Local 	: Field : Simple Prompt: Width		: @@VchLeftPromptWidth % Page
+		[Field	: EISalesman]
+			Use	: Ledger Name Field
+			Storage	: EISalesmanLED
+			Show Table	: Always
+			Table		: ListOfSalesman
+
+
+[Collection	: ListOfSalesman]
+	Title		: $$LocaleString:"List Of Salesman"
+	Type		: ledger
+	Child Of	: $$GroupSundryCreditors
+	Belongs To	: Yes
+	Format		: $NAME,40
+	Filter		: IsOnlySalesmanLED
+;	Fetch	: IsSalesmanLED, parent
+;	Format	: $IsSalesmanLED,25
+;	Format	: $parent,20
+			
+[System	: Formula]
+	IsOnlySalesmanLED	: $IsSalesmanLED
+	
+			
+[System	: UDF]
+	IsSalesmanLED	: Logical	: 6100
+	EISalesmanLED	: String	: 6101
+;	EISalesmanLEDRS	: String	: 6102
+	
+ [#Part: EXPINV Consignee]
+	Add	: Line	: At End	: GlobalSalesman
+	[Line	: GlobalSalesman]
+		Field	: medium Prompt, GlobalSalesman
+		Local	: Field	: medium Prompt	: Set as	: "Salesman Name : "
+		[Field	: GlobalSalesman]
+			Use	: NAme field
+			Set as	: $EISalesmanLED
+			Style	: normal
+			
+ [#Part: EXPINV Buyer]	
+	Add	: Line	: At End	: RSGlobalSalesman
+	[Line	: RSGlobalSalesman]
+		Field	: medium Prompt, RSGlobalSalesman
+		Local	: Field	: medium Prompt	: Set as	: "Salesman Name : "
+		[Field	: RSGlobalSalesman]
+			Use	: Name field
+			Set as	: $EISalesmanLED
+			Style	: normal			

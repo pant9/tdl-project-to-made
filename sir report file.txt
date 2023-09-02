@@ -1,0 +1,178 @@
+
+
+;[#Form	: Delivery Note Color]
+;	Add	: Print	: At End	: ManrajCeilPackList
+;	
+;	[Report	: ManrajCeilPackList]
+;		Title	: $$LocaleString:"Packing List"
+;		Object	: Voucher
+;		Form	: ManrajCeilPackList
+;		
+;		[Form	: ManrajCeilPackList]
+;			Parts	: RSManrajCEillingPARTTitle, Empty, RSManrajCEillingPART
+			
+[#Form	: Comprehensive invoice] 
+    Add : Option  : ManrajCeilPackList  : @@IsDelNote
+
+	[!Form  :	ManrajCeilPackList ]
+	Delete	:	Option
+	Delete	: 	Top Parts
+	Delete	: 	Parts
+	Delete	:	Bottom Parts
+	Delete	: 	Page Break
+	
+
+	Add	: Part  :   RSManrajCEillingPARTTitle, Empty, RSManrajCEillingPART
+	;Add : Bottom Part  : EXPINV Totals,RSSKAmtDetails,RSSKAMtGSTDET,rssknARRATION
+	Add	: Page Break	: RSManrajCEillingCl,RSManrajCEillingOP
+	Space Right	: 5
+	
+	[Part: RSManrajCEillingCl]
+		Line	: RSManrajCEillingCl
+	[Line	: RSManrajCEillingCl]
+		Field	: RSManrajCEillingCl
+		Border	: Thin Box
+			[Field	: RSManrajCEillingCl]
+				Use	: Name Field
+				Set as	: "...Continued."
+				Full Width	: Yes
+				Align	: Right
+	[Part :	RSManrajCEillingOP]
+		Part  	:  RSManrajCEillingPARTTitle, Empty, RSManrajCEillingPART
+		Vertical:	Yes
+;			
+;[#Form	: Comprehensive Invoice]
+;	Add	: Option	: asdasdad	: @@IsDelNote
+;	
+;[Report: Product List]
+;	Title		: $$LocaleString:"Product List  "
+;	Print Set	: ReportTitle 	: " Product List "
+;		Use		: DSP Template
+;		Form	: CustomerForm
+;	
+;[Form: CustomerForm]
+;	Use		: DSP Template
+;	Part	: DSPCompanyName,DSP CompanyAddress,DSP ReportTitle, 
+;	Delete	: Page Break
+;	Add		: Page Break  : DSP ClPageBreak, CU OpPageBreak
+;	
+;[Part	: CU OpPageBreak]
+;	Part		: DSPCompanyName,DSP CompanyAddress,DSP ReportTitle,RSManrajCEillingPARTTitle
+;	Vertical	: Yes
+
+[Part:  RSManrajCEillingPARTTitle]
+	Background : Lightblue 
+	Line	: RSManrajCEillingLINE
+
+[Line		: RSManrajCEillingLINE]
+	Border	: Column Titles
+	Use		: RSManrajCEillingLINE
+	
+	Field		: RSManrajCEillingSRNO,RSManrajCEillingItemName
+	Right Field	: RSManrajCEillingSpf,RSManrajCEillingpcs,RSManrajCEillingBox,RSManrajCEillingQty,RSManrajCEillingNetQty
+	
+	Local 	: Field	: Default	: Type	: String
+	Local 	: Field	: default	: Style	: Small Bold
+	Local 	: Field	: RSManrajCEillingSRNO		: Set as	: "SR.NO."
+	Local 	: Field	: RSManrajCEillingItemName	: Set as	: "Item Name"
+	Local 	: Field	: RSManrajCEillingSpf		: Set as	: "Specification"
+	Local 	: Field	: RSManrajCEillingpcs		: Set as	: "PCS/Per Box"
+	Local 	: Field	: RSManrajCEillingBox		: Set as	: "Box"
+	Local 	: Field	: RSManrajCEillingQty		: Set as	: "Quantity"
+	Local 	: Field	: RSManrajCEillingNetQty	: Set as	: "Total Quantity"
+	
+	
+
+[Part	: RSManrajCEillingPART]
+	Border			: Thin Left Right
+	Line			: ManrajCEillingLINE
+	Repeat			: ManrajCEillingLINE: MyVoucherItems
+	Scroll			: Vertical	
+	Float			: No
+	Common Borders	: Yes
+	
+[Line	: ManrajCEillingLINE]
+	Fields		: RSManrajCEillingSRNO, RSManrajCEillingItemName
+	Right Field	: RSManrajCEillingSpf, RSManrajCEillingpcs, RSManrajCEillingBox, RSManrajCEillingQty, RSManrajCEillingNetQty
+	
+	[Field	: RSManrajCEillingSRNO]
+		Use		: Name Field
+		Set as	: $$Line
+		Width	: 10% page
+		Style	: Small
+	
+	[Field	: RSManrajCEillingItemName]
+		Set as		: $StockItemName
+		Full Width	: Yes
+		Lines		: 0
+		Border		: Thin Left
+		Style		: Small
+		
+	[Field	: RSManrajCEillingSpf]
+		Use		: Name Field
+		Set as	: $Description:stockitem:$stockitemName
+		Width	: 20% page
+		Align	: Right
+		Border	: Thin Left
+		Style	: Small
+		
+	[Field : RSManrajCEillingpcs]
+		Use		: Name Field
+		Set as	:  $BilledQty
+		Width	: 12
+		Border	: Thin Left
+		Align	: Right
+		Style	: Small
+			
+	[Field	:  RSManrajCEillingBox]
+		Use		: Name Field
+		Set as	:   Set as      : "( " + $$String:($BilledQty):Symbol,ShortForm,Secondary + " )"
+		Width	: 12
+		Align	: Right
+		Border	: Thin Left
+		Style	: Small
+		
+	[Field	: RSManrajCEillingQty]
+		Use		: Qty Primary Field
+		Set as	: ""
+		Width	: 12
+		Border	: Thin Left
+		Align	: Right
+		Style	: Small
+		
+	[Field	: RSManrajCEillingNetQty]
+		Use		: Name Field
+		Set as	: ""
+		Border	: Thin Left
+		Width	: 12
+		Align	: Right
+		Style	: Small
+
+;[Field	: MAinQty]
+;	Use		: Qty Primary Field
+;	Set as	: $BilledQty
+;	
+;[Field	: AltQty]
+;	Use		: Qty Secondary Field
+;	Set as	: $BilledQty
+;	
+[Collection	: MyVoucherItems]
+	Source Collection : SRC SaleCollection
+	Walk	: Inventory Entries
+	
+	Compute	: StockItemName		: $StockItemName
+	Compute : Rate				: $Rate
+	Compute : BilledQty			: $BilledQty
+	Compute : Amount			: $Amount
+	Compute : PartyLedgerName	: $PartyLedgerName
+	Compute : VoucherNumber		: $VoucherNumber
+	Compute : Date				: $Date
+
+	[Collection : SRC SaleCollection]
+		Type		: Vouchers	: Voucher Type
+		Child Of	: $$VchTypeDelNote
+		Belongs To	: Yes
+[#Field: Vchitemtitle]
+	
+
+

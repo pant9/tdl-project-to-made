@@ -1,0 +1,44 @@
+[#Menu	: Default]
+	Add	: Button	: RefreshTdlButton
+
+[#Form	: Default]
+	Add	: Button	: RefreshTdlButton
+
+	[Button	: RefreshTdlButton]
+		Title	: "Refresh"
+		Key		: CTRL + 8
+		Action	: Refresh TDL
+		
+;[#Line: DSP VchAccTitles]
+;	Add	: Right Field	: At Beginning	: DSPVchDocNo
+	
+		
+[#Line: DBTitle1]
+	Add	: Right Field	: At Beginning	: DSPVchDocNo
+;	Local	: Field	: DSPVchDocNo	: Set as	: "Dispatch Doc No."
+	[Field	: DSPVchDocNo]
+		Use	: Name Field
+		Set as	: "Dispatch Doc No."
+		Width	: 15% page
+		Style	: normal
+		Align	: Center
+		Invisible	: $$IsEmpty:#DSPVchDocNum
+	
+;[#Line	: DSP VchAccDetail]
+;	Add	: Right Field	: At Beginning	: DSPVchDocNo
+
+[#Line: DSP VchDetail]
+	Add	: Right Field	: At Beginning	: DSPVchDocNum
+	[Field	: DSPVchDocNum]
+		Use	: Name Field
+		Set as	: If $$IsSales:$VoucherTypeName then $BasicShipDocumentNo else ""
+		Width	: 15% page
+		Align	: Center
+		Inactive	: not $$IsSales:$VoucherTypeName
+		
+
+;[#Collection	: Filtered Vouchers of Company]
+;	ADD	: Fetch	: BasicShipDocumentNo
+	
+[#Collection	: Filtered Vouchers of Company]
+	Add	: Compute	: BasicShipDocumentNo	: $BasicShipDocumentNo

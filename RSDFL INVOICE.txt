@@ -1,0 +1,726 @@
+[#Form         	 	: Comprehensive Invoice]
+	Add         	: Option     : RSDFL Invoice	: @@IsSales
+	[!Form			: RSDFL Invoice]
+		Delete		: Top Part
+		Delete		: Part
+		Delete		: Bottom Part
+		Add			: Part			: RSDFL NAME PART, RSDFL GSTIN PART, RSDFL TITLE PART
+		Add			: Bottom Part	: RSDFL NOTE, RSDFL TERM PART
+		
+[Part				: RSDFL NAME PART]
+	Border			: thick bottom
+	Line			: RSDFL GSTI, RSDFL CN, RSDFL ADD
+	
+
+	[Line			: RSDFL GSTI]
+		Field		: RSDFL GSTI, RSDFL GSTINV
+		Right Field	: RSDFL OI
+		[Field		: RSDFL GSTI]
+			Use		: Name field
+			Set as	: ""
+			Width	: 15
+			
+		[Field		: RSDFL GSTINV]
+			Use		: Name field
+			Set as		: "GST INVOICE"
+			Border		: thin bottom
+			Full Width	:  Yes
+			Align		:  Center
+			Style		:  normal bold italic
+			
+		[Field			: RSDFL OI]
+			Use			: Name field
+			Set as		: "ORIGNAL INVOICE"
+			Border		: thin bottom
+			Width		: 15
+			Align		: Right
+			
+	[Line				: RSDFL CN]
+		Field			: RSDFL CN
+		[Field			: RSDFL CN]
+			Use			: Name field
+			Set as		: "Duke Fabrics (India) Limited"
+			Border		: thin bottom
+			Full Width	:  Yes
+			Align		:  Center
+			Style		: extra large bold
+			
+	[Line				: RSDFL ADD]
+		Field			: RSDFL ADD
+		[Field			: RSDFL ADD]
+			Use			: Name field
+			Set as		: "Regd office: G.T. Road Near Jalandhar Bye Pass Ludhiana, Phone: 0161-5224130, E-mail: Dyeing@dukeindia.com"
+			Full Width	:  Yes
+	
+	
+[Part					: RSDFL GSTIN PART]
+	Border				: THIN  BOTTOM
+	Part				: RSDFL GSTIN LEFTPART, RSDFL RC RIGHT PART
+	[Part				: RSDFL GSTIN LEFTPART]
+	Line				:  RSDFL GSTIN, RSDFL PAN, RSDFL CIN, RSDFL STATE, RSDFL BLANK, RSDFL NAME, RSDFL PN, RSDFL AN, RSDFL LUD, RSDFL SC, RSDFL PAN NO, RSDFL BL, RSDFL GSTNO, RSDFL BL1
+	
+;RSDFL GST BLANKF,
+;	[Line				: RSDFL GST BLANKF]
+;		Border			: THIN BOTTOM
+;		Field			: RSDFL GST BLANKF
+;		[Field			: RSDFL GST BLANKF]
+;			Use			: Name field
+;			Set as		: ""
+;			Style		: NORMAL
+
+
+
+	[Line				: RSDFL GSTIN]
+		Field			: RSDFL GSTIN
+		[Field			: RSDFL GSTIN]
+			Use			: Name field
+			Set as		: "GSTIN     :  03AABCD9415E1Z3"
+			Full Width	: Yes
+			Style		: NORMAL
+
+
+	[Line				: RSDFL PAN]
+		Field			: RSDFL PAN
+		[Field			: RSDFL PAN]
+			Use			: Name field
+			Set as		: "PAN NO  :  AABCD9415E"
+			Full Width	: Yes
+			Style		: NORMAL
+			
+	[Line				: RSDFL CIN]
+		Field			: RSDFL CIN
+		[Field			: RSDFL CIN]
+			Use			: Name field
+			Set as		: "CIN NO   :  U118101PB1983PLC005324"
+			Full Width	: Yes
+			Style		: NORMAL
+			
+	[Line				: RSDFL STATE]
+		Border			: THIN BOTTOM
+		Field			: RSDFL STATE
+		[Field			: RSDFL STATE]
+			Use			: Name field
+			Set as		: "STATE    :  PUNJAB STATE CODE : 03"
+			Full Width	: Yes
+			Style		: NORMAL
+			
+	[Line				: RSDFL BLANK]
+		Field			: RSDFL BLANK
+		[Field			: RSDFL BLANK]
+			Use			: Name field
+			Set as		: ""
+			Full Width	: Yes
+			Style		: NORMAL
+			
+	[Line				: RSDFL NAME]
+		Field			: RSDFL NAME, RSDFL NAME1
+		[Field			: RSDFL NAME]
+			Use			: Name field
+			Set as		: "M/s "
+			Width       : 4
+			Style		: NORMAL
+			
+		[Field			: RSDFL NAME1]
+			Use			: Name field
+			Set as		: "VINTEX INDUSTRIES  (N) "
+			Full Width  : Yes
+			Style		: NORMAL
+			
+
+			
+	[Line				: RSDFL PN]
+		Field			: RSDFL PN, RSDFL PN1
+		[Field			: RSDFL PN]
+			Use			: Name field
+			Set as		: " "
+			Width       : 4
+			Style		: NORMAL
+			
+		[Field			: RSDFL PN1]
+			Use			: Name field
+			Set as		: "PLOT NO.B 32 NEAR HOLIDAY SCHOOL"
+			Full Width  : Yes
+			Style		: NORMAL
+			
+	[Line				: RSDFL AN]
+		Field			: RSDFL AN, RSDFL AN1
+		[Field			: RSDFL AN]
+			Use			: Name field
+			Set as		: " "
+			Width       : 4
+			Style		: NORMAL
+			
+		[Field			: RSDFL AN1]
+			Use			: Name field
+			Set as		: "AMAN NAGAR "
+			Full Width  : Yes
+			Style		: NORMAL
+			
+	[Line				: RSDFL LUD]
+		Field			: RSDFL LUD, RSDFL LUD1
+		[Field			: RSDFL LUD]
+			Use			: Name field
+			Set as		: " "
+			Width       : 4
+			Style		: NORMAL
+			
+		[Field			: RSDFL LUD1]
+			Use			: Name field
+			Set as		: "LUDHIANA "
+			Full Width  : Yes
+			Style		: NORMAL
+			
+	[Line				: RSDFL SC]
+		Field			: RSDFL SC, RSDFL SC1
+		[Field			: RSDFL SC]
+			Use			: Name field
+			Set as		: " "
+			Width       : 4
+			Style		: NORMAL
+			
+		[Field			: RSDFL SC1]
+			Use			: Name field
+			Set as		: "State:- PUNJAB State Code:- 3 "
+			Full Width  : Yes
+			Style		: NORMAL
+					
+				
+	[Line				: RSDFL PAN NO ]
+		Field			: RSDFL PAN NO , RSDFL PAN NO1
+		[Field			: RSDFL PAN NO ]
+			Use			: Name field
+			Set as		: " "
+			Width       : 4
+			Style		: NORMAL
+			
+		[Field			: RSDFL PAN NO1]
+			Use			: Name field
+			Set as		: "Pan NO.  ABKPY2106Q "
+			Full Width  : Yes
+			Style		: NORMAL
+			
+	[Line				: RSDFL BL]
+		Field			: RSDFL BL
+		[Field			: RSDFL BL]
+			Use			: Name field
+			Set as		: " "
+			Width       : 4
+			Style		: NORMAL
+			
+	
+	[Line				: RSDFL GSTNO ]
+		Field			: RSDFL GSTNO, RSDFL GSTNO1
+		[Field			: RSDFL GSTNO]
+			Use			: Name field
+			Set as		: " "
+			Width       : 4
+			Style		: NORMAL
+			
+		[Field			: RSDFL GSTNO1]
+			Use			: Name field
+			Set as		: "GST No.  03ABKPY2106Q1Z9 "
+			Full Width  : Yes
+			Style		: NORMAL
+			
+	[Line				: RSDFL BL1]
+		Field			: RSDFL BL1
+		[Field			: RSDFL BL1]
+			Use			: Name field
+			Set as		: " "
+			Width       : 4
+			Style		: NORMAL
+			
+[Part					: RSDFL RC RIGHT PART]
+	Border				: THIN LEFT
+	Line				:  RSDFL RC, RSDFL INV NO, RSDFL INVD, RSDFL RC BLANK,RSDFL RC BLANK1, RSDFL TPT, RSDFL VEH, RSDFL DT, RSDFL POS, RSDFL GR, RSDFL GRB, RSDFL GRD, RSDFL BN  
+;	RSDFL RC BLANKF,
+;	[Line				: RSDFL RC BLANKF]
+;		Border			: THIN BOTTOM
+;		Field			: RSDFL RC BLANKF
+;		[Field			: RSDFL RC BLANKF]
+;			Use			: Name field
+;			Set as		: ""
+;			Style		: NORMAL
+			
+
+	[Line				: RSDFL RC]
+		Field			: RSDFL RC
+		[Field			: RSDFL RC]
+			Use			: Name field
+			Set as		: "REVERSE CHARGES : YES/NO"
+		
+			Style		: NORMAL BOLD
+			
+	[Line				: RSDFL INV NO]
+		Field			: RSDFL INV NO
+		[Field			: RSDFL INV NO]
+			Use			: Name field
+			Set as		: "INVOICE NO. :-     GST/05128"
+			
+			Style		: NORMAL BOLD
+			
+	[Line				: RSDFL INVD]
+		Field			: RSDFL INVD
+		[Field			: RSDFL INVD]
+			Use			: Name field
+			Set as		: "INVOICE DATE :-     22/02/2023"
+	
+			Style		: NORMAL BOLD
+			
+
+	[Line				: RSDFL RC BLANK]
+		Border			: THIN BOTTOM
+		Field			: RSDFL RC BLANK
+		[Field			: RSDFL RC BLANK]
+			Use			: Name field
+			Set as		: ""
+			
+			Style		: NORMAL
+			
+	[Line				: RSDFL RC BLANK1]
+		Field			: RSDFL RC BLANK1
+		[Field			: RSDFL RC BLANK1]
+			Use			: Name field
+			Set as		: ""
+			
+			Style		: NORMAL
+			
+	[Line				: RSDFL TPT ]
+		Field			: RSDFL TPT, RSDFL TPT1
+		[Field			: RSDFL TPT]
+			Use			: Name field
+			Set as		: "Tpt Mode "
+			Width       : 12
+			Style		: NORMAL
+			
+		[Field			: RSDFL TPT1]
+			Use			: Name field
+			Set as		: "TEMPO "
+			Style		: NORMAL
+			Width       : 15
+			
+	[Line				: RSDFL VEH ]
+		Field			: RSDFL VEH, RSDFL VEH1
+		[Field			: RSDFL VEH]
+			Use			: Name field
+			Set as		: "Vehicle No "
+			Width       : 12
+			Style		: NORMAL
+			
+		[Field			: RSDFL VEH1]
+			Use			: Name field
+			Set as		: "PB10FV6366 "
+			Style		: NORMAL
+			Width       : 15
+			
+	[Line				: RSDFL DT ]
+		Field			: RSDFL DT, RSDFL DT1
+		[Field			: RSDFL DT]
+			Use			: Name field
+			Set as		: "Dt. of Supply "
+			Width       : 12
+			Style		: NORMAL BOLD
+			
+		[Field			: RSDFL DT1]
+			Use			: Name field
+			Set as		: "22-FEB-23 "
+			Style		: NORMAL
+			Width       : 15
+			
+	[Line				: RSDFL POS ]
+		Field			: RSDFL POS, RSDFL POS1
+		[Field			: RSDFL POS]
+			Use			: Name field
+			Set as		: "Place of Supply "
+			Width       : 12
+			Style		: NORMAL
+			
+		[Field			: RSDFL POS1]
+			Use			: Name field
+			Set as		: " "
+			Style		: NORMAL
+			Width       : 15
+			
+	[Line				: RSDFL GR ]
+		Field			: RSDFL GR, RSDFL GR1
+		[Field			: RSDFL GR]
+			Use			: Name field
+			Set as		: "Gr No. "
+			Width       : 12
+			Style		: NORMAL
+			
+		[Field			: RSDFL GR1]
+			Use			: Name field
+			Set as		: " "
+			Style		: NORMAL
+			Width       : 15
+			
+	[Line				: RSDFL GRB]
+	
+		Field			: RSDFL GRB
+		[Field			: RSDFL GRB]
+			Use			: Name field
+			Set as		: ""
+			
+			Style		: NORMAL
+			
+	[Line				: RSDFL GRD ]
+		Field			: RSDFL GRD, RSDFL GRD1
+		[Field			: RSDFL GRD]
+			Use			: Name field
+			Set as		: "Gr Date "
+			Width       : 12
+			Style		: small
+			
+		[Field			: RSDFL GRD1]
+			Use			: Name field
+			Set as		: " "
+			Style		: NORMAL
+			Width       : 15
+			
+	[Line				: RSDFL BN ]
+		Field			: RSDFL BN, RSDFL BN1
+		[Field			: RSDFL BN]
+			Use			: Name field
+			Set as		: " "
+			Width       : 12
+			Style		: NORMAL
+			
+		[Field			: RSDFL BN1]
+			Use			: Name field
+			Set as		: "BIND NATH "
+			Style		: NORMAL
+			Width       : 15
+			
+
+[Part				: RSDFL TITLE PART]
+	Border			: thick bottom
+	Line			: RSDFL TITLE
+	[Line			: RSDFL TITLE]
+		
+		Field		: RSDFL SR, RSDFL HSN, RSDFL SHADE , RSDFL DES, RSDFL UNIT, RSDFL GWT, RSDFL NET, RSDFL RATE, RSDFL TAX
+		[Field		: RSDFL SR]
+			Border	: THIN RIGHT
+			Use		: Name field
+			Set as	: "SR.NO."
+			Width	: 3
+			Lines	: 0
+			
+		[Field		: RSDFL HSN]
+			Border	: THIN RIGHT
+			Use		: Name field
+			Set as	: "HSN CODE"
+			Width	: 6
+			Lines	: 0
+			
+		[Field		: RSDFL SHADE]
+			Border	: THIN RIGHT
+			Use		: Name field
+			Set as	: "SHADE"
+			Width	: 8
+			
+			
+		[Field		: RSDFL DES]
+			Border	: THIN RIGHT
+			Use		: Name field
+			Set as	: "DESCRIPTION"
+			Width	: 18
+			
+
+		[Field		: RSDFL UNIT]
+			Border	: THIN RIGHT
+			Use		: Name field
+			Set as	: "RL/BAGS/PCS"
+			Width	: 6
+			Lines	: 0
+			
+		[Field		: RSDFL GWT]
+			Border	: THIN RIGHT
+			Use		: Name field
+			Set as	: "GROSS WT"
+			Width	: 9
+			
+		[Field		: RSDFL NET]
+			Border	: THIN RIGHT
+			Use		: Name field
+			Set as	: "NET WT"
+			Width	: 7
+			
+
+		[Field		: RSDFL RATE]
+			Border	: THIN RIGHT
+			Use		: Name field
+			Set as	: "RATE"
+			Width	: 7
+			
+		[Field		: RSDFL TAX]
+			Use		: Name field
+			Set as	: "TAXABLE"
+			Width	: 7
+			
+
+[Part					: RSDFL NOTE]
+	Border				: thick TOP
+	Part				: RSDFL NOTE LEFT PART, RSDFL NOTE RIGHT PART
+	[Part				: RSDFL NOTE LEFT PART]
+		Border				: thick bottom
+		Line				: RSDFL NOTE, RSDFL NBl, RSDFL BANK, RSDFL AC NO, RSDFL AMT
+	
+
+		[Line				: RSDFL NOTE]
+			Field			: RSDFL NOTE
+			[Field			: RSDFL NOTE]
+				Use			: Name field
+				Set as		: "NOTE: If there is any problem in any of our process, please don't send it to any next process,return the goods as it is with your remarks within 2 days to enable us to re-process. However, we shall not be responsible for any defact,if any process is done on the goods after our process."
+				Full Width	: Yes
+				Style		: extra small
+				Lines		: 0
+				
+
+		[Line				: RSDFL NBl]
+			Field			: RSDFL NBl
+			[Field			: RSDFL NBl]
+				Use			: Name field
+				Set as		: ""
+				
+				
+		[Line				: RSDFL BANK]
+			Field			: RSDFL BANK
+			[Field			: RSDFL BANK]
+				Border		: THIN BOTTOM
+				Use			: Name field
+				Set as		: "BANK DETAILS:- HDFC BANK LTD."
+				Width		: 30
+				
+		[Line				: RSDFL AC NO]
+			Field			: RSDFL AC NO
+			[Field			: RSDFL AC NO]
+				Border		: THIN BOTTOM
+				Use			: Name field
+				Set as		: "A/C NO. 57500000624473,RTGS/NEFT/IMPS, IFSC HDFC0000034"
+				Full Width	: Yes
+				
+		[Line				: RSDFL AMT]
+			Field			: RSDFL AMT, RSDFL AMTW
+			[Field			: RSDFL AMT]
+				Use			: Name field
+				Set as		: "Total amt on invoice (in words) Rs. "
+				Width		: 22
+				Style		: SMALL
+				
+		
+			[Field			: RSDFL AMTW]
+				Use			: Name field
+				Set as		: "Ninty Four Thousand Six Hundred Fifty Eight Only "
+				Width		: 22
+				Style		: SMALL ITALIC
+					
+			
+				
+	[Part					: RSDFL NOTE RIGHT PART]
+		Border				: THIN bottom LEFT
+		Line				: RSDFL NOTE1,RSDFL NB, RSDFL SGST, RSDFL CGST, RSDFL NB1, RSDFL RO, RSDFL NB2, RSDFL GT, RSDFL NB3
+	
+
+		[Line				: RSDFL NOTE1]
+			Field			: RSDFL NOTE1,RSDFL NOTE2
+			[Field			: RSDFL NOTE1]
+				Use			: Name field
+				Set as		: "722.610"
+				Width		: 15
+				Align		: Center
+				
+			[Field			: RSDFL NOTE2]
+				Use			: Name field
+				Set as		: "90150.57"
+				Width		: 10
+				Align		: Center
+				
+		[Line				: RSDFL NB]
+			Field			: RSDFL NB
+			[Field			: RSDFL NB]
+				Use			: Name field
+				Set as		: ""
+				Width		: 15
+				
+		[Line				: RSDFL SGST]
+			Field			: RSDFL SGST,RSDFL SGSTA
+			[Field			: RSDFL SGST]
+				Use			: Name field
+				Set as		: "SGST ON SALE@2.5%"
+				Width		: 15
+				
+				
+			[Field			: RSDFL SGSTA]
+				Use			: Name field
+				Set as		: "2253.77"
+				Width		: 10
+				Align		: Center
+				
+		[Line				: RSDFL CGST]
+			Field			: RSDFL CGST,RSDFL CGSTA
+			[Field			: RSDFL CGST]
+				Use			: Name field
+				Set as		: "CGST ON SALE@2.5%"
+				Width		: 15
+				
+				
+			[Field			: RSDFL CGSTA]
+				Use			: Name field
+				Set as		: "2253.77"
+				Width		: 10
+				Align		: Center
+				
+		[Line				: RSDFL NB1]
+			Field			: RSDFL NB1
+			[Field			: RSDFL NB1]
+				Use			: Name field
+				Set as		: ""
+				Width		: 15
+				
+		[Line				: RSDFL RO]
+			Border			: THIN BOTTOM
+			Field			: RSDFL RO,RSDFL ROA
+			[Field			: RSDFL RO]
+				Use			: Name field
+				Set as		: "Round Off."
+				Width		: 15
+				
+				
+			[Field			: RSDFL ROA]
+				Use			: Name field
+				Set as		: "-0.17"
+				Width		: 10
+				Align		: Center
+				
+				
+		[Line				: RSDFL NB2]
+			Field			: RSDFL NB2
+			[Field			: RSDFL NB2]
+				Use			: Name field
+				Set as		: ""
+				Width		: 15
+				
+
+		[Line				: RSDFL GT]
+;			Border			: THIN BOTTOM
+			Field			: RSDFL GT,RSDFL GTA
+			[Field			: RSDFL GT]
+				Use			: Name field
+				Set as		: "Grand Total"
+				Width		: 15
+				
+				
+			[Field			: RSDFL GTA]
+				Use			: Name field
+				Set as		: "94658.0"
+				Width		: 10
+				Align		: Center
+				
+		[Line				: RSDFL NB3]
+			Field			: RSDFL NB3
+			[Field			: RSDFL NB3]
+				Use			: Name field
+				Set as		: ""
+				Width		: 15
+				
+[Part						: RSDFL TERM PART]
+	Part					: RSDFL TERM LEFT PART, RSDFL TERM RIGHT PART
+	[Part					: RSDFL TERM LEFT PART]
+		Border				: thick bottom
+		Line				: RSDFL TB, RSDFL TERMS
+		
+		[Line				: RSDFL TB]
+			Field			: RSDFL TB
+			[Field			: RSDFL TB]
+				Use			: Name field
+				Set as		: ""
+				Full Width	: Yes
+				
+
+		[Line				: RSDFL TERMS]
+			Field			: RSDFL TERMS
+			[Field			: RSDFL TERMS]
+				Border		: THIN BOTTOM
+				Use			: Name field
+				Set as		: "TERMS"
+				Full Width	: Yes
+				
+		
+				
+
+	[Part					: RSDFL TERM RIGHT PART]
+		Border				: thick left bottom
+		Line				: RSDFL TBS, RSDFL SIGN, RSDFL TBS1, RSDFL TBS2, RSDFL TBS3, RSDFL AUTH, RSDFL TBS4, RSDFL TBS5
+		
+		[Line				: RSDFL TBS]
+			Field			: RSDFL TBS
+			[Field			: RSDFL TBS]
+				Use			: Name field
+				Set as		: ""
+				Width		: 25
+				
+
+		[Line				: RSDFL SIGN]
+			Field			: RSDFL SIGN
+			[Field			: RSDFL SIGN]
+				Border		: THIN BOTTOM
+				Use			: Name field
+				Set as		: "For Duke Fabrics (India) Limited"
+				Width		: 25
+				Align		: Center
+				
+				
+				
+		[Line				: RSDFL TBS1]
+			Field			: RSDFL TBS1
+			[Field			: RSDFL TBS1]
+				Use			: Name field
+				Set as		: ""
+				Width		: 25	
+				
+		[Line				: RSDFL TBS2]
+			Field			: RSDFL TBS2
+			[Field			: RSDFL TBS2]
+				Use			: Name field
+				Set as		: ""
+				Width		: 25	
+				
+		[Line				: RSDFL TBS3]
+			Field			: RSDFL TBS3
+			[Field			: RSDFL TBS3]
+				Use			: Name field
+				Set as		: ""
+				Width		: 25
+				
+		[Line				: RSDFL AUTH]
+			Field			: RSDFL AUTH
+			[Field			: RSDFL AUTH]
+				Use			: Name field
+				Set as		: "Auth. Signatory"
+				Width		: 25	
+				
+		[Line				: RSDFL TBS4]
+			Field			: RSDFL TBS4
+			[Field			: RSDFL TBS4]
+				Use			: Name field
+				Set as		: ""
+				Width		: 25
+				
+
+		[Line				: RSDFL TBS5]
+			Field			: RSDFL TBS5
+			[Field			: RSDFL TBS5]
+				Use			: Name field
+				Set as		: ""
+				Width		: 25
+				
+
+			
+			
+			
+			
+		
+			
+			
+

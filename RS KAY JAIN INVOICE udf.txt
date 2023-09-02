@@ -1,0 +1,1004 @@
+;--------------------------------{SHRI GURU GRANTH SAHIB JI DE CHARNA CH ARDASS}------------------------------------------
+;---------------------------------{WAHEGURU JI KA KHALSA WAHEGURU JI KI FATEH}--------------------------------------------
+
+;	TITLE		: SALES INVOICE
+;	DATE		: 26-MAY-2023
+
+[#Menu	: Default]
+	Add	: Button	: RefreshTdlButton
+
+[#Form	: Default]
+	Add	: Button	: RefreshTdlButton
+
+	[Button	: RefreshTdlButton]
+		Title	: "Refresh"
+		Key		: CTRL + 8
+		Action	: Refresh TDL
+
+
+[System	: UDF]
+	WORKAddress		: String	: 4001
+	STKIbaseSize	: String	: 4002
+	
+	STKIBaseRDisct	: Number	: 4003
+	STKIBaseDDisct	: Number	: 4004
+	STKIBaseSDisct	: Number	: 4005
+	
+	VCHBATCHRDisc	: Number	: 4014
+	VCHBATCHDDisc	: Number	: 4015
+	VCHBATCHSDisc	: Number	: 4016
+	
+	LEDDisctAppAmt	: String	: 4006
+	LEDRDisctAppAmt	: String	: 4007
+	LEDDDisctAppAmt	: String	: 4008
+	LEDSDisctAppAmt	: String	: 4009
+	
+	GRPIsDiscAppAmt	: String	: 4010
+	GRPIsRDisct		: String	: 4011
+	GRPIsDDisct		: String	: 4012
+	GRPIsSDisct		: String	: 4013
+	
+	
+	VCHDisctRetail	: Number	: 4017
+	VCHDisctDist	: Number	: 4018
+	VCHDisctSpcl	: Number	: 4019
+	;	=-=-=-=-=-=-=-=-IN COMPANY ADDRESS FORM=-=-=-=-=-=-=-=-=-=-=-=-=	
+;[#Part: Company MailingDtlsAddress]
+;	Add	: Line	: After	: CMP Address	: CMPComADD
+;  
+;	[Line	: CMPComADD]
+;		Left Fields : Medium Prompt, CMPCompADD
+;		Option      : Small Size Line
+;		Local       : Field : Medium Prompt : Info       : $$LocaleString:"Address:"
+;		Local       : Field : Medium Prompt : Inactive   : $$Line > 1
+;		Local		: Field	: Medium Prompt	: Style		 : Normal
+;		
+;		[Field: CMPCompADD]
+;			Use         : Name Field
+;			Style		: Normal
+;			Storage     : WORKAddress 
+			
+;-=--=-=-=-=-=-=-=-=-IN ITEM FORM-=-=-=-=-=-=-=-=-=-=-=-=-					
+
+[#Part: STKI Units]
+	Add	: Line	: At End: STKIBaseSize, STKIBaseRDisc, STKIBaseDDisc, STKIBaseSDisc
+	[Line	: STKIBaseSize]
+		Fields      : Short Prompt, STKIBaseSize
+		Space Top	: 0.5
+        Local       : Field : Short Prompt : Info : $$LocaleString:"Size:"
+		
+		[Field		: STKIBaseSize]
+			Use         : Name Field
+			Style		: Normal
+			Storage     : STKIbaseSize
+			
+	[Line	: STKIBaseRDisc]
+		Fields	: Short Prompt, STKIBaseRDisc
+        Local	: Field : Short Prompt : Info : $$LocaleString:"Retail Discount:"
+		
+		[Field		: STKIBaseRDisc]
+			Use         : Number Field
+			Width       : 3% Page
+			Align		: Right
+			Format		: "No Zero, Percentage"
+			Style		: Small Bold
+			Storage     : STKIBaseRDisct
+			
+	[Line	: STKIBaseDDisc]
+		Fields	: Short Prompt, STKIBaseDDisc
+        Local	: Field : Short Prompt : Info : $$LocaleString:"Distributor Discount:"
+		
+		[Field	: STKIBaseDDisc]
+			Use         : Number Field
+			Width       : 3% Page
+			Align		: Right
+			Format		: "No Zero, Percentage"
+			Style		: Small Bold
+			Storage     : STKIBaseDDisct
+			
+	[Line	: STKIBaseSDisc]
+		Fields	: Short Prompt, STKIBaseSDisc
+        Local	: Field : Short Prompt : Info : $$LocaleString:"Special Discount:"
+		
+		[Field	: STKIBaseSDisc]
+			Use         : Number Field
+			Width       : 3% Page
+			Align		: Right
+			Format		: "No Zero, Percentage"
+			Style		: Small Bold
+			Storage     : STKIBaseSDisct
+;			
+;-------------------IN LEDGER FORM-------------------------
+	
+[#Part: LED Other Details]
+	Add	: Line	: After	: LED GSTADDLDETAILS	: LEDDiscAppAmt, LEDRDiscAmt, LEDDDiscAmt, LEDSDiscAmt
+	[Line	: LEDDiscAppAmt]
+		Fields  	: Medium Prompt, LEDDiscAppAmt
+		Local  			: Field : Medium Prompt : Set as 	: $$LocaleString:"Discount Applicable Amount" + ":"
+		Local  			: Field : Medium Prompt : Indent    : 2
+		
+		[Field	: LEDDiscAppAmt]
+			Use	: name field
+			Storage	: LEDDisctAppAmt
+			
+	
+	[Line	: LEDRDiscAmt]
+		Fields  	: Medium Prompt, LEDRDiscAmt
+		Local  			: Field : Medium Prompt : Set as 	: $$LocaleString:"Retail Discount" + ":"
+		Local  			: Field : Medium Prompt : Indent    : 2
+		
+		[Field	: LEDRDiscAmt]
+			Use	: name field
+			Storage	: LEDRDisctAppAmt
+			
+	[Line	: LEDDDiscAmt]
+		Fields  	: Medium Prompt, LEDDDiscAmt
+		Local  			: Field : Medium Prompt : Set as 	: $$LocaleString:"Distributor Discount" + ":"
+		Local  			: Field : Medium Prompt : Indent    : 2
+		
+		[Field	: LEDDDiscAmt]
+			Use	: name field
+			Storage	: LEDDDisctAppAmt
+			
+	[Line	: LEDSDiscAmt]
+		Fields  	: Medium Prompt, LEDSDiscAmt
+		Local  			: Field : Medium Prompt : Set as 	: $$LocaleString:"Special Discount" + ":"
+		Local  			: Field : Medium Prompt : Indent    : 2
+		
+		[Field	: LEDSDiscAmt]
+			Use	: name field
+			Storage	: LEDSDisctAppAmt
+			
+;--------------------IN GROUP FORM-----------------------------
+
+[#Part: GRP Details]
+	Add	: Line	: Before	: GRP IsSubLed	: GRPIsDiscApp, GRPIsRDisc, GRPIsDDisc, GRPIsSDisc
+	[Line	: GRPIsDiscApp]
+		
+		Field       : Long Prompt, GRPIsDiscApp
+		Local       : Field : Long Prompt : Info : $$LocaleString:"Discount Applicable Amount:"
+		
+		[Field		: GRPIsDiscApp]
+			Use		: name field
+			Storage	: GRPIsDiscAppAmt
+			
+	[Line	: GRPIsRDisc]
+		
+		Field       : Long Prompt, GRPIsRDisc
+		Local       : Field : Long Prompt : Info : $$LocaleString:"Retail Discount:"
+		
+		[Field		: GRPIsRDisc]
+			Use		: name field
+			Storage	: GRPIsRDisct
+			
+	[Line	: GRPIsDDisc]
+		
+		Field       : Long Prompt, GRPIsDDisc
+		Local       : Field : Long Prompt : Info : $$LocaleString:"Distributor Discount:"
+		
+		[Field		: GRPIsDDisc]
+			Use		: name field
+			Storage	: GRPIsDDisct
+			
+	[Line	: GRPIsSDisc]
+		Field       : Long Prompt, GRPIsSDisc
+		Local       : Field : Long Prompt : Info : $$LocaleString:"Special Discount:"
+		
+		[Field		: GRPIsSDisc]
+			Use		: name field
+			Storage	: GRPIsSDisct
+		
+;----------------------------IN ITEM ALLOCATION---------------------------
+
+[#Line	: VCHBATCH ColumnOne];VCHRDISCT, 
+	Add	: Right Field	: After	: VCH RateUnitsTitle	: VCHDDISCT, VCHSDISCT
+	
+;	[Field	: VCHRDISCT]
+;		Use	: NAME FIELD
+;		Info	: "DR%"
+;		Width	: 4% PAGE
+;		Align	: Center
+		
+	[Field	: VCHDDISCT]
+		Use	: NAME FIELD
+		Info	: "D.Disc%"
+		Width	: 4% PAGE
+		Style	: Small
+		Align	: Center
+		
+	[Field	: VCHSDISCT]
+		Use	: NAME FIELD
+		Info	: "S.Disc%"
+		Width	: 4% PAGE
+		Style	: Small
+		Align	: Center
+		
+[#Line: VCH Batch InclusiveTax];VCHRDISCT, 
+	Add		: Right Field	: After	: VCH RateUnitsTitle	: VCHDDISCT, VCHSDISCT
+;	Local	: Field	: VCHRDISCT	: Info	: ""
+	Local	: Field	: VCHDDISCT	: Info	: ""
+	Local	: Field	: VCHSDISCT	: Info	: ""
+	
+[#Line: STKVCH Batch2];VCHBATCHDR, 
+	Add	: Right Field	: After	: VCHBATCH RateUnits	: VCHBATCHDD, VCHBATCHSD
+
+;	[Field	: VCHBATCHDR]
+;		Use			: Number Field
+;		Width		: 4% page
+;		Style		: Small
+;		Storage		: VCHBATCHRDisc
+;		Align		: Right
+;		Format		: "No Zero, Percentage"
+;		Set as		: $STKIBaseRDisct:StockItem:$StockItemName
+;		Set Always	: Yes
+;		Inactive	: @@NoBaseUnits OR @@BatchAllocBreak OR $$IsEmpty:$Rate
+		
+	[Field	: VCHBATCHDD]
+		Use			: Number field
+		Width		: 4% page
+		Format		: "No Zero, Percentage"
+		Align		: Right
+		Style		: Small Bold
+		Storage		: VCHBATCHDDisc
+		Set as		: $STKIBaseDDisct:StockItem:$StockItemName
+		Set Always	: Yes
+		Inactive	: @@NoBaseUnits OR @@BatchAllocBreak OR $$IsEmpty:$Rate
+		
+	[Field	: VCHBATCHSD]
+		Use			: Number field
+		Width		: 4% page
+		Format		: "No Zero, Percentage"
+		Align		: Right
+		Style		: Small Bold
+		Storage		: VCHBATCHSDisc
+		Set as		: $STKIBaseSDisct:StockItem:$StockItemName
+		Set Always	: Yes
+		Inactive	: @@NoBaseUnits OR @@BatchAllocBreak OR $$IsEmpty:$Rate
+
+[#Field	: VCHBATCH Value]
+	Set By Condition	: @@NoBaseUnits 							: $$Value
+	Set By Condition	: ($$IsEmpty:$$Value)						: @DiscThree
+	Set By Condition	: ($$IsEmpty:#VCHBatchRate)					: @DiscThree
+	Set By Condition	: ##IsFieldAltered							: @DiscThree
+	Set By Condition	: $$IsEdited AND @IsDefaultValue			: $$Value	
+	Set as				: @DiscThree
+	MultiDisc			: (((If $$IsMultiGodownOn Then $BatchRate Else $Rate) * $BilledQty * (100 - $Discount)) / 100)
+	DiscOne				: @MultiDisc - (@MultiDisc * $VCHBATCHRDisc / 100)
+	DiscTwo				: @DiscOne - (@DiscOne * $VCHBATCHDDisc / 100)
+	DiscThree			: @DiscTwo - (@DiscTwo * $VCHBATCHSDisc / 100)
+	
+[#Field	: VCH BatchRate]
+	NrmlCalcRate	: $$Value
+;--------------------------IN VOUCHER------------------------------
+
+[#Line	: EI ColumnOne]
+	Add	: Right Field	: After	: VCH RateUnitsTitle	: VCHDiscRetail, VCHDiscDist, VCHDiscSpcl
+	
+	[Field	: VCHDiscRetail]
+		Use		: name field
+		Align	: Center
+		Style	: Small Bold
+		Info	: "DR%"
+		Width	: 7% page
+;		Invisible	: NOT @@IsSales
+	[Field	: VCHDiscDist]
+		Use		: name field
+		Align	: Center
+		Style	: Small Bold
+		Info	: "DD%"
+		Width	: 7% page
+		
+	[Field	: VCHDiscSpcl]
+		Use		: name field
+		Align	: Center
+		Style	: Small Bold
+		Info	: "SD%"
+		Width	: 7% page
+		
+[#Line	: EI ColumnOneRate]
+	Add		: Right Field	: After	: VCH RateUnitsTitle	: VCHDiscRetail, VCHDiscDist, VCHDiscSpcl
+	Local	: Field	: VCHDiscRetail	: Info	: ""
+	Local	: Field	: VCHDiscDist	: Info	: ""
+	Local	: Field	: VCHDiscSpcl	: Info	: ""
+	
+[#Line	: EI ColumnTwo]
+	Add		: Right Field	: After	: VCH RateUnitsTitle	: VCHDiscRetail, VCHDiscDist, VCHDiscSpcl
+	Local	: Field	: VCHDiscRetail	: Info	: ""
+	Local	: Field	: VCHDiscDist	: Info	: ""
+	Local	: Field	: VCHDiscSpcl	: Info	: ""
+	
+
+[#Line	: EI InvInfo]
+	Add	: Right Field	: After	: VCH RateUnit	: VCHDisctRetail, VCHDisctDist, VCHDisctSpcl
+	
+	[Field	: VCHDisctRetail]
+		Use		: Number field
+		Align	: Center
+		Width	: 7% page
+		Style	: Normal Bold
+		Storage	: VCHDisctRetail
+		Set as	: $ 
+
+;		Invisible	: NOT @@IsSales
+
+	[Field	: VCHDisctDist]
+		Use		: Number field
+		Align	: Center
+		Width	: 7% page
+		Style	: Normal Bold
+		Storage	: VCHDisctDist
+		
+	[Field	: VCHDisctSpcl]
+		Use		: Number field
+		Align	: Center
+		Width	: 7% page
+		Style	: Normal Bold
+		Storage	: VCHDisctSpcl
+		
+[#Line	: EIAccInfo]
+	Add		: Right Field	: After	: EI AccRatePer	:  VCHDiscRetail, VCHDiscDist, VCHDiscSpcl
+	Local	: Field	: VCHDiscRetail	: Info	: ""
+	Local	: Field	: VCHDiscDist	: Info	: ""
+	Local	: Field	: VCHDiscSpcl	: Info	: ""
+	
+
+[#Line	: CIAccInfo]
+	Add		: Right Field	: After	: EI AccRatePer	:  VCHDiscRetail, VCHDiscDist, VCHDiscSpcl
+	Local	: Field	: VCHDiscRetail	: Info	: ""
+	Local	: Field	: VCHDiscDist	: Info	: ""
+	Local	: Field	: VCHDiscSpcl	: Info	: ""
+	
+
+	
+[#Line: CI InvInfo]
+	Add	: Right Field	: After	: VCHRateUnit	: VCHDisctRetail, VCHDisctDist, VCHDisctSpcl
+	
+;[System	: UDF]
+;	VCHListOfMobile	: String	: 1101
+
+
+[#Part: EI DelNoteInfo]
+	Add	: Line	:	At Beginning	: EIDelMarks, EIDelPkg
+	[Line	: EIDelMarks]
+		Field	: Medium Prompt ,EIDelMarks
+		Local	: Field	: Medium Prompt : Set as: "Marks :"
+		[Field	: EIDelMarks]
+			Use	: name field
+			Storage	: EIDetlMarks
+			
+	[Line	: EIDelPkg]
+		Field	: Medium Prompt ,EIDelPkg
+		Local	: Field	: Medium Prompt : Set as: "Pkg :"
+		[Field	: EIDelPkg]
+			Use	: name field
+			Storage	: EIDetlPkg
+			
+			
+[System	: UDF]
+	EIDetlMarks	: String	: 1500
+	EIDetlPkg	: String	: 1501
+;-----------------------------------------------------------SALES INVOICE-------------------------------------------------------------
+
+[#Form	: Comprehensive Invoice]
+	Add	: Option	: KayJainInvForm	: @@IsSales
+	
+	[!Form	: KayJainInvForm]
+		Delete	: Parts
+		Delete	: Bottom Parts
+		Delete	: Page Break
+		Add		: Top Parts		: KayJainInvTopPart, KayJainInvBodyPart
+		Add		: Bottom Part	: KayJainInvBottomPart
+		Add		: Width  		: 100% Page;@@InvWidth Inch
+		Add		: Height 		: 100% Page;@@InvHeight Inch
+        Add		: Space Top		: @@InvSpace Inch
+        Add		: Space Right	: 0.5 Inch
+        Add		: Space Left	: @@InvSpaceLeft Inch
+        Add		: Space Bottom	: 0.25 Inch
+		Local	: Style	: Default	: Font	: "COURIER NEW"
+	
+
+		[Part	: KayJainInvTopPart]
+			Vertical: Yes
+			Border	: thin box
+			Parts	: KayJainInvCompDet, KayJainInvEwayDet, KayJainInvLedDtl, KayJainInvDispDet, KayJainInvColTit
+			
+			[Part	: KayJainInvCompDet]
+				Border	: thin bottom
+				Parts	: KayJainInvCompAddr, KayJainInvScanCode
+				Right Part	: KayJainInvComGSTIN
+				
+				[Part	: KayJainInvCompAddr]
+					Lines	: KayJainInvCompName, KayJainInvCompAdd, KayJainInvCompTel, KayJainInvCompWAdd
+;					Repeat	: KayJainInvCompAdd	 	: KayJainCompanyAddress
+;					Repeat	: KayJainInvCompWAdd	: KayJainCompanyWorkAdd
+				
+						
+					[Line	: KayJainInvCompName]
+						Fields	: KayJainInvCompName
+						Local	: Style	:  COURIER NEW : Height	: 16
+						
+						[Field	: KayJainInvCompName]
+							Use	: Name Field
+							Width	: 50% page
+							Set as	: @@CmpMailName
+							Align	: Left
+							Style	: LARGE BOLD
+							
+					[Line	: KayJainInvCompAdd]
+						Fields	: simple prompt, KayJainInvCompAdd
+						Local	: Field	: simple prompt	: Set as	: "Shop" 
+						Local	: Field	: simple prompt	: Style		: normal italic
+						Local	: Field	: Simple Prompt	: Width		: 8% Page
+						
+						[Field	: KayJainInvCompAdd]
+							Use	: Name Field
+							Width	: 42% page
+							Set as	: $$FullList:KayJainCompanyAddress:$Address
+							Lines	: 0
+							Style	: normal
+							Align	: Left
+							
+							[Collection	: KayJainCompanyAddress]
+								Type	: Address   : Company
+								Child of: ##SVCurrentCompany
+								Compute	: IsNumber	  	: No
+								Compute	: FixedDirection: No
+								Object	: Company State
+								Object	: Company Statecode
+								Filter  : IsNotBlankAddr
+								
+					[Line	: KayJainInvCompTel]
+						Field	: KayJainInvCompTel
+						[Field	: KayJainInvCompTel]
+							Use	: name field
+							Set as	: "Tel: "+$PhoneNumber:Company:##SVCurrentCompany +" "+ "E: "+ $Email:Company:##SVCurrentCompany
+							Width	: 50% page
+							Style	: normal
+							Align	: Left
+						
+							
+					[Line	: KayJainInvCompWAdd]
+						Fields	: simple prompt, KayJainInvCompWAdd
+						Local	: Field	: simple prompt	: Set as	: "Work: " 
+						Local	: Field	: simple prompt	: Style		: normal italic
+						Local	: Field	: Simple Prompt	: Width		: 8% Page
+						
+						[Field	: KayJainInvCompWAdd]
+							Use	: Name Field
+							Width	: 42% page
+							Lines	: 0
+							Set as	: $$FullList:CompanyMultiAddressPrintNew:$Address
+							Style	: normal
+							Align	: Left
+							
+							[Collection	: CompanyMultiAddressPrintNew]
+								Collection	: Company Multi Address PrnExtractNew
+								Object      : Company Multi Address PrnState
+								Object  	: Company CINumber
+								Object		: Company Multi Address TINTRN
+								Object      : Company Multi Address PrnContacts
+								Object		: Company Multi Address PrnFaxNo
+								Filter		: IsNotBlankAddr
+								Fetch		: Address
+								Option		: Company Multi Address GSTIN			: (##IsVoucher OR ##IsMultiVchReport) AND @@IsGSTOnAppl
+								Option		: Company Multi Address PrintInVch		: ##IsVoucher
+								Option		: Company Multi Address PrnWebsiteName	: Yes
+	
+								[Collection	: Company Multi Address PrnExtractNew]
+									Source Collection	: Company Multi Address PrnSrc CollNew
+									Walk		: Address
+									Compute		: Address		: $Address
+																	
+									[Collection	: Company Multi Address PrnSrc CollNew]
+										Title       : $$LocaleString:"List of Companies"
+										Type        : MultiAddressList	: Company
+										Child of	: ##SVCurrentCompany
+										Fetch		: Address.*, AddressName
+										Filter		: IsSameCmpAddrTypeNew
+
+										[System	: Formula]
+											IsSameCmpAddrTypeNew	: $AddressName = "Work"
+											
+				[Part	: KayJainInvScanCode]
+					Line	: KayJainInvScanCode
+					[Line	: KayJainInvScanCode]
+						Field	: KayJainInvScanCode
+						[Field	: KayJainInvScanCode]
+							Use	: name field
+							Set as	: ""
+							Width	: 20% page
+							
+				[Part	: KayJainInvComGSTIN]
+					Line	: KayJainInvComGSTIN , KayJainInvTitle, KayJainInvTitle1, KayJainInvBillTit, KayJainInvDate
+					[Line	: KayJainInvComGSTIN]
+						Right Field	: KayJainInvComGSTIN
+;						Local	: Field	: simple Prompt	: Set as	: "GSTIN:"
+						[Field	: KayJainInvComGSTIN]
+							Use	: NAME FIELD
+							Set as	: "GSTIN:" + @@VATCMPGSTNumber
+							Width	: 30% PAGE
+							Align	: Right
+							Style	: normal
+							
+					[Line	: KayJainInvTitle]
+						Space Top	: 0.5
+						Space Bottom	: 0.6
+						Right Field	: KayJainInvTitle
+						[Field		: KayJainInvTitle]
+							Set as	: ##ReportTitle
+							Style	: normal bold
+							Width	: 30% page
+							Align	: Right
+							
+					[Line	: KayJainInvTitle1]
+						Right Field	: KayJainInvTitle1
+						[Field		: KayJainInvTitle1]
+							Set as	: "Extra Copy"
+							Style	: normal italic
+							Width	: 30% page
+							Align	: Right
+							
+					[Line	: KayJainInvBillTit]
+						Right Field	: KayJainInvBillTit
+						[Field		: KayJainInvBillTit]
+							Set as	: IF $PartyLedgerName contains "Cash" then "Cash" else "Credit"
+							Style	: normal 
+							Width	: 30% page
+							Align	: Right
+							
+					[Line	: KayJainInvDate]
+						Right Field	: simple Prompt, KayJainInvDate
+						Local	: Field	: simple Prompt	: Set as	: "Due Date:"
+						Local	: Field	: Default		: Style		: normal bold
+						[Field	: KayJainInvDate]
+							Use	: NAME FIELD
+							Set as	: $Date
+							Width	: 10% PAGE
+							Align	: Right
+							Style	: normal bold
+							
+				[Part	: KayJainInvEwayDet]
+					Border	: thin bottom
+					Lines	: KayJainInvEwayNum, KayJainInvEwayIRN
+					[Line	: KayJainInvEwayNum]	
+						Fields	: KayJainInvEwayNum, KayJainInvEwayDate, KayJainInvEwayCh
+						[Field	: KayJainInvEwayNum]
+							Use	: name field
+							Set as	: "Number  : " + $IRNAckNo
+							Width	: 30% page
+							Align	: Left
+							Style	: normal
+							
+						[Field	: KayJainInvEwayDate]
+							Use	: name field
+							Set as	: "Date  : " + $IRNAckDate
+							Width	: 30% page
+							Align	: Left
+							Style	: normal
+							
+						
+						[Field	: KayJainInvEwayCh]
+							Use	: name field
+							Set as	: "Ch  : " 
+							Width	: 40% page
+							Align	: Left
+							Style	: normal
+							
+					[Line	: KayJainInvEwayIRN]
+						Fields	: KayJainInvEwayIRN
+						[Field	: KayJainInvEwayIRN]
+							Use	: name field
+							Set as	: "IRN  : " + @@GSTeInvIRN
+							Width	: 100% page
+							Align	: Left
+							Style	: normal
+							
+				[Part	: KayJainInvLedDtl]
+					Border	: thin bottom
+					Part	: KayJainInvPratyDtl, KayJainInvConsignDtl
+					[Part	: KayJainInvPratyDtl]
+						Lines	: KayJainInvPratyDtl, KayJainInvPratyName, KayJainInvPratyAdd, KayJainInvPratyState
+						Lines	: KayJainInvPratyGST
+						Repeat	: KayJainInvPratyAdd	: Address
+						[Line	: KayJainInvPratyDtl]
+							Space Top	: 0.2
+							Field	: KayJainInvPratyDtl
+							[Field	: KayJainInvPratyDtl]
+								Use	: name field
+								Set as	: "Customer"
+								Style	: normal italic
+								Width	: 50% page
+;								Align	: Left
+							
+						[Line	: KayJainInvPratyName]
+							Field	: KayJainInvPratyName
+							[Field	: KayJainInvPratyName]
+								Use	: name field
+								Set as	: $partyledgername
+								Style	: normal 
+								Width	: 50% page
+;								Align	: Left
+								
+						[Line	: KayJainInvPratyAdd]
+							Field	: KayJainInvPratyAdd
+							[Field	: KayJainInvPratyAdd]
+								Use	: name field
+								Set as	: $Address
+								Style	: normal 
+								Width	: 50% page
+;								Align	: Left
+								
+						[Line	: KayJainInvPratyState]
+							Space Top	: 0.5
+							Field	: KayJainInvPratyState;, KayJainInvPratyPin, KayJainInvPratySCode
+							[Field	: KayJainInvPratyState]
+								Use	: name field
+								Set as	: $StateName +" "+ $PartyPinCode +" "+ $$GetGSTStateCode:$StateName + "-" + $StateName
+								Style	: normal 
+								Width	: 50% page
+;								Align	: Left
+								
+;							[Field	: KayJainInvPratyPin]
+;								Use	: name field
+;								Set as	: $PartyPinCode
+;								Style	: normal 
+;								Width	: 10% page
+;								Align	: Left
+;								
+;							[Field	: KayJainInvPratySCode]
+;								Use	: name field
+;								Set as	: $$GetGSTStateCode:$StateName + "-" + $StateName
+;								Style	: normal 
+;								Width	: 10% page
+;								Align	: Left
+								
+						[Line	: KayJainInvPratyGST]
+							Space Bottom	: 0.2
+							Field	: KayJainInvPratyGST
+							[Field	: KayJainInvPratyGST]
+								Use	: name field
+								Set as	: "GSTIN : " + $PartyGstin
+								Style	: normal 
+								Width	: 50% page
+;								Align	: Left
+								
+					[Part	: KayJainInvConsignDtl]
+						Border	: thin left
+						Line	: KayJainInvConsignDtl
+						Bottom Line	: KayJainInvConsignGST
+						[Line	: KayJainInvConsignDtl]
+							Space Top	: 0.2
+							Field	: KayJainInvConsignDtl
+							[Field	: KayJainInvConsignDtl]
+								Use	: name field
+								Set as	: "Consignee"
+								Style	: normal italic
+								Width	: 50% page
+								
+								
+						[Line	: KayJainInvConsignGST]
+							Space Bottom	: 0.2
+							Field	: KayJainInvConsignGST
+							[Field	: KayJainInvConsignGST]
+								Use	: name field
+								Set as	: "GSTIN : " + $ConsigneeGSTIN
+								Style	: normal 
+								Width	: 50% page
+							
+								
+					[Part	: KayJainInvDispDet]
+						Border	: thin bottom
+						Line	: KayJainInvDispDet, KayJainInvDispTrans
+						[Line	: KayJainInvDispDet]
+							Field	: KayJainInvDispMark, KayJainInvDispPkg, KayJainInvDispGR
+							Right Field	: short prompt, KayJainInvDispDT
+							Local	: Field	: short prompt	: Set as	: "Dt: "
+							Local	: Field	: short prompt	: Align		: Right
+							Local	: Field	: short propmt	: Width		: 15% page
+							[Field	: KayJainInvDispMark]
+								Use	: name field
+								Set as	: "Marks : " + $EIDetlMarks
+								Width	: 25% page
+								Align	: Left
+								Style	: normal
+							
+							[Field	: KayJainInvDispPkg]
+								Use	: name field
+								Set as	: "Pkg : " + $EIDetlPkg
+								Width	: 25% page
+								Align	: Left
+								Style	: normal
+								
+							[Field	: KayJainInvDispGR]
+								Use	: name field
+								Set as	: "GR/RR/PP No. : " + $BillofLadingNo
+								Width	: 25% page
+								Align	: Left
+								Style	: normal
+								
+							[Field	: KayJainInvDispDT]
+								Use	: UniDate Field
+								Set as	:  $BillofLadingDate
+								Width	: 10% page
+								Align	: Right
+								Style	: normal
+								
+
+						[Line	: KayJainInvDispTrans]
+							Space Bottom	: 0.2
+							Field	: KayJainInvDispTrans, KayJainInvDispAgency
+							[Field	: KayJainInvDispTrans]
+								Use	: name field
+								Set as	: "Transport : " + $BasicShippedBy
+								Width	: 56% page
+								Align	: Left
+								Style	: normal		
+								
+							[Field	: KayJainInvDispAgency]
+								Use	: name field
+								Set as	: "Agency : " + $EICheckPost
+								Width	: 44% page
+								Align	: Left
+								Style	: normal
+								
+					[Part	: KayJainInvColTit]
+						Line	: KayJainInvColTit
+						[Line	: KayJainInvColTit]
+							Use		: KayJainInvBodyPart
+							Local	: Field	: KayJainInvColTitDes		: Set as	: "Particulars "
+							Local	: Field	: KayJainInvColTitDes		: Align		: Left
+							Local	: Field	: KayJainInvColTitSize		: Set as	: "Size "
+							Local	: Field	: KayJainInvColTitQty		: Set as	: "Qnty/UOM "
+							Local	: Field	: KayJainInvColTitRate		: Set as	: "Rate "
+							Local	: Field	: KayJainInvColTitDR		: Set as	: "DR% "
+							Local	: Field	: KayJainInvColTitDD		: Set as	: "DD% "
+							Local	: Field	: KayJainInvColTitSD		: Set as	: "SD% "
+							Local	: Field	: KayJainInvColTitAmt		: Set as	: "Amount "
+							Local	: Field	: Default		: Type		: String
+							Local	: Field	: Default		: Align		: Center
+							Local	: Field	: Default		: Style		: Normal 
+							
+							
+				[Part	: KayJainInvBodyPart]
+					Border			: Thin Left Right
+					Line			: KayJainInvBodyPart, KayJainInvBodyPartTot, KayJainInvRoundOff
+					Repeat			: KayJainInvBodyPart	: InventoryEntries
+					Bottom Line		: KayJainInvBodyPartGST
+					Scroll			: Vertical
+					Float			: No
+					Common Borders	: Yes
+					Total			: KayJainInvColTitDes, KayJainInvColTitQty, KayJainInvColTitAmt
+					
+					[Line	: KayJainInvBodyPart]
+						Left Fields	: KayJainInvColTitDes
+						Right Fields: KayJainInvColTitSize, KayJainInvColTitQty, KayJainInvColTitRate, KayJainInvColTitDR
+						Right Field	: KayJainInvColTitDD, KayJainInvColTitSD, KayJainInvColTitAmt 
+						Local		: Field	: Default	: Style	: Normal
+						
+						[Field	: KayJainInvColTitDes]
+							Full Width	: Yes
+							Border		: Thin Left
+							Lines		: 0
+							Set as		: $StockItemName
+							Lines		: 0
+											
+						[Field	: KayJainInvColTitSize]
+							Use		: Name Field
+;							Border	: Thin Left
+							Width	: 10% Page
+							Set as	: $STKIbaseSize
+							Align	: Center
+							Lines	: 0
+							
+						[Field	: KayJainInvColTitQty]
+							Use		: Qty Primary Field
+							Width	: 15% Page
+;							Border	: Thin Left
+							Lines	: 0
+							Align	: Center
+							Set as	: $BilledQty
+												
+						[Field	: KayJainInvColTitRate]
+							Use		: Rate Price Field
+							Width	: 15% Page
+;							Border	: Thin Left
+							Set as	: $Rate
+							Align	: Center
+							Lines	: 0
+							
+						[Field	: KayJainInvColTitDR]
+							Use	    : Name Field
+							Width   : 5% Page
+;							Border  : Thin Left
+							Set as  : $VCHDisctRetail
+							Align	: Center
+							Lines	: 0
+							
+						[Field	: KayJainInvColTitDD]
+							Use		: Name Field
+							Width	: 5% Page
+;							Border	: Thin Left
+							Set as	: $VCHDisctDist
+							Align	: Center
+							Lines	: 0
+							
+						[Field	: KayJainInvColTitSD]
+							Use		: Name Field
+							Width	: 5% Page
+;							Border	: Thin Left
+							Set as	: $VCHDisctSpcl
+							Align	: Center
+							Lines	: 0
+							
+						[Field	: KayJainInvColTitAmt]
+							Use		: Amount Field
+							Width	: 15% Page
+;							Border	: Thin Left
+							Set as	: $Amount
+							Align	: Center
+							Lines	: 0
+							
+					[Line	: KayJainInvBodyPartTot]
+						Space Top	: 0.6
+;						Border	: Totals
+						Use		: KayJainInvBodyPart
+						Local	: Field	: KayJainInvColTitDes		: Set as	: "Total "
+						Local	: Field	: KayJainInvColTitSize		: Set as	: " "
+						Local	: Field	: KayJainInvColTitQty		: Set as	: $$Total:KayJainInvColTitQty 
+						Local	: Field	: KayJainInvColTitQty		: Border	: THIN TOP
+						Local	: Field	: KayJainInvColTitRate		: Set as	: " "
+						Local	: Field	: KayJainInvColTitDR		: Set as	: " "
+						Local	: Field	: KayJainInvColTitDD		: Set as	: " "
+						Local	: Field	: KayJainInvColTitSD		: Set as	: " "
+						Local	: Field	: KayJainInvColTitAmt		: Set as	: $$Total:KayJainInvColTitAmt
+						Local	: Field	: KayJainInvColTitAmt		: Border	: THIN TOP
+						Local	: Field	: Default					: Style		: Normal 
+						
+					[Line	: KayJainInvRoundOff]
+						Right Fields	: KayJainInvRoundOff, KayJainInvRoundOffValue
+						[Field	: KayJainInvRoundOff]
+							Use	: name field
+							Set as	: "Round Off"
+							Width	: 10% page
+							Style	: normal
+							
+						[Field	: KayJainInvRoundOffValue]
+							Use		: Amount field
+							Set as	: $$FilterAmtTotal:LedgerEntries:OnlyRoffLed:$Amount
+							Width	: 15% page
+							Style	: normal
+;							
+;[System	: Formula]
+;	OnlyRoffLed	: 
+												
+					[Line	: KayJainInvBodyPartGST]
+						Field	: KayJainInvBodyPartGST, 
+;						KayJainInvGST
+						Remove if	: $ledgerName = $PartyledgerName
+						[Field	: KayJainInvBodyPartGST]
+							Use	: NAME FIELD
+							Set as	: "Net Amt Includes "
+							CSfssd	: If $$IsEmpty:@CGSTVal Then "CGST:0.00" Else "CGST:" + $$String:@CGSTVal
+							CGSTVal	: $$FilterAmtTotal:LedgerEntries:CGSTLedFltr:$Amount
+							Align	: Left
+							Width	: 100% page
+							Style	: normal
+							
+;						[Field		: KayJainInvGST]
+;							Use		: Name field
+;							Set as	: "Net Amount Includes "
+;							CSfssd	: If $$IsEmpty:@CGSTVal Then "CGST:0.00" Else "CGST:" + $$String:@CGSTVal
+;							CGSTVal	: $$FilterAmtTotal:LedgerEntries:CGSTLedFltr:$Amount
+;;							Align	: Right	
+;							Width	: 85% page
+;							Style	: normal
+
+[System	: Formula]
+	CGSTLedFltr	: $$IsLedOfGrp:$LedgerName:$$GroupDuties							
+							
+		[Part	: KayJainInvBottomPart]
+			Vertical	: Yes
+			Space Top		: 0.3
+			Space Bottom	: 1
+			Border			: thin box
+			Parts			: KayJainInvAmtDtls, KayJainInvTerms
+			
+			[Part	: KayJainInvAmtDtls]
+				Space Bottom	: 0.3
+				Border	: thin bottom
+				Line	: KayJainInvAmtDtls
+				[Line	: KayJainInvAmtDtls]
+					field	: KayJainInvAmtDtls, KayJainInvAmtINW
+					Right Field	: KayJainInvAmtValue
+					[Field	: KayJainInvAmtDtls]
+						Use	: name field
+						Set as	: "Amount " 
+						Style	: normal bold
+						Align	: Left
+						Width	: 10% page
+						
+					[Field	: KayJainInvAmtINW]
+						Use		: name field
+						Set as	: $$InWords:$Amount + " Only"
+						Style	: normal
+						Align	: Left
+						Width	: 70% page
+						
+					[Field	: KayJainInvAmtValue]
+						Use		: Amount Field
+						Set as	: $$CollAmtTotal:InventoryEntries:$Amount
+						Style	: normal
+						Align	: Right
+						Width	: 20% page
+						
+			[Part	: KayJainInvTerms]
+				Line	: KayJainInvTerms, KayJainInvTerms1, KayJainInvTerms2, KayJainInvTerms3, KayJainInvSign
+				[Line	: KayJainInvTerms]
+					Field	: KayJainInvTerms
+					Right Field	: KayJainInvCompFor
+					[Field	: KayJainInvTerms]
+						Use	: name field
+						Set as	: "Terms & Conditions: "
+						Style	: normal italic
+						Align	: Left
+						Border	: thin bottom
+						
+					[Field	: KayJainInvCompFor]
+						Use	: name field
+						Set as	: "For "
+						Style	: normal
+						Align	: Right
+						
+				[Line	: KayJainInvTerms1]
+					Field	: KayJainInvTerms1
+					Right Field	: KayJainInvComName
+					[Field	: KayJainInvTerms1]
+						Use	: name field
+						Set as	: "1 . " + "Subject to " + @@Jurisdiction + "  Jurisdiction. "
+						Style	: small
+						Align	: Left
+						Width	: 70% page 
+						Lines	: 0
+						
+					[Field	: KayJainInvComName]
+						Use	: name field
+						Set as	: @@CmpMailName
+						Style	: normal bold
+						Width	: 30% page
+						Align	: Right
+						
+				[Line	: KayJainInvTerms2]
+					Field	: KayJainInvTerms2
+					[Field	: KayJainInvTerms2]
+						Use	: name field
+						Set as	: "2 . " + "Prevailing Bank Interest will be charged on bills unpaid by due date. "
+						Style	: small
+						Align	: Left
+						Width	: 70% page 
+						Lines	: 0
+						
+				[Line	: KayJainInvTerms3]
+					Field	: KayJainInvTerms3
+					[Field	: KayJainInvTerms3]
+						Use	: name field
+						Set as	: "3 . " + "Payment is accepted only through 'AT PAR CHQ/DD', payable at " + @@Jurisdiction + "or through " + $BankMailingName:Ledger:@@VchBankMailingName + "A/c No " + $BankDetails:Ledger:@@VchBankName + "," + "NEFT/RTGS "	
+						Style	: small
+						Align	: Left
+						Width	: 70% page 
+						Lines	: 0
+				
+				[Line	: KayJainInvSign]
+					Field	: KayJainInvEOE
+					Right Field	: KayJainInvSign
+					[Field	: KayJainInvEOE]
+						Use	: name field
+						Set as	: "E & O E "
+						Style	: normal 
+						Align	: Left
+						
+					[Field	: KayJainInvSign]
+						Use	: name field
+						Set as	: "Auth Sign "
+						Style	: normal
+						Align	: Right
+	

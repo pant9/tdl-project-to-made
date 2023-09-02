@@ -1,0 +1,11 @@
+[#Line: EXPINV Company]
+	Local	: Field	: Name Field	: Style	:  large bold
+	
+[#Line	: EXPINV Consignee]
+	Local	: Field : Name Field : Style	: OwnStyle
+	
+	[Style	: OwnStyle]
+		Font	: Cambria
+		Height	: 15
+		Bold	: Yes
+		Italic	: Yes

@@ -1,0 +1,88 @@
+[#Menu	: Default]
+	Add	: Button	: RefreshTdlButton
+
+[#Form	: Default]
+	Add	: Button	: RefreshTdlButton
+
+	[Button	: RefreshTdlButton]
+		Title	: "Refresh"
+		Key		: CTRL + 8
+		Action	: Refresh TDL
+
+;------------------------------------------ADD LINE IN COMPREHENSIVE INVOICE------------------------------------	
+	
+[#Part: EXPINV LeftSign]
+	Add	: Option	: EXPINV Contactno	: @@IsSales
+	
+	[!Part	: EXPINV Contactno]
+		ADD	: Bottom Part	: BEFORE	: EXPINV Narration	: EXPINVContactNum
+		
+		[Part: EXPINVContactNum]
+			Line	: EXPINVContactNum
+			[Line	: EXPINVContactNum]
+				Field	: Short prompt, EXPINVContactNum
+				Local	: Field	: Short prompt	: Set as	: "Contact For Delivery"
+				Local	: Field	: Short prompt	: Width		: 20% PAGE
+				[Field	: EXPINVContactNum]
+					Use	: Name Field
+					Set as	: $MobileNumbers:company:##svcurrentcompany
+					Width	: 10% page
+					
+		
+			
+[#Part	: EXPINV OtherRef]
+	Local    : Field : EXPINV SubTitle : Info    : If @@IsGCCCountries Then $$LocaleString:"Narration" Else $$LocaleString:"Narration"
+	
+[#Line	: EXPINV OtherRef]
+     Local   : Field : Name Field : Set as : $Narration
+	 
+[#Part: EXPINV TopRight]
+	Add	: Part	: Before	: EXPINV Terms	: EXPINVVenCode
+	
+	[Part	: EXPINVVenCode]
+		Border	: Thin Bottom
+		
+		Lines	: EXPINVVenCodeTit, EXPINVVenCode
+		[Line	: EXPINVVenCodeTit]
+			Space Bottom	: 0.2
+			Field	: EXPINVVenCodeTit
+			[Field	: EXPINVVenCodeTit]
+				Use	: Name Field
+				Set as	: "Vendor Code"
+				Style	: Normal
+				Width	: 15% PAGE
+				
+		[Line	: EXPINVVenCode]
+			Field	: EXPINVVenCode
+			[Field	: EXPINVVenCode]
+				Use	: Name Field
+				Set as	: $$MachineTime;:$Date;$OnlyAlias:Ledger:$PartyLedgerName
+				Width	: 15% PAGE
+
+[#Field	: VCHBATCH Godown]	
+	On	: Accept	: Yes	: Call	: SetQtyFunction
+	On	: Accept	: Yes	: Field Accept	
+	[Function	: SetQtyFunction]
+		01	: Set Value	: BilledQty	: $$AsQty:15
+		02	: Set Value	: Amount	: $$AsAmount:100
+;[#Part: EXPINV Consignee]
+;	Add	: Line	: At End	: EXPINVVendorCode
+;	[Line	: EXPINVVendorCode]
+;		Field	: Short Prompt, EXPINVVendorCode
+;		Local	: Field	: Short Prompt	: Set as	: "Vendor code"
+;		Local	: Field	: Short Prompt	: Width		: 15% page
+;		[Field	: EXPINVVendorCode]
+;			Use	: Name Field
+;			Set as	: $OnlyAlias:Ledger:$ConsigneeMailingName
+;			Width	: 15% page
+;			
+;[#Part: EXPINV Buyer]                 
+;	Add	: Line	: At End	: EXPINVBuyerVenCode
+;	[Line	: EXPINVBuyerVenCode]
+;		Field	: Short Prompt, EXPINVBuyerVenCode
+;		Local	: Field	: Short Prompt	: Set as	: "Vendor Code"
+;		Local	: Field	: Short Prompt	: Width		: 15% page
+;		[Field	: EXPINVBuyerVenCode]
+;			Use	: Name Field
+;			Set as	: $OnlyAlias:Ledger:$PartyMailingName
+;			Width	: 15% page 

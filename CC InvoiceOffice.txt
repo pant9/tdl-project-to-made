@@ -1,0 +1,963 @@
+ ;;;;Discount in Party Master
+;;Three Mobile Nos.
+;; Stop Billing
+;; Security Deposit Amount, DAte,Remarks
+;; Security Deposit Chq No,Bank,Remarks
+;; Remove Purchase from exempt unit
+;; Pesticide Lic. No.
+;; Pin code print in invoice
+;; mfg date col as dd/mm/yyyy
+;; CGST SGST
+
+[#Form	: Comprehensive Invoice]
+;	Add	: Bottom Part: At End: HOAddress
+;[#Part: EXPINV ClPageBreak]
+;	Add	: Part: At End: HOAddress
+	
+;[Part: HOAddress]
+[#Part: DSP EXPINV OpPageBreak]
+	Add	: Part	: After: DSP EXPINV Leading : ExpInvCashNote
+
+
+[#Part: EXPINV OpPageBreak]
+	Add	: Part	: After: EXPINV Leading : ExpInvCashNote
+[Part	: ExpInvCashNote]
+	Line	: ExpInvCashNote
+[Line	: ExpInvCashNote]
+	Field	: ExpInvCashNote
+	Border	: Thin Box
+[Field	: ExpInvCashNote]
+	Use	: Name Field
+	Set as	: "Message : CASH PAYMENTS STRICITLY PROHIBITED."
+	Style	: Large Bold
+	Full Width	: Yes
+	
+
+
+[#Form	: VchPrint]
+
+[#Part: DSP EXPINV InvoiceCompGen]
+	Line	: HOAddress
+[#Part: EXPINV InvoiceCompGen]	
+	Line	: HOAddress
+[Line	: HOHSN]
+	Field	: Name Field
+	Local	: Field: Name Field : Set as: "REMARKS: HSN Code 28 is applied where vide Notification No.18/2007 dt 30.06.2017, Schedule II, Serial 56, Chapter 28, Goods cleared under Sr.No.1(F) of Schedule 1,PART(A)of the F.C.O. 1985."
+	Local	: Field: Name Field : Full Width	: Yes
+	Local	: Field: Name Field : Style	: Tiny
+	Local	: Field: Name Field : Lines	: 2
+	
+	Space Top: .3
+[Line	: HOAddress]
+	Field	: Name Field
+	Local	: Field: Name Field : Set as: "Head Office : 401-B, IVth Floor, Usha Kiran Building, Azadpur Commercial Complex, New Delhi-110033, INDIA."
+	Local	: Field: Name Field : Full Width	: Yes
+	Local	: Field: Name Field : Style	: Small Bold
+	Local	: Field: Name Field : Align	: Center
+	Space Top: .3
+	Border	: Thin box
+	
+[#Part: DSP EXPINV Company]
+	Add	: Bottom Line: EXPINVCMPPANRS,ExpInvPCNo,ExpInvFENo	
+[#Part: EXPINV SalesTopLeftWithLogo]
+;	Add	: Part: After : EXPINV CompanyDetails : ExpInvPestDet
+	Height	: 40% Page
+ [Part	: ExpInvPestDet]
+	 Line	: EXPINVCMPPANRS ;;,ExpInvPCNo,ExpInvFENo	
+	 Space Left	: 15% Page
+[#Part: EXPINV Company]
+	Add	: Bottom Line: EXPINVCMPPANRS ,ExpInvPCNo,ExpInvFENo	
+;	Height		: If ((NOT $$InPrintMode) AND ($$InExportAction OR $$InMailAction)) Then 18% Else 14% Page
+	;Border	: Thin Right
+	Height		: If (NOT $$InPrintMode AND ($$InExportAction OR $$InMailAction)) Then 15% Else 15% Page
+ ;   Width	: 40%  Page            
+;	Local	: Part	: Default : Local	: Line	: Default : Local	: Field	: Default : Full Width	: Yes
+;[#Part: EXPINV Company EcoPrinting]
+ ;   Width	: 50%  Page            
+	
+;[#Part: EXPINV Logo]
+ ;   Width	: 10%  Page            
+
+[#Field: EXPINV Address]
+	Full Width	: Yes
+[Line:EXPINVCMPPANRS]
+	Fields		:  Short Prompt,EXPINVCMPPANRS
+   	Local       : Field : Short Prompt : Set as 	: $$LocaleString:"PAN No. :"
+;    Space Top   : 0.1
+    [Field	: EXPINVCMPPANRS]
+		Use		: Name Field
+		Set as	: $IncomeTaxNumber:Company:##SVCurrentCompany
+		Style	: Small
+		Width	: 15
+                
+[Line: ExpInvPCNo]
+	Fields		:  ExpInvPCNo
+   	Local       : Field : Short Prompt : Set as 	: $$LocaleString:"Pesticides Lic. No. :"
+;    Space Top   : 0.1
+    [Field	: ExpInvPCNo]
+		Use		: Name Field
+		Set as	: "Pesticides Lic. No. : " + $CMPPesticideLicNo:Company:##SVCurrentCompany
+		Style	: Small
+;;		Width	: 30
+[Line: ExpInvFENo]
+	Fields		:  ExpInvFENo
+   	Local       : Field : Short Prompt : Set as 	: $$LocaleString:"Fertilizers Lic. No. :"
+;	Local       : Field : Short Prompt 	: Width	: 12
+;    Space Top   : 0.1
+    [Field	: ExpInvFENo]
+		Use		: Name Field
+		Set as	: "Fertilizers Lic. No. : " + $CMPFertilizersLicNo:Company:##SvCurrentCompany
+		Style	: Small
+	;;	Width	: 30
+[#Part: DSP EXPINV Consignee]
+	Add	: Line	: After : EXPINV ConAddress : ExpInvPinCode
+	Add	: Line	: ExpInvBuyerType
+[#Part: EXPINV Consignee]
+	Add	: Line	: After : EXPINV ConAddress :ExpInvPinCode
+	Add	: Line	: ExpInvBuyerType
+	Height	: 18% Page
+	Border: thin top bottom
+    [#Line: EXPINV Consignee]
+		;Delete:Field   : Name Field
+		;Add  :  Field  : INvConsignee
+;		Local:Field:INvConsignee:Set as:$RSpropname:LEDGER:$PARTYLEDGERNAME
+	[Field:INvConsignee]
+		Use:name field
+		Style:small bold
+[#Part: EXPINV Contact]
+	Delete	:Lines 		
+	Add	: Line: EXPINV Contact, EXPINV TelNo,EXPINV EmailAddress
+
+		
+[#Line: EXPINV Contact]
+	Local		: Field : Medium Prompt	: Set As	: $$LocaleString:"Contact Person : "
+	
+[#System	: Formulae]
+	VchContactNo		: If ($$IsEmpty:@@VchSuppAddtyp OR $$IsSysName:@@VchSuppAddtyp OR (NOT ##ICFGSupplementary AND ##ICFGDefaultDet)) Then $$SPrintf:@@VchContactDtlsFormat:@@VchContactMobileNo:@@VchContactTelNo Else $$SPrintf:@@LedContactFrmt:$$FuncVchSuppMobileNumber:$$FuncVchSuppPhoneNumber
+		
+[Line:EXPInvLiable]
+Contact	Field:name field
+	Local:Field:name field:Set as:"Liable Person : " +$LedgerContact:LEDGER:$PARTYLEDGERNAME
+	Local   : Field : Name Field : Style	: Small
+    Local   : Field : Name Field : Width    : 50% Page
+	Local   : Field : Name Field : Cells    : 2 * ($$Quotient:@@ExcelCellColumn:4)
+[Line:EXPInvLiableMob]
+	Field:name field
+	Local:Field:name field:Set as:"Liable Mobile No. : " +$LedgerMobile:LEDGER:$PARTYLEDGERNAME
+	Local   : Field : Name Field : Style	: Small
+    Local   : Field : Name Field : Width    : 50% Page
+    Local   : Field : Name Field : Cells    : 2 * ($$Quotient:@@ExcelCellColumn:4)
+[Line	: ExpInvPinCode] 
+	Field   : Name Field
+	Local   : Field : Name Field : Set as   : "Pin : " + $PinCode:Ledger:$PartyLedgerName
+	Local   : Field : Name Field : Style	: Small
+    Local   : Field : Name Field : Width    : 50% Page
+	Local   : Field : Name Field : Cells    : 2 * ($$Quotient:@@ExcelCellColumn:4)    
+	
+[Line	: ExpInvBuyerType]
+	Field   : medium prompt,Name Field
+	Local   : Field : Medium Prompt : Set as   : "Registration Type : " 
+	Local   : Field : Medium Prompt : Style:small bold
+	Local   : Field : Name Field : Set as   : $GSTREGISTRATIONTYPE:Ledger:$PartyLedgerName
+	Local   : Field : Name Field : Style	: Small BOLD
+	Local	: Field : Medium Prompt	: Width			: 18% Page
+				
+    ;ocal   : Field : Name Field : Width    : 50% Page
+	Local   : Field : Name Field : Cells    : 2 * ($$Quotient:@@ExcelCellColumn:4)    
+
+
+;[#Line: EXPINV Totals]
+;	Add	: Right Field:  Before	: EXPINV BilledQtyTotal :  ExpInvRSBatchTitle,ExpInvRSMfdTitle,ExpInvRSExpiryTitle,ExpInvRSPkgsTitle
+;	Local : Field : ExpInvRSBatchTitle	: Set as	: "" 
+;	Local : Field : ExpInvRSMfdTitle	: Set as	: ""
+;	Local : Field : ExpInvRSExpiryTitle	: Set as	: ""
+;	Local : Field : ExpInvRSPkgsTitle	: Set as	: ""
+;
+;[#Line: EXPINV Column1]
+;	Add	: Right Field:  Before	: EXPINV QtyTitle : ExpInvRSBatchTitle,ExpInvRSMfdTitle,ExpInvRSExpiryTitle,ExpInvRSPkgsTitle
+;
+;[#Line: EXPINV Column2]
+;	Add	: Right Field:  Before	: EXPINV ActualQtyTitle :  ExpInvRSBatchTitle,ExpInvRSMfdTitle,ExpInvRSExpiryTitle,ExpInvRSPkgsTitle
+;	Local : Field : ExpInvRSBatchTitle	: Set as	: "" 
+;	Local : Field : ExpInvRSMfdTitle	: Set as	: ""
+;	Local : Field : ExpInvRSExpiryTitle	: Set as	: ""
+;	Local : Field : ExpInvRSPkgsTitle	: Set as	: ""
+;[#Line: EXPINV AccDetails]
+;	Add	: Right Field:  Before	: EXPINV AccQty :  ExpInvRSBatchTitle,ExpInvRSMfdTitle,ExpInvRSExpiryTitle,ExpInvRSPkgsTitle
+;	Local : Field : ExpInvRSBatchTitle	: Set as	: "" 
+;	Local : Field : ExpInvRSMfdTitle	: Set as	: ""
+;	Local : Field : ExpInvRSExpiryTitle	: Set as	: ""
+;	Local : Field : ExpInvRSPkgsTitle	: Set as	: ""
+;
+;
+;[Field: ExpInvRSBatchTitle]
+;	Use		: Name Field
+;	Set as	: "Batch Name"
+;	Width	: 6
+;	Style	: Small ; Bold
+;	Border	: Thin Left
+;[Field: ExpInvRSMfdTitle]
+;	Use		: Name Field
+;	Set as	: "Mfd On"
+;	Width	: 5
+;	Style	: Small ; Bold
+;	Border	: Thin Left
+;[Field: ExpInvRSExpiryTitle]
+;	Use		: Name Field
+;	Set as	: "Expiry On"
+;	Width	: 5
+;	Style	: Small ; Bold
+;	Border	: Thin Left
+;	
+;[Field: ExpInvRSPkgsTitle]
+;	Use		: Name Field
+;	Set as	: "Packages"
+;	Width	: 4
+;	Style	: Small ; Bold
+;	Border	: Thin Left
+;	
+;
+;
+;
+;[#Part: EXPINV InvInfo]
+;	Delete	: Repeat
+;    Add : Repeat      : EXPINV InvDetails    : InvBatches ;Batch Allocations
+;
+;[#Line: EXPINV InvDetails]
+;	Add	: Right Field	: Before	: EXPINV Qty 	: ExpInvRSBatch,ExpInvRSMfd ,ExpInvRSExpiry,ExpInvRSPkgs
+;;	Delete	: Left Field	: EXPINV Packages
+;	Local: Field	: EXPINV HSNSACDetails : Set as	: $MyHSNCode:StockITem:$StockITemNAme
+;	;Local: Field	: EXPINV HSNSACDetails : Width	: 6
+;	;Local	: Field	: EXPINV HSNSACDetails	: Delete: Border 
+;[#Field: EXPINV Packages]
+;	Invisible	: Yes
+;[#Field	: EXPINV AccPackages]
+;	Invisible	: Yes
+;[Field : ExpInvRSBatch]
+;	Use		: Name Field
+;	Set as	: $BatchName
+;	Width	: 6
+;	Style	: Small ; Bold
+;	Border	: Thin Left
+;[Field : ExpInvRSMfd]
+;	Use		: Uni Date Field
+;	Set as	: $Mfdon
+;	Width	: 5
+;	Style	: Small ;Bold
+;	Border	: Thin Left
+;[Field : ExpInvRSExpiry]
+;	Use		: Short Date Field
+;	Set as	: $ExpiryPeriod
+;	Width	: 5
+;	Style	: Small ;Bold
+;	Border	: Thin Left
+;[Field : ExpInvRSPkgs]
+;	Use		: Name Field
+;	Set as	: $BasicNumPackages
+;	Width	: 4
+;	Style	: Small Bold
+;	Border	: Thin Left
+	
+[Collection	: InvBatches]
+	Source Collection	: ..
+	Walk	: Inventory Entries,Batch Allocations
+	Compute	: StockItemName	: $..StockItemname
+	Compute	: BatchName		: $BatchName
+	Compute	: BilledQty		: $BilledQty
+	Compute	: RAte			: $RAte
+	Compute	: Amount		: $Amount
+	Compute	: BasicNumPackages : $..BasicNumpackages
+	Compute	: MfdON			: $MfdOn
+	Compute	: ExpiryPeriod	: $ExpiryPeriod
+
+[#Field: EXPINV MfgDate]
+	Delete : Format     ; : Month Beginning, Universal Date, Behind:$Date
+    
+[#Object: StockITem]
+	MyHSNCode : $$CollectionField:$HSNCODE:1:GSTDETAILS
+
+;[#Field :EXPINV PackagesTitle1]
+;	Invisible	: Yes
+;[#Field	: EXPINV PackagesTitle2]
+;	Invisible	: Yes
+	
+
+
+[System	: UDF]
+	EITPTNAME	: String	: 1000
+	EiVehNO		: String	: 1001
+
+[#Form: EiSupplementary] 
+	Add	: Part: EiInvCols
+[#Form: VchSuppl DespatchOrderDetails]
+	Add	: Part: EiInvCols
+	
+	
+[Part: EiInvCols]
+	Line	: EIWTLine,EIPvtLine
+
+[Line	: EIWTLine]
+	Field	: Short Prompt,EIWTLine
+	Local: Field	: Short Prompt : Set as: "Transport Name : "
+	Border	: thin top
+	
+	[Field	: EIWTLine]
+		Use	: Name Field
+		Storage	: EITPTNAME
+		Style	: Small Bold
+[Line	: EIPvtLine]
+	Field	: Short Prompt,EIPvtLine
+	Local: Field	: Short Prompt : Set as: "Vehicle No. : "
+	[Field	: EIPvtLine]
+		Use	: Name Field
+		Storage	: EiVehNO
+		Style	: Small Bold
+	
+
+;;[#Part: EXPINV Terms]
+[#Part: EXPINV TopRight]
+	Add	: Part	: ExpInvOthersD
+[Part	: ExpInvOthersD	]
+	Add	: Bottom Line	:EISalePerson, EIWTLine1,EIPvtLine1 ;;,EiCaseLine1
+[Line	: EISalePerson]
+	Field	: Short Prompt,EISalePerson
+	Local: Field	: Short Prompt : Set as: "Agent Name : "
+	Border	: thin top
+	
+	[Field	: EISalePerson]
+		Use	: Name Field
+		Set as	: $Parent:Ledger:$LedgerName
+		Style	: Small Bold
+
+[Line	: EIWTLine1]
+	Field	: Short Prompt,EIWTLine1
+	Local: Field	: Short Prompt : Set as: "Transport Name : "
+	Border	: thin top
+	
+	[Field	: EIWTLine1]
+		Use		: Name Field
+		Set as	: $EITPTNAME
+		Style	: Small
+[Line	: EIPvtLine1]
+	Field	: Short Prompt,EIPvtLine1
+	Local: Field	: Short Prompt : Set as: "Vehicle No. : "
+	[Field	: EIPvtLine1]
+		Use	: Name Field
+		Set as	: $EIVEHNo
+		Style	: Small 
+
+[#Form	: VCHPrint]
+[#Part: DSP EXPINV Terms]
+	Add	: Bottom Line	:EISalePerson, EIWTLine1,EIPvtLine1 ;;,EiCaseLine1
+	
+
+;;;;Discount in Party Master
+;;Three Mobile Nos.
+;; Stop Billing
+;; Security Deposit Amount, DAte,Remarks
+;; Security Deposit Chq No,Bank,Remarks
+[System : UDF]
+	IsRSActiveLedger	: Logical : 3501
+	PartyDiscount		: Number	: 3502
+	PartyMobile1		: String	: 3503
+	PartyMobile2		: String	: 3504
+	SecAmount			: Amount	: 3505
+	SecDAte				: Date		: 3506
+	SecRemarks			: String	: 3507
+	SecChqNO			: String	: 3508
+	SecBankName			: String	: 3509
+	SecBankRem			: String	: 3510
+	CMPPesticideLicNo	: String	: 3511
+	CMPFertilizersLicNo	: String	: 3512
+	RsLedDist			: String	: 3513
+	RSBankAcNo			: String	: 3514
+	RSFname				: String	: 3515
+	RSpropname			: String	: 3516
+	AccOpenDate         : Date      : 3517
+	NumofChq            : Number    : 3518
+	AuthSign            : String    : 3519
+	SecBankRem1         : String    : 3520
+	Designation         : String    : 3521
+	SecondContact       : String    : 3522
+	RelationPerson      : String    : 3523
+	RelationMobile      : String    : 3524
+	ResAddress          : Aggregate : 3525
+	physicalVerify      : Logical   : 3526
+	DocRecord1          : String    : 3527  
+	DocRecord2A         : String    : 3528
+	Proprietorship      : String    : 3529
+	RsAddress           : String    : 3530
+	
+
+[System : Formula]
+	RSActiveLedger : Not $IsRSActiveLedger
+
+;;;;;;;;;;;;;;Ledger Changes
+[#FOrm : Ledger]
+	
+[#Part: MST LED Parent]	
+	Add : Part : RSActiveLedger
+[Part: RSActiveLedger]
+    Line : RSActiveLedger,LedPartyDisc,LedAccOpening,LedPartySecAMount,LedPartySecDate,LedPartySecRem,LedPartyNumChq,LedPartySecChqNo,LedPartySecBank,LedPartySecBankAC,LedPartySignatory,LedPartySecBankRem,LedPartySecBAnkRem1,LedPhysicalVerification,+
+	LedDocRecord1,LedDocRecord2;;,RSApprovedLedger
+[Line : RSActiveLedger]
+	Field : Medium Prompt,RSActiveLedger
+	Local : Field : Medium Prompt : Set as : "Stop Billing ? "
+[Field : RSActiveLedger]
+	Use : Logical Field
+	Set as : if $$IsEmpty:$$Value then "No" else $$Value
+	Storage : IsRSActiveLedger
+	Set Always : Yes
+;	Skip	: Not $$IsCmpOwner
+
+[Line : LedPartyDisc]
+	Field : Medium Prompt,LedPartyDisc
+	Local : Field : Medium Prompt : Set as : "Discount %age :"
+[Field : LedPartyDisc]
+	Use : Number Field
+	Storage : PartyDiscount
+	Set Always : Yes
+	Format	: "NoZero,Percentage"
+[Line  : LedAccOpening]
+	Field  : Medium Prompt,LedAccOpening
+	Local  : Field  : Medium prompt : Set as : "Account Opening Date :"
+	Space Bottom:1
+[Field : LedAccOpening]
+	Use : Uni Date Field
+	Storage : AccOpenDate
+	Set Always : Yes
+
+	
+[Line : LedPartySecAMount]
+	Field : Medium Prompt,LedPartySecAMount
+	Local : Field : Medium Prompt : Set as : "Security Amount : "
+[Field : LedPartySecAMount]
+	Use : Amount Field
+	Storage : SecAmount
+	Set Always : Yes
+[Line : LedPartySecDate]
+	Field : Medium Prompt,LedPartySecDate
+	Local : Field : Medium Prompt : Set as : "Security Date : "
+[Field : LedPartySecDate]
+	Use : Uni Date Field
+	Storage : SecDAte
+	Set Always : Yes
+
+[Line : LedPartySecRem]
+	Field : Medium Prompt,LedPartySecRem
+	Local : Field : Medium Prompt : Set as : "Security Remarks : "
+	Space Bottom:1
+[Field : LedPartySecRem]
+	Use : Name Field
+	Storage : SecRemarks
+	Set Always : Yes
+[Line  : LedPartyNumChq]
+	Field  : medium prompt,LedPartyNumChq
+	Local  : Field  : medium prompt : Set as : "Number of Cheques : "
+[Field  : LedPartyNumChq]
+	Use : number field
+	Storage : NumofChq
+	Set Always:Yes
+	Format   : "no zero"
+[Line : LedPartySecChqNo]
+	Field : Medium Prompt,LedPartySecChqNo
+	Local : Field : Medium Prompt : Set as : "Detail of Cheque No. : "
+[Field : LedPartySecChqNo]
+	Use : Name Field
+	Storage : SecChqNO
+	Set Always : Yes	
+[Line : LedPartySecBank]
+	Field : Medium Prompt,LedPartySecBank
+	Local : Field : Medium Prompt : Set as : "Name of Bank : "
+[Field : LedPartySecBank]
+	Use : Name Field
+	Storage : SecBankName
+	Set Always : Yes
+[Line : LedPartySecBankAC]
+	Field : Medium Prompt,LedPartySecBankAC
+	Local : Field : Medium Prompt : Set as : "Account Number : "
+[Field : LedPartySecBankAC]
+	Use : Name Field
+	Storage : RSBankAcNo	
+	Set Always : Yes
+[Line  : LedPartySignatory]
+	Field  : medium prompt,LedPartySignatory
+	Local  : Field  : Medium prompt : Set as : "Authorized Signatory : "
+[Field  : LedPartySignatory]
+	Use   : name field
+	Storage : AuthSign
+	Set Always : Yes
+
+[Line : LedPartySecBankRem]
+	Field : Medium Prompt,LedPartySecBankRem
+	Local : Field : Medium Prompt : Set as : "Remarks 1 : "
+[Field : LedPartySecBankRem]
+	Use : Name Field
+	Storage : SecBankRem
+	Set Always : Yes	
+[Line  : LedPartySecBankRem1]
+	Field  : Medium prompt,LedPartySecBankRem1
+    Local  : Field  : Medium prompt : Set as : "Remarks 2 : "
+	Space Bottom:1
+[Field  : LedPartySecBankRem1]
+	Use  : name field
+	Storage  : SecBankRem1
+	Set Always:Yes
+[Line : LedPhysicalVerification]
+	Field:medium prompt,LedPhysicalVerification
+	Local:Field:medium prompt:Set as:"Physical Verification : "
+[Field:LedPhysicalVerification]
+	Use:LOGICAL field
+	Storage:physicalVerify
+	Set Always:Yes
+[Line:LedDocRecord1]
+	Field:medium prompt,LedDocRecord1
+    Local:Field:medium prompt:Set as:"Documents in Record 1 : "
+[Field:LedDocRecord1]
+	Use:name field
+	Storage:DocRecord1
+	Set Always:Yes
+[Line:LedDocRecord2]
+	Field:medium prompt,LedDocRecord2
+    Local:Field:medium prompt:Set as:"Documents in Record 2 : "
+[Field:LedDocRecord2]
+	Use:name field
+	Storage:DocRecord2A
+	Set Always:Yes
+[#Part: LED Contact]
+	;Add  : Line  :AFTER :LEDStateNote:LedResAdd 
+    Delete:Line: LED Contact
+	Add	: Line	: At Beginning	:LedResAdd, Ledproprietorship,LedProp,Led FName,Led Designation
+	Delete	: Line	: LED Phone
+	Add	: Line	: After: LED Mobile:LED Phone,LedSecondConPer,LedRelation,LedConMob,LedDistrictRS;,LED Mobile2;,LED Mobile3,
+    Repeat:LedResAdd:RESAddress
+	Break On:$$IsEmpty:$RsAddress
+	Height:20
+	;Scroll:Vertical
+;[#Line: LED Contact]
+;	Local       : Field : Medium Prompt : Set as 	: $$LocaleString:"Contact Name"
+[#Line : LED Mobile]
+	Local : Field  : medium prompt  : Set as : "Liable's Mobile No.1"
+[#Line: LED Fax]
+	Local       : Field : Medium Prompt : Set as : $$LocaleString:"Aadhar No.:"
+	
+
+[Line  : LedResAdd]
+	Field:medium prompt,LedResAdd
+	Local:Field  : medium prompt  : Set as : "Residential Address"
+	Local: Field : Medium Prompt : Inactive : $$Line > 1
+	;Space Bottom : 2
+[Field  : LedResAdd]
+	Use   : name field
+	Storage:RsAddress
+	;Set as:$$Line > 1
+	;Set Always:Yes
+	Width:30
+	Unique:Yes
+[#Line: LED Mailing Address]
+	Local:Field:medium prompt:Set as:"Business Address"
+[#Line: LED Phone]
+	Local       : Field : Medium Prompt : Set as : $$LocaleString:"Liable's Mobile No.2"
+
+	[Line	: LedProp]
+    	Fields      : Medium Prompt, LedProp
+        Local       : Field : Medium Prompt : Set as : $$LocaleString:" Liable Person :"
+		[Field: LedProp]
+			Use         : Name Field
+			Style       : Small Bold
+			Storage     : LedgerContact ;RSpropname
+			Inactive    : $$IsEmpty:#LEDMailingName
+			Invisible   : ##MVInMultiMode
+			Skip		: @@SkipMailingDetails
+		[Line : Ledproprietorship]
+			Field:medium prompt,Ledproprietorship
+			Local:Field:medium prompt:Set as:"Proprietorship/Partnership : "
+		[Field:Ledproprietorship]
+			Use:name field
+			Storage:Proprietorship
+			Set Always:Yes
+
+	[Line	: Led FName]
+    	Fields      : Medium Prompt, Led FName
+        Local       : Field : Medium Prompt : Set as : $$LocaleString:"Father' Name"
+		[Field: Led FName]
+			Use         : Name Field
+			Style       : Small Bold
+			Storage     : RSFname
+			Inactive    : $$IsEmpty:#LEDMailingName
+			Invisible   : ##MVInMultiMode
+			Skip		: @@SkipMailingDetails
+	[Line   : Led Designation]
+		Field  : Medium prompt,Led Designation
+		Local  : Field   : Medium prompt : Set as  : "Designation"
+    [Field  : Led Designation]
+		Use : name field
+		Storage :Designation
+[Line : LedSecondConPer]
+	Field   : Medium Prompt,LedSecondConPer
+	Local  : Field  : Medium prompt  : Set as  : "Second Contact Person"
+[Field  : LedSecondConPer]
+	Use  : name field
+	Storage  : SecondContact
+	Set Always:Yes
+[Line   : LedRelation]
+	Field  : Medium prompt,LedRelation
+    Local  : Field  : Medium prompt :Set as  : "Relation to Liable Person"
+[Field  : LedRelation]
+	Use  : name field
+	Storage:RelationPerson
+	Set Always:Yes
+[Line  : LedConMob]
+	Field  : Medium prompt,LedConMob
+    Local:Field:Medium prompt:Set as:"Contact's Mobile No."
+[Field  : LedConMob]
+	Use  : name field
+	Storage:RelationMobile
+	Set Always:Yes
+	;Format:"no zero"
+	[Line: LED Mobile2]
+
+    	Fields      : Medium Prompt, LED Mobile2
+        Local       : Field : Medium Prompt : Set as : $$LocaleString:"Contact's Mobile No."
+		
+		[Field: LED Mobile2]
+			Use         : Name Field
+			Style       : Small Bold
+			Storage     : PartyMobile1
+			Inactive    : $$IsEmpty:#LEDMailingName
+			Invisible   : ##MVInMultiMode
+			Skip		: @@SkipMailingDetails
+	[Line: LED Mobile3]
+    	Fields      : Medium Prompt, LED Mobile3
+        Local       : Field : Medium Prompt : Set as : $$LocaleString:"Mobile no. 3"
+		[Field: LED Mobile3]
+			Use         : Name Field
+			Style       : Small Bold
+			Storage     : PartyMobile2
+			Inactive    : $$IsEmpty:#LEDMailingName
+			Invisible   : ##MVInMultiMode
+			Skip		: @@SkipMailingDetails
+[Line	: LedDistrictRS]
+	Field	: Medium Prompt,LedDistrictRS
+	Local	: Field: Medium Prompt : Set as	: "District :"
+	[Field	: LedDistrictRS]
+		Use		: Name Field
+		Storage	: RsLedDist
+		Table	: CmpDistrictList,NotApplicable
+		Show Table	: Always
+[#Collection	: LedgersVch Src]
+	Add : Fetch	: IsRSActiveLedger ;,IsRSApprovedLedger
+	Add : Filter : RSActiveLedger;,RSApprovedLedger
+[#Collection: VLedTable]
+	Add: Option: VLEdTableSales : @@IsSales or @@ISSalesOrder or @@IsDelNote
+[!Collection:VLEdTableSales]
+	
+	Add : Fetch	: IsRSActiveLedger;,IsRSApprovedLedger
+	Add : Filter : RSActiveLedger;,RSApprovedLedger
+	
+;[#Part: Company MailingDetails]
+
+[#Part: Company MailingDtlsAddress]
+	Add	: Bottom Line:  CMPPesticideLic,CmpFertilizersLic
+	Height	: 12
+[Line	: CMPPesticideLic]
+	Fields		: Medium Prompt, CMP PesticideLic
+   	Local       : Field : Medium Prompt : Set as 	: $$LocaleString:"Pesticides Lic. No. :"
+    Space Top   : 0.1
+    [Field	: CMP PesticideLic]
+		Use		: Name Field
+		Storage	: CMPPesticideLicNo
+		Style	: Small
+[Line	: CmpFertilizersLic]
+	Fields		: Medium Prompt, CMP FertilizersLic
+   	Local       : Field : Medium Prompt : Set as 	: $$LocaleString:"Fertilizers Lic. No. :"
+    Space Top   : 0.1
+    [Field	: CMP FertilizersLic]
+		Use		: Name Field
+		Storage	: CMPFertilizersLicNo
+		Style	: Small
+
+;;;;;;;;;;;;;;;Discount from Party	
+[#Field: VchBatchDiscount]
+    Set as      		: if $$Increatemode then $PartyDiscount:Ledger:#EiConsignee else If $BilledQty = 0 Then 0 Else +
+							If $$Line > 1 Then $Discount Else +
+							If $$Line = 1 And (NOT $$IsEmpty:$$AltTable:VCHBATCHTrack:VCHBATCHOrder:$Discount +
+								AND ($$IsFieldEdited:VCHBATCHTrack OR $$IsFieldEdited:VCHBATCHOrder)) Then +
+								If $$IsFieldEdited Then $$Value Else  + 
+								$$AltTable:VCHBATCHTrack:VCHBATCHOrder:$Discount +
+							Else +
+								If @IsBilledQtyEdited Then @@stdVchDiscount Else +
+								If $$IsValidPriceLevel:$PriceLevel AND $BatchRate=0 Then @@StdVchDiscount Else +
+								If $$IsValidPriceLevel:$PriceLevel AND $$Isempty:$$Value AND $BatchRate!=0 Then +
+								@TableDiscount Else +
+								If ($$InAlterMode OR $$IsFieldEdited) AND NOT ($$IsValidPriceLevel:$PriceLevel)Then $$Value Else +
+								If $$IsEmpty:$Discount Then @@StdVchDiscount Else +
+								$Discount
+
+[#Field: VCHBATCH Value]
+;	Type	: Amount: Forced
+	Add	: Option	: VCHBATCH ValueSales : @@IsSales 
+[!Field	: VCHBATCH ValueSales]
+	Delete	: Set By Condition
+	Set as	: @@CalcedAmt
+
+
+[#Part: EXPINV AccInfo]
+	Delete: Option
+	
+;[#Form	: StockITem]
+	
+[#Field: MST Name]
+;	Full Width: Yes
+	Width	: 100
+	Max: 150 
+[#Line: EI Inv Info]
+	
+[#Collection: Alias Collection]
+	Delete : Format       : $$Name, 25
+	Add : Format       : $$Name, 50
+
+[#Field: VCH StockItem]
+	Width	: 50
+;    Format      : $$Name, 25
+
+
+	
+;[#Collection: ExtractAlias Collection]
+;	Delete : Format       : $$Name, 25
+;	Add : Format       : $$Name, 50
+
+;;;;;;;;;;;;;;MRP BATCH WISE
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Batch Fields
+
+[System : UDF]
+	BatchEng 	: String : 520
+
+;[#Field: STKALLOC Name]
+;	SubForm : MyBatchQuality : Not $$IsEmpty:$$Value
+;
+;[#Field: VCHBATCH Name]
+;	SubForm : MyBatchQuality : Not $$IsEnd:$$Value
+;	
+;[Report : MyBatchQuality]
+;	Object : Batch Allocations
+;	Form : MyBatchQuality
+;[Form : MyBatchQuality]
+;	Part : MyBatchQuality
+;	
+;[Part : MyBatchQuality]
+;	Line  : MyBatchEng
+;[Line  : MyBatchEng]
+;	Field : Short Prompt , BatchEng
+;	Local : Field : Short Prompt : Set as : "Engine No : "
+
+[#Line: VCHBATCH ColumnOne]
+	Add : Right Field: After : VCH BatchNameTitle:BatchEngTitle
+[Field	: BatchEngTitle]
+	Use 	: Name Field
+	Set as 	: "MRP"
+	Width 	: 15
+	Align 	: Center
+	Style	: SMALL BOLD
+	Skip	: Yes
+	
+[#Line: STKVCH Batch2]
+	Add: Right Field : After : VCHBATCH Name : BatchEng
+
+[Field : BatchEng]
+	Use : Name Field
+	;Type : String : Forced
+	Set as :  if $$IsEmpty:$$TableObj:VCHBATCHName:$BatchEng then $$Value else $$TableObj:VCHBATCHName:$BatchEng 
+	Set Always : Yes
+	Storage : BatchEng
+	Width : 15
+	Align : Center
+
+;;;Stock iTem Master
+[#Form	: Stock Item]
+[#Line: STKALLOC Column]
+	Add	: Field	: After: STKALLOC NameTitle : BatchEngTitle
+
+[#Line: STKALLOC MainLine]
+	Add: Field	: After: STKALLOCName : BatchEng
+	
+[#Collection : Active Batches VchExtract]
+	Fetch : BatchEng
+	Add : Format : $BatchEng,6
+
+[#Field: SSBatchName]
+	Add : Field : SSBatchMRPVal
+
+
+[Field : SSBatchMRPVal]
+	Use : Name Field
+	Set as : $$String:$BatchEng
+	Width  : 15
+    Style       : Small
+	Format	: "Decimal:2"
+    Invisible   : NOT $$IsBatchWiseOn
+
+[#Line: LR ContactPerson]
+	Local   : Field : Simple Prompt : Info  	: "Contact Person : "
+
+
+	
+
+;;;;;;Vat Auto Calculation
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+[#Field: EI Consignee]
+	Add : Control	: CtrlCreditDays	: NOT $$iSeMPTY:@@MyLedDaysVal AND @@ChkCreditDays>0 and $$InCreateMode and ($$IsDelNote:##SVVoucherType or $$IsSales:##SVVoucherType)
+	
+
+[Collection: Credit PartyPending Bills]
+    Type        : Bills
+    Child of    : #EIConsignee
+    Unique      : $$Name		
+	Format		: @@DateDiff
+    Format      : $BillDate, 8      : Universal Date
+    Format      : $$Name, 10
+    Format      : $BaseClosing,-30  : "AllSymbols, DrCr"
+	Format		: @@DueDate
+	Format		: ##SVCurrentDate
+	Filter		: FltrCreditDays, FltrCrAmt
+
+[System	: Formula]
+
+	CtrlCreditDays		: if @@ChkCreditDays = 1 then "The Customer has " + $$NewLine + $$String:@@ChkCreditDays +  $$NewLine + " Bill OverDue." else "The Customer has " + $$NewLine + $$String:@@ChkCreditDays +  $$NewLine + " Bills OverDue."
+	ChkCreditDays		: $$Numitems:CreditPartyPendingBills
+	FltrCreditDays		: $$Number:@@DateDiff >= $$Number:@@MyLedDaysVal ;;$BillCreditPeriod:Ledger:#EiConsignee ; ; 1 
+	DueDate				: $$Date:$$String:$BillDATE:UniversalDate
+	DateDiff			: ##SVCurrentDate - @@DueDate
+	FltrCrAmt			: $$IsDr:$BaseClosing 
+	MyLedDaysVal	: $$Number:$BillCreditPeriod:Ledger:#EiConsignee ;if $Date = $RSCreditLimitExceedDate:Ledger:#EiConsignee then $$Number:$BillCreditPeriod:Ledger:#EiConsignee + $$Number:$RSCreditLimitExceedDays:Ledger:#Eiconsignee else $$Number:$BillCreditPeriod:Ledger:#EiConsignee
+	
+	MyCrLimitRS	: $CREDITLIMIT:Ledger:#EiConsignee +  $LedCRLimitAmount:Ledger:#EiConsignee
+	MyBalExceed	: $ClosingBalance:Ledger:#EiConsignee > $LedCRLimitAmount:Ledger:#EiConsignee
+	CtrlCreditAmt: "The Customer has Exceed Credit Limit"
+
+;[#System: Formula]
+;	PartyLimit	: if $Date = $RSCreditLimitExceedDate:Ledger:@@VchPartyName then $CreditLimit:Ledger:@@VchPartyName + $LedCRLimitAmount:Ledger:@@VchPartyName else $CreditLimit:Ledger:@@VchPartyName
+;	PartyLimitExceeded  : (NOT $$IsEmpty:@@PartyLimit) AND $$IsDebit:@@PartyNett AND ($$Abs:@@PartyNett > $$Abs:@@PartyLimit)
+
+;;;;;Qty Total in MRN
+;;;;;;;;;;;;;;;;;;;Negetive Control
+;	Add : Option : VCH NrmlBilledQtySO :  (@@IsSales or @@IsDelNote or @@IsDebitNote or @@IsRejectionoutRS)
+
+;;;;;;;;;;;;;;;;;;total
+
+
+[#Part: EXPINV InvInfo]
+	Add:Total: EXPINV Marks
+[#Field: EXPINV Marks]
+;;;Total Line	
+[#Line: EXPINV Totals] ;;[Field: EXPINV MarksTitle1]
+	Local:Field:EXPINV MarksTitle1 :Delete:Info
+	Local:Field:EXPINV MarksTitle1 :Add:Set as:$$CollNumTotal:InventoryEntries:$$Number:$BasicPackageMarks
+	Local:Field:EXPINV MarksTitle1 :Type:Number
+	Local:Field:EXPINV MarksTitle1 :Format:"No Zero"
+	
+	Local:Field:EXPINV PackagesTitle1 :Delete:Info
+	Local:Field:EXPINV PackagesTitle1 :Add:Set as:$$CollNumTotal:InventoryEntries:$$Number:$BasicNumPackages
+	Local:Field:EXPINV PackagesTitle1 :Type:Number
+	Local:Field:EXPINV PackagesTitle1 :Format:"No Zero"
+
+[#Field:EXPINV BilledQtyTotal]
+	Use:Number Field
+	Set as:$$CollNumTotal:InventoryEntries:$$Number:$billedQty
+	
+
+
+
+;[#Form:ei supplementary]
+	
+;[#Part: EI PartyNameAddr]
+[#Part: EI PartyLedger]	
+	Local	: Line: Default : Local: Field: Default : Skip: Not ($$IsCmpowner) and @@issales
+
+[#Part: Ledger Contact]
+	delete:Line: LCPhone
+	Add:Line:After:LCMobile:LCMobile2
+	
+[#Line: LCFax]
+	Local       : Field : Medium Prompt : Set as    : $$LocaleString:"Aadhar No.:"
+
+[#Form: Ledger Contact]	
+	add:Part:LCResiAddress
+	Height:30
+	;Add:Line:after:LCGSTNo:LCResiAdd
+[Part:LCResiAddress]
+	Line:LCResiAdd
+	;Repeat:LCResiAdd:RESAddress
+[#Part: Ledger Contact]
+delete:Line: LCContact
+Add:Line:Before:LCMobile:RSContact
+[Line:RSContact]
+	Field:medium prompt,RSContact
+	Local:Field:medium prompt:Set as:"Contact:"
+	Space Top:1
+[Field:RSContact]
+	Use:name field
+	Set as:$LedgerContact:ledger:##ledgername
+[#Line: LCAddress]
+	;[#Line: LMCAddress]7
+	;[#Line: LCMailingName]
+	Local       : Field : Medium Prompt : Set as    :"Business Address"
+    [#Line: LCMobile]
+	Local       : Field : Medium Prompt :Set as:"Mobile No.1"
+[Line:LCmobile2]
+	Field:medium prompt,LCMobile2
+	Local       : Field : Medium Prompt : Set as    :"Mobile No.2"
+[Field:LCMobile2]
+	Use:name field
+	Set as:$LedgerPhone:Ledger:##LedgerName
+	Style:small bold
+[Line:LCResiAdd]
+	Field:medium prompt,LCResiAdd
+	Local:Field:medium prompt:Set as:"Residential Address"
+[Field:LCResiAdd]
+	Use:name field
+	Set as:$$FullList:ResAddressColl:$RsAddress ;$RSADDRESS;$$CollectionField:$rsaddress:1:ResAddress
+	Style:small bold
+	Lines:0
+[Collection:ResAddressColl]
+	Type:ResAddress:Ledger
+	Child Of:##LedgerName
+	Format:$RSADDRESS
+	;Fetch:RSaddress
+;;[#Part: EI Buyer]
+;	[#Field: EI PartyAddress]
+;		Skip:Yes
+;	[#Field: EI BuyerAddress]
+;		Skip:Yes
+;	[#Field: EI ConsigneeStateName]
+;		Skip:Yes
+;	[#Field: EI ConsigneeTaxNumber]
+;		Skip:Yes
+;	[#Field: EI BuyerTaxNumber]
+;		Skip:Yes
+;	[#Field: GST AddlBuyerPOS]
+;		Skip:Yes
+;	[#Field: EI PartyAddressType]
+;		Skip:Yes
+;	[#Field: EI BuyerAddressType]
+;		Skip:Yes
+;;	[#Line: GSTPartyDealerType]
+;;		Local	: Field	: Name Field	:Skip:Yes
+;[#Form:ledger]
+;	;[#Field:GSTRegistrationType]
+;	;	Skip:Yes
+;	;[#Field:GSTVchRegistrationType]
+;	[#Field: EI ConsigneeTaxNumber]
+;		Skip:Yes
+;	[#Field: EI DestCountry]
+;		Skip:Yes
+;		
+
+;;;
+[#Part: EXPINV SaleTopLeft]
+	Delete	: Parts
+	Add	: 	Parts 		: EXPINV Company,  EXPINV Buyer,EXPINV Consignee ;;, EXPINV ConsigneeContact, EXPINV Contact
+            Bottom Parts: EXPINV Country
+		

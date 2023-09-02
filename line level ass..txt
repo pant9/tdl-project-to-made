@@ -9,7 +9,7 @@
 		Key		: Alt + 7
 		Action	: Refresh TDL
 		
-[System	: Formula] 
+[System	: Formula]
 	GurleenLedRepTit	: $$LocaleString:"Ledger Master Details"
 
 [#Menu	: Display Menu]
@@ -18,8 +18,7 @@
 	[Report		: LedgerDtline]
 		Use		: DSP Template
 		Form	: LedgerDtline
-	
-
+		
 		[Form		: LedgerDtline]
 			Use		: DSP Template
 			Height	: 100% screen

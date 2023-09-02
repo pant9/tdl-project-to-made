@@ -82,7 +82,7 @@
 					Explode	: MtrlIssueDtlRepExpl
 					Field	: RSDCgdwnGrpName, RSDCempTit
 					Right Fields	: RSDCqtyTit, RSDCrateTit, RSDCamtTit
-					Border	: thin top bottom
+					Border	: Column Titles
 					
 					[Field	: RSDCgdwnGrpName]
 						Use		: Short Name Field
@@ -237,8 +237,7 @@
 								[Collection	: RSDCMtrlIssueListExplNew]
 									Source Collection : SRCMtrlIssueCollection
 									Walk	: Inventory Entries Out
-								;	Compute	: StkGrpItemName 	: $parent:StockItem:$StockItemName
-								;	Compute	: VoucherNumber		: $VoucherNumber
+			
 									Compute : StockItemNAme		: $StockItemNAme
 									Compute	: RSGodownName		: $GodownName
 									Compute : BilledQty			: $BilledQty
@@ -255,8 +254,7 @@
 [Collection	: RSDCMtrlIssueListExpl]
 	Source Collection : SRCMtrlIssueCollection
 	Walk	: Inventory Entries Out
-;	Compute	: StkGrpItemName 	: $parent:StockItem:$StockItemName
-;	Compute	: VoucherNumber		: $VoucherNumber
+
 	Compute : StockItemNAme		: $StockItemNAme
 	Compute	: RSGodownName		: $GodownName
 	Compute : BilledQty			: $BilledQty
